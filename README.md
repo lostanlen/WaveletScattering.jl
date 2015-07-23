@@ -1,6 +1,6 @@
-## Scattering.jl
+## WaveletScattering.jl
 
-Scattering.jl is a Julia package that intends to provide fast scattering transforms of images, sounds and videos.
+WaveletScattering.jl is a Julia package that intends to provide fast scattering transforms of images, sounds and videos.
 Scattering coefficients are powerful features for signal-based machine learning tasks, as they offer a great discriminability
 while discarding non-informative variability, such as rigid motions, frequency transpositions, and elastic deformations.
 
