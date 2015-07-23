@@ -7,6 +7,7 @@ tests = [
 println("Running tests:")
 
 for t in tests
-    println(" * ", t, ".jl ...")
-    include(t)
+    tfile = string(t, ".jl")
+    println(" * ", tfile, " ...")
+    include(tfile)
 end
