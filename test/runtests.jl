@@ -1,4 +1,5 @@
 using WaveletScattering
+using Base.Test
 
 tests = [
     "variables"

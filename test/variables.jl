@@ -1,6 +1,3 @@
-using Scattering
-using Base.Test
-
 # Literal
 time_literal = Literal(:time)
 gamma2_literal = Literal((:γ, 2))

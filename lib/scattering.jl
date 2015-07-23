@@ -1,4 +1,4 @@
-module Scattering
+module WaveletScattering
 
 using DataStructures
 
