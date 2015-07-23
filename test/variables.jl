@@ -1,3 +1,6 @@
+import WaveletScattering: Literal, VariableKey, VariableTree,
+                          getindex, setindex!, haskey
+
 # Literal
 time_literal = Literal(:time)
 gamma2_literal = Literal((:γ, 2))
