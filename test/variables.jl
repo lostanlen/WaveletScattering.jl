@@ -1,6 +1,5 @@
 import WaveletScattering: Literal, VariableKey, VariableTree,
                           getindex, setindex!, haskey
-using DataStructures
 
 # Literal
 time_literal = Literal(:time)
