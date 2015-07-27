@@ -4,7 +4,8 @@ immutable Literal
     symbol::Symbol
     level::Int
 end
-Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
+typealias SymbolInt @compat(Tuple{Symbol,Int})
+Literal(tup::SymbolInt) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
 # A scattering Variable is a linked list of Literals.
