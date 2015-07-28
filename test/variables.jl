@@ -1,5 +1,5 @@
 import WaveletScattering: Literal, variablekey, VariableTree,
-                          getindex, setindex!, haskey
+                          getindex, setindex!, haskey, subtree
 
 # Literal
 time_literal = Literal(:time)
@@ -37,3 +37,8 @@ variabletree[variablekey(:time)] = 3.0
 @test haskey(variabletree, variablekey(:time))
 @test !haskey(variabletree, variablekey(:space))
 @test !haskey(variabletree, variablekey((:time,2)))
+
+# subtree
+@test subtree(variabletree, nil())[nil()] == 1.0
+@test subtree(variabletree, nil())[variablekey(:time)] == 3.0
+@test subtree(variabletree, variablekey(:time))[nil()] == 3.0
