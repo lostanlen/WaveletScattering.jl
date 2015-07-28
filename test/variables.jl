@@ -12,9 +12,9 @@ gamma2_literal = Literal((:γ, 2))
 # variablekey
 @test isa(variablekey(),Nil{Literal})
 varkey = variablekey(:time, (:γ, 2))
-@test key.head == time_literal
-@test key.tail.head == gamma2_literal
-@test key.tail.tail == variablekey()
+@test varkey.head == time_literal
+@test varkey.tail.head == gamma2_literal
+@test varkey.tail.tail == variablekey()
 
 # VariableTree constructor
 value = 1.0
