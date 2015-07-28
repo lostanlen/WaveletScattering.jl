@@ -47,4 +47,4 @@ end
 # Unlike getindex, which yields a value, the function subtree yields a branch
 subtree(t::VariableTree, key::Nil) = t
 subtree(t::VariableTree, key::Cons) =
-    subtree(t.symbols[key.head.symbol][key.head.level], v.tail)
+    subtree(t.symbols[key.head.symbol][key.head.level], key.tail)
