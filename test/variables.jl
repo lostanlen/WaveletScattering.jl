@@ -1,4 +1,4 @@
-import WaveletScattering: Literal, VariableKey, VariableTree,
+import WaveletScattering: Literal, variablekey, VariableTree,
                           getindex, setindex!, haskey
 
 # Literal
@@ -9,12 +9,12 @@ gamma2_literal = Literal((:γ, 2))
 @test isimmutable(time_literal)
 @test isimmutable(gamma2_literal)
 
-# VariableKey
-@test isa(VariableKey(),Nil{Literal})
-variablekey = VariableKey(:time, (:γ, 2))
-@test variablekey.head == time_literal
-@test variablekey.tail.head == gamma2_literal
-@test variablekey.tail.tail == VariableKey()
+# variablekey
+@test isa(variablekey(),Nil{Literal})
+varkey = variablekey(:time, (:γ, 2))
+@test key.head == time_literal
+@test key.tail.head == gamma2_literal
+@test key.tail.tail == variablekey()
 
 # VariableTree constructor
 value = 1.0
@@ -26,14 +26,14 @@ variabletree.symbols[:time] = [VariableTree(2.0)]
 
 # VariableTree getindex
 @test variabletree[nil()] == 1.0
-@test variabletree[VariableKey(:time)] == 2.0
+@test variabletree[variablekey(:time)] == 2.0
 
 # VariableTree setindex!
-variabletree[VariableKey(:time)] = 3.0
-@test variabletree[VariableKey(:time)] == 3.0
+variabletree[variablekey(:time)] = 3.0
+@test variabletree[variablekey(:time)] == 3.0
 
 # VariableTree haskey
 @test haskey(variabletree, nil())
-@test haskey(variabletree, VariableKey(:time))
-@test !haskey(variabletree, VariableKey(:space))
-@test !haskey(variabletree, VariableKey((:time,2)))
+@test haskey(variabletree, variablekey(:time))
+@test !haskey(variabletree, variablekey(:space))
+@test !haskey(variabletree, variablekey((:time,2)))
