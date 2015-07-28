@@ -4,13 +4,14 @@ immutable Literal
     symbol::Symbol
     level::Int
 end
-Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
+typealias SymbolInt @compat(Tuple{Symbol,Int})
+Literal(tup::SymbolInt) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
 # A scattering Variable is a linked list of Literals.
 typealias VariableKey LinkedList{Literal}
-VariableKey() = nil(Literal)
-VariableKey(head, tail...) = cons(Literal(head), VariableKey(tail...))
+variablekey() = nil(Literal)
+variablekey(head, tail...) = cons(Literal(head), variablekey(tail...))
 
 # A scattering VariableTree is a hybrid Dict-of-Vectors recursive container
 # indexed by the scattering symbols and levels that make up a Literal.
