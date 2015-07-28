@@ -40,5 +40,5 @@ variabletree[variablekey(:time)] = 3.0
 
 # subtree
 @test subtree(variabletree, nil())[nil()] == 1.0
-@test subtree(variabletree, nil())[variablekey(:time)] == 1.0
+@test subtree(variabletree, nil())[variablekey(:time)] == 3.0
 @test subtree(variabletree, variablekey(:time))[nil()] == 3.0
