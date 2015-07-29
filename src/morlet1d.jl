@@ -1,5 +1,5 @@
-immutable MorletSpec1D{T<:Number} <: AbstractSpect1D{T}
     ɛ
+immutable Morlet1DSpec{T<:Number} <: AbstractSpec1D{T}
     log2_length::Int
     max_qualityfactor
     max_scale
