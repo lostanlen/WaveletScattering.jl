@@ -1,7 +1,7 @@
 # A Spec object contains the immutable specifications of a filter bank
 abstract AbstractSpec
 abstract Abstract1DSpec{T<:Number} <: AbstractSpec
-abstract Abstract1DSpec{T<:Number} <: AbstractSpec
+abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 function specgammas(spec::AbstractSpec)
     nΓs = spec.nFilters_per_octave * spec.nOctaves
