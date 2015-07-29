@@ -6,12 +6,11 @@ immutable Morlet1DSpec{T<:Number} <: AbstractSpec1D{T}
     max_scale # ::realtype(T) (imposed by inner constructor)
     nFilters_per_octave::Int
     nOctaves::Int
-    function Morlet1DSpec{T<:Number}(ɛ, log2_length, max_qualityfactor,
-                                     max_scale, nFilters_per_octave, nOctaves)
-        @assert isa(ɛ, realtype(T))
-        @assert isa(max_qualityfactor, realtype(T))
-        @assert isa(max_scale, realtype(T))
-        new{T}(ɛ, log2_length, max_qualityfactor, max_scale,
-            nFilters_per_octave, nOctaves)
+    function Morlet1DSpec{T<:Number}(ɛ, signaltype::Type{T}, log2_length,
+                                     max_qualityfactor, max_scale,
+                                     nFilters_per_octave, nOctaves)
+        RealT = realtype(T)
+        new(RealT(ɛ), T, log2_length, RealT(max_qualityfactor),
+            RealT(max_scale), nFilters_per_octave, nOctaves)
     end
 end
