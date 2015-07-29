@@ -1,3 +1,6 @@
+import WaveletScattering: AbstractSpec, AbstractSpec1D, AbstractSpec2D,
+                          specgammas
+
 immutable TestSpec1D <: AbstractSpec1D
     nFilters_per_octave::Int
     nOctaves::Int
@@ -21,15 +24,15 @@ spec = TestSpec1D(1, 1)
 
 spec = TestSpec1D(2, 1)
 (γs, χs, js) = specgammas(spec)
-@test γs == [0 1]
-@test χs == [0 1]
-@test js == [0 0]
+@test γs == [0, 1]
+@test χs == [0, 1]
+@test js == [0, 0]
 
 spec = TestSpec1D(1, 2)
 (γs, χs, js) = specgammas(spec)
-@test γs == [0 1]
-@test χs == [0 0]
-@test js == [0 1]
+@test γs == [0, 1]
+@test χs == [0, 0]
+@test js == [0, 1]
 
 spec = TestSpec(12, 8)
 (γs, χs, js) = specgammas(spec)
