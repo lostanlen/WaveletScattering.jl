@@ -2,9 +2,15 @@ immutable TestSpec1D <: AbstractSpec1D
     nFilters_per_octave::Int
     nOctaves::Int
 end
+immutable TestSpec2D <: AbstractSpec2D
+    nFilters_per_octave::Int
+    nOctaves::Int
+    nOrientations::Int
+end
 
 # abstract subtype testing
 @test TestSpec1D <: AbstractSpec
+@test TestSpec2D <: AbstractSpec
 
 # specgammas
 spec = TestSpec1D(1, 1)
