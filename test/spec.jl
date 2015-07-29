@@ -40,3 +40,10 @@ nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(γs) == nWavelets
 @test length(χs) == nWavelets
 @test length(js) == nWavelets
+
+# realtype
+@test realtype(Float32) == Float32
+@test realtype(Float64) == Float64
+@test realtype(Complex{Float32}) == Float32
+@test realtype(Complex{Float64}) == Float64
+@test_throws MethodError realtype(ASCIIString)

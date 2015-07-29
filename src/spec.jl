@@ -1,3 +1,4 @@
+# A Spec object contains the immutable specifications of a filter bank
 abstract AbstractSpec
 abstract AbstractSpec1D{T<:Number} <: AbstractSpec
 abstract AbstractSpec2D{T<:Number} <: AbstractSpec
@@ -11,3 +12,6 @@ function specgammas(spec::AbstractSpec)
     js = vec(repmat(transpose(octaves), spec.nFilters_per_octave))
     return (γs, χs, js)
 end
+
+realtype{T<:Real}(::Type{T}) = T
+realtype{T<:Real}(::Type{Complex{T}}) = T
