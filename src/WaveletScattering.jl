@@ -1,5 +1,7 @@
 module WaveletScattering
 
+require("Options")
+
 using Compat
 using DataStructures
 using OptionsMod
