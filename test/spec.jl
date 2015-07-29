@@ -34,7 +34,7 @@ spec = TestSpec1D(1, 2)
 @test χs == [0, 0]
 @test js == [0, 1]
 
-spec = TestSpec(12, 8)
+spec = TestSpec1D(12, 8)
 (γs, χs, js) = specgammas(spec)
 nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(γs) == nWavelets
