@@ -2,7 +2,7 @@ module WaveletScattering
 
 using Compat
 using DataStructures
-using Options
+using OptionsMod
 
 include("morlet1d.jl")
 include("spec.jl")
