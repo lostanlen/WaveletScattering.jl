@@ -10,7 +10,7 @@ immutable MorletSpec1D{T<:Number} <: AbstractSpect1D{T}
         @assert isa(ɛ, realtype(T))
         @assert isa(max_qualityfactor, realtype(T))
         @assert isa(max_scale, realtype(T))
-        new(ɛ, log2_length, max_qualityfactor, max_scale,
+        new{T}(ɛ, log2_length, max_qualityfactor, max_scale,
             nFilters_per_octave, nOctaves)
     end
 end
