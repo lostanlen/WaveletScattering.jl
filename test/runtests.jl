@@ -3,6 +3,7 @@ using Base.Test
 using DataStructures
 
 tests = [
+    "spec",
     "variables"
 ]
 
