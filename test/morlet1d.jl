@@ -1,8 +1,7 @@
 import WaveletScattering: Morlet1DSpec, realtype
 
 # Morlet1DSpec constructor
-for T in [Float16, Float32, Float64,
-                   Complex{Float16}, Complex{Float32}, Complex{Float64}]
+for T in [Float16, Float32, Float64, Complex{Float16}, Complex{Float32}, Complex{Float64}]
     RealT = realtype(T)
     ɛ = 1e-5
     log2_length = 15
@@ -13,7 +12,7 @@ for T in [Float16, Float32, Float64,
     m = Morlet1DSpec{T}(ɛ, T, log2_length, max_qualityfactor, max_scale,
         nFilters_per_octave, nOctaves)
     @test isa(m.ɛ, RealT)
-    @test m.signaltype == signaltype
+    @test m.signaltype == T
     @test isa(max_qualityfactor, RealT)
     @test isa(max_scale, RealT)
 end
