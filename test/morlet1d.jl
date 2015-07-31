@@ -1,3 +1,5 @@
+import WaveletScattering: Morlet1D, realtype
+
 # Morlet1D constructor
 for signaltype in [Float16, Float32, Float64,
                    Complex{Float16}, Complex{Float32}, Complex{Float64}]
