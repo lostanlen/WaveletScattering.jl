@@ -3,6 +3,8 @@ abstract AbstractSpec
 abstract Abstract1DSpec{T<:Number} <: AbstractSpec
 abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
+# checkspec enforces properties of the wavelets to satisfy null mean and
+# Littlewood-Paley inequality. See documentation for details.
 function checkspec(opts::Options)
     if opts[:max_qualityfactor]<1.0
         error("max_qualityfactor cannot be lower than 1.0.")
@@ -12,9 +14,12 @@ function checkspec(opts::Options)
     end
 end
 
+# realtype provides the type parameter of a complex type e.g. Complex{Float32}.
+# For numeric real types, e.g. Float32, it is a no-op.
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
+# specgammas yields log-scales γs, chromas χs, and octaves js of a given spec.
 function specgammas(spec::AbstractSpec)
     nΓs = spec.nFilters_per_octave * spec.nOctaves
     γs = collect(0:(nΓs-1))
