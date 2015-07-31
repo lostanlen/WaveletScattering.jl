@@ -1,6 +1,6 @@
-import WaveletScattering: Morlet1D, realtype
+import WaveletScattering: Morlet1DSpec, realtype
 
-# Morlet1D constructor
+# Morlet1DSpec constructor
 for signaltype in [Float16, Float32, Float64,
                    Complex{Float16}, Complex{Float32}, Complex{Float64}]
     RealT = realtype(signaltype)
