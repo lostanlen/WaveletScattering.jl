@@ -1,5 +1,5 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-                          realtype, specgammas
+                          checkspec, realtype, specgammas
 
 immutable Test1DSpec <: Abstract1DSpec
     nFilters_per_octave::Int
@@ -14,6 +14,21 @@ end
 # abstract subtype testing
 @test Test1DSpec <: AbstractSpec
 @test Test2DSpec <: AbstractSpec
+
+# checkspec
+opts = @options max_qualityfactor=2.0 max_nFilters_per_octave=4
+@test checkopts(opts) == nothing
+opts = @options max_qualityfactor=0.5 max_nFilters_per_octave=4
+@test_throws ErrorException checkopts(opts)
+opts = @options max_qualityfactor=8.0 max_nFilters_per_octave=4
+@test_throws ErrorException checkopts(opts)
+
+# realtype
+@test realtype(Float32) == Float32
+@test realtype(Float64) == Float64
+@test realtype(Complex{Float32}) == Float32
+@test realtype(Complex{Float64}) == Float64
+@test_throws MethodError realtype(ASCIIString)
 
 # specgammas
 spec = Test1DSpec(1, 1)
@@ -40,10 +55,3 @@ nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(γs) == nWavelets
 @test length(χs) == nWavelets
 @test length(js) == nWavelets
-
-# realtype
-@test realtype(Float32) == Float32
-@test realtype(Float64) == Float64
-@test realtype(Complex{Float32}) == Float32
-@test realtype(Complex{Float64}) == Float64
-@test_throws MethodError realtype(ASCIIString)
