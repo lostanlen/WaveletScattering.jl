@@ -1,5 +1,4 @@
 using Base.Test
-using WaveletScattering
 
 tests = [
     "spec",

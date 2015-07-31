@@ -1,5 +1,5 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-                          specgammas
+                          realtype, specgammas
 
 immutable Test1DSpec <: Abstract1DSpec
     nFilters_per_octave::Int
