@@ -17,11 +17,11 @@ end
 
 # checkspec
 opts = @options max_qualityfactor=2.0 max_nFilters_per_octave=4
-@test checkopts(opts) == nothing
+@test checkspec(opts) == nothing
 opts = @options max_qualityfactor=0.5 max_nFilters_per_octave=4
-@test_throws ErrorException checkopts(opts)
+@test_throws ErrorException checkspec(opts)
 opts = @options max_qualityfactor=8.0 max_nFilters_per_octave=4
-@test_throws ErrorException checkopts(opts)
+@test_throws ErrorException checkspec(opts)
 
 # realtype
 @test realtype(Float32) == Float32
