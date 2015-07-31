@@ -1,4 +1,3 @@
 julia 0.3
-Compat 0.4.10
 DataStructures 0.3.11
 Options 0.2.4
