@@ -29,7 +29,7 @@ function Morlet1DSpec(opts::Options{CheckError})
         @defaults opts max_qualityfactor = float(nFilters_per_octave)
     end
     @defaults opts max_scale = RealT(Inf)
-    @defaults opts nFilters_per_octave = ceil(max_qualityfactor)
+    @defaults opts nFilters_per_octave = ceil(Int, max_qualityfactor)
     @defaults opts nOctaves = 8
     @check_used opts
     Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
