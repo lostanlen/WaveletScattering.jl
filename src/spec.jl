@@ -5,13 +5,11 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 # checkspec enforces properties of the wavelets to satisfy null mean and
 # Littlewood-Paley inequality. See documentation for details.
-function checkspec(opts::Options)
-    if opts[:max_qualityfactor]<1.0
-        error("max_qualityfactor cannot be lower than 1.0.")
-    end
-    if opts[:max_qualityfactor]>opts[:nFilters_per_octave]
-        error("max_qualityfactor cannot be greater than nFilters_per_octave.")
-    end
+function checkspec(max_qualityfactor, nFilters_per_octave)
+  max_qualityfactor<1.0 || error("max_qualityfactor cannot be lower than 1.0.")
+  nFilters_per_octave<1 || error("nFilters_per_octave cannot be lower than 1.")
+  qualityfactor>nFilters_per_octave ||
+      error("max_qualityfactor cannot be lower than nFilters_per_octave")
 end
 
 # realtype provides the type parameter of a complex type e.g. Complex{Float32}.
