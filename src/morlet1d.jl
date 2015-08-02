@@ -44,5 +44,5 @@ function Morlet1DSpec(opts::Options{CheckError})
                  nFilters_per_octave, nOctaves)
 end
 
-# Empty options by default
+# A zero-argument constructor falls back to default options, see above
 Morlet1DSpec() = Morlet1DSpec(@options)
