@@ -8,7 +8,7 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 function checkspec(max_qualityfactor, nFilters_per_octave)
   max_qualityfactor>=1.0 || error("max_qualityfactor cannot be lower than 1.0.")
   nFilters_per_octave>=1 || error("nFilters_per_octave cannot be lower than 1.")
-  max_qualityfactor<nFilters_per_octave ||
+  max_qualityfactor<=oftype(max_qualityfactor, nFilters_per_octave) ||
       error("max_qualityfactor cannot be greater than nFilters_per_octave")
 end
 
