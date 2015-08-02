@@ -16,11 +16,11 @@ end
 @test Test2DSpec <: AbstractSpec
 
 # checkspec
-opts = @options max_qualityfactor=2.0 max_nFilters_per_octave=4
+opts = @options max_qualityfactor=2.0 nFilters_per_octave=4
 @test checkspec(opts) == nothing
-opts = @options max_qualityfactor=0.5 max_nFilters_per_octave=4
+opts = @options max_qualityfactor=0.5 nFilters_per_octave=4
 @test_throws ErrorException checkspec(opts)
-opts = @options max_qualityfactor=8.0 max_nFilters_per_octave=4
+opts = @options max_qualityfactor=8.0 nFilters_per_octave=4
 @test_throws ErrorException checkspec(opts)
 
 # realtype
