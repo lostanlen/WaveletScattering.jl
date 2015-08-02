@@ -17,20 +17,28 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
 end
 
 function Morlet1DSpec(opts::Options{CheckError})
+    # Single-precision real input by default
     @defaults opts signaltype=Float32
     T = signaltype
     RealT = realtype(T)
+    # Default threshold is equal to floating-point machine precision, i.e. the
+    # distance between 1.0 and the next numbe of type RealT.
     @defaults opts ɛ = eps(RealT)
+    # Default window length is 32768 samples, i.e. about 740 ms at 44.1kHz
     @defaults opts log2_length = 15
+    # max_qualityfactor and nFilters_per_octave are mutual defaults.
+    # If none is present, both are set to one.
     @defaults opts max_qualityfactor = one(RealT)
     if opts[:nFilters_per_octave] == nothing
         @defaults opts max_qualityfactor = one(RealT)
     else
         @defaults opts max_qualityfactor = float(opts[:nFilters_per_octave])
     end
-    @defaults opts max_scale = RealT(Inf)
     @defaults opts nFilters_per_octave = ceil(Int, max_qualityfactor)
-    @defaults opts nOctaves = 8
+    # By default, no upper limit on the scale of the lowest-frequency wavelets.
+    @defaults opts max_scale = RealT(Inf)
+    # By default, the filter bank covers the whole frequency range
+    @defaults opts nOctaves = log2_length - 1
     @check_used opts
     Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
                  nFilters_per_octave, nOctaves)
