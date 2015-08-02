@@ -22,7 +22,7 @@ end
 
 # Morlet1DSpec default options
 for T in numerictypes
-  opts = @options signaltype = T
+  opts = @options signaltype=T nOctaves=8
   RealT = realtype(T)
   spec = Morlet1DSpec(opts)
   @test spec.ɛ == eps(RealT)
@@ -38,3 +38,7 @@ for T in numerictypes
   spec = Morlet1DSpec(opts)
   @test_approx_eq spec.max_qualityfactor 12.0
 end
+
+# Zero-argument constructor
+spec = Morlet1DSpec()
+@test spec.nOctaves == spec.log2_length
