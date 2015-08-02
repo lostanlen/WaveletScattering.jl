@@ -15,7 +15,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     end
 end
 
-function Morlet1DSpec{T<:Number}(opts::Options)
+function Morlet1DSpec{T<:Number}(opts::Options{CheckError})
     RealT = realtype(T)
     @defaults opts ɛ = eps(RealT)
     @defaults opts log2_length = 15
