@@ -27,14 +27,14 @@ for T in numerictypes
   spec = Morlet1DSpec(opts)
   @test spec.ɛ == eps(RealT)
   @test spec.log2_length == 15
-  @test_approx_eq spec.max_qualityfactor == 1.0
-  @test_approx_eq spec.max_scale == Inf
-  @test spec.max_nFilters_per_octave == 1
+  @test_approx_eq spec.max_qualityfactor 1.0
+  @test_approx_eq spec.max_scale Inf
+  @test spec.nFilters_per_octave == 1
   @test spec.nOctaves == 8
   opts = @options max_qualityfactor=8.0
   spec = Morlet1DSpec(opts)
-  @test spec.max_nFilters_per_octave == 8
-  spec = Morlet1DSpec(opts)
+  @test spec.nFilters_per_octave == 8
   opts = @options nFilters_per_octave=12
-  @test_approx_eq spec.max_qualityfactor == 12.0
+  spec = Morlet1DSpec(opts)
+  @test_approx_eq spec.max_qualityfactor 12.0
 end
