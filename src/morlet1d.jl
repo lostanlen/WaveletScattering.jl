@@ -17,7 +17,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
 end
 
 function Morlet1DSpec(opts::Options{CheckError})
-    @defaults opts signaltype = Float32
+    @defaults opts signaltype=Float32
     T = signaltype
     RealT = realtype(T)
     @defaults opts ɛ = eps(RealT)
