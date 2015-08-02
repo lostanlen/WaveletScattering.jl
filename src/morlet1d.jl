@@ -26,7 +26,7 @@ function Morlet1DSpec(opts::Options{CheckError})
     if opts[:nFilters_per_octave] == nothing
         @defaults opts max_qualityfactor = one(RealT)
     else
-        @defaults opts max_qualityfactor = float(nFilters_per_octave)
+        @defaults opts max_qualityfactor = float(opts[:nFilters_per_octave])
     end
     @defaults opts max_scale = RealT(Inf)
     @defaults opts nFilters_per_octave = ceil(Int, max_qualityfactor)
