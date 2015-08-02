@@ -18,7 +18,7 @@ end
 # checkspec
 max_qualityfactor = 2.0
 nFilters_per_octave = 4
-@test checkspec(max_qualityfactor, nFilters_per_octave) == nothing
+@test checkspec(max_qualityfactor, nFilters_per_octave)
 max_qualityfactor = 0.5
 @test_throws ErrorException checkspec(max_qualityfactor, nFilters_per_octave)
 max_qualityfactor = 8.0
