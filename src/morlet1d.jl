@@ -15,7 +15,9 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     end
 end
 
-function Morlet1DSpec{T<:Number}(opts::Options{CheckError})
+function Morlet1DSpec(opts::Options{CheckError})
+    @defaults opts signaltype = Float32
+    T = opts[:signaltype]
     RealT = realtype(T)
     @defaults opts ɛ = eps(RealT)
     @defaults opts log2_length = 15
@@ -30,19 +32,9 @@ function Morlet1DSpec{T<:Number}(opts::Options{CheckError})
     @defaults opts nOctaves = 8
     @check_used opts
     checkspec(opts)
-    Morlet1DSpec{precision}(opts[:ɛ], opts[:log2_length],
-             opts[:max_qualityfactor], opts[:max_scale],
-             opts[:nFilters_per_octave], opts[:nOctaves])
+    Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
+                 nFilters_per_octave, nOctaves)
 end
-
-# Real input by default
-Morlet1DSpec(opts::Options) = Morlet1DSpec(opts)
-Morlet1DSpec{Number}(opts::Options) = Morlet1DSpec{Real}(opts)
-
-# Single-precision input by default
-Morlet1DSpec{Real}(opts::Options) = Morlet1DSpec{Float32}(opts)
-Morlet1DSpec{Complex}(opts::Options) = Morlet1DSpec(Complex{Float32})(opts)
 
 # Empty options by default
 Morlet1DSpec() = Morlet1DSpec(@options)
-Morlet1DSpec{T<:Number}() = Morlet1DSpec{T}(@options)
