@@ -34,3 +34,15 @@ function Morlet1DSpec{T<:Number}(opts::Options)
              opts[:max_qualityfactor], opts[:max_scale],
              opts[:nFilters_per_octave], opts[:nOctaves])
 end
+
+# Real input by default
+Morlet1DSpec(opts::Options) = Morlet1DSpec(opts)
+Morlet1DSpec{Number}(opts::Options) = Morlet1DSpec{Real}(opts)
+
+# Single-precision input by default
+Morlet1DSpec{Real}(opts::Options) = Morlet1DSpec{Float32}(opts)
+Morlet1DSpec{Complex}(opts::Options) = Morlet1DSpec(Complex{Float32})(opts)
+
+# Empty options by default
+Morlet1DSpec() = Morlet1DSpec(@options)
+Morlet1DSpec{T<:Number}() = Morlet1DSpec{T}(@options)
