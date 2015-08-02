@@ -22,7 +22,7 @@ end
 
 # Morlet1DSpec default options
 for T in numerictypes
-  opts = @options
+  opts = @options signaltype = T
   RealT = realtype(T)
   spec = Morlet1DSpec(opts)
   @test spec.ɛ == eps(RealT)
