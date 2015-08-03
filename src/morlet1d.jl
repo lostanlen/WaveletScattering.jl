@@ -63,5 +63,6 @@ function localize{T<:Number}(spec::Morlet1DSpec{T})
     unbounded_qualityfactors = scales .* centerfrequencies / scale_multiplier
     qualityfactors = clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
     bandwidths = resolutions ./ qualityfactors
+    scales = scale_multiplier * qualityfactors./centerfrequencies
     return (bandwidths, centerfrequencies, qualityfactors, scales)
 end
