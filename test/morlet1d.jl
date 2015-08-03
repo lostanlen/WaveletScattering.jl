@@ -35,12 +35,6 @@ for T in numerictypes
   spec = Morlet1DSpec(@options max_qualityfactor=8.0)
   @test spec.nFilters_per_octave == 8
   @test spec.nOctaves == 11
-=======
-  @test spec.nOctaves == 8
-  # nFilters_per_octave defaults to max_qualityfactor when it is provided
-  spec = Morlet1DSpec(@options max_qualityfactor=8.0)
-  @test spec.nFilters_per_octave == 8
->>>>>>> morlet-localize
   # max_qualityfactor defaults to nFilters_per_octave when it is provided
   spec = Morlet1DSpec(@options nFilters_per_octave=12)
   @test_approx_eq spec.max_qualityfactor 12.0
@@ -49,11 +43,7 @@ end
 
 # Zero-argument constructor
 spec = Morlet1DSpec()
-<<<<<<< HEAD
 @test spec.nOctaves == spec.log2_length - 1
-=======
-@test spec.nOctaves == spec.log2_length
->>>>>>> morlet-localize
 
 # localize
 # in the dyadic case, check that the mother center center frequency is 0.39
@@ -72,7 +62,6 @@ for n in [2, 4, 8, 12, 16, 24, 32]
     @test all(centerfreqs.>0.0)
 end
 for RealT in [Float16, Float32, Float64]
-<<<<<<< HEAD
     for max_q in [1, 2, 4, 8, 12, 16, 24, 32], max_s in [exp2(11:16); Inf]
         opts = @options signaltype=RealT max_qualityfactor=max_q max_scale=max_s
         spec = Morlet1DSpec(opts)
@@ -88,23 +77,4 @@ for RealT in [Float16, Float32, Float64]
         @test all(abs(diff(heisenberg_tradeoff)) .< 10.0*eps(RealT))
         # TODO: test bandwidths and scales on actual wavelets
     end
-=======
-for max_q in [1, 2, 4, 8, 12, 16, 24, 32]
-  for max_s in [exp2(11:16); Inf]
-      opts = @options signaltype=RealT max_qualityfactor=max_q max_scale=max_s
-      spec = Morlet1DSpec(opts)
-      (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
-      @test all(qualityfactors.>=1.0)
-      @test all(qualityfactors.<=max_q)
-      @test all(scales.>0.0)
-      @test all(scales.<=max_s)
-      resolutions = centerfrequencies / centerfrequencies[1]
-      @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
-      heisenberg_tradeoff = bandwidths .* scales
-      nWavelets = length(heisenberg_tradeoff)
-      @test all(abs(diff(heisenberg_tradeoff)) .< 10.0*eps(RealT))
-      # TODO: test bandwidths and scales on actual wavelets
-  end
-end
->>>>>>> morlet-localize
 end
