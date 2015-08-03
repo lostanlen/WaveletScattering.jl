@@ -5,28 +5,37 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 # checkspec enforces properties of the wavelets to satisfy null mean and
 # Littlewood-Paley inequality. See documentation for details.
-function checkspec(log2_length, max_qualityfactor, nFilters_per_octave, nOctaves)
-  if (log2_length-nOctaves)<2
-      error("Wavelet support is too large in low frequencies.\n",
-      "Either increase log2_length or decrease nOctaves.\n",
-      "log2_length = ", log2_length, "\n",
-      "nOctaves = ", nOctaves, "\n",
-      "The gap should be at least 2.")
-  end
-  if (log2_length-nOctaves)<log2(nFilters_per_octave)-1
-    error("Too many filters per octave for the given length.\n",
-    "Either increase log2_length, decrease nOctaves, ",
-    "or decrease nFilters_per_octave.\n",
-    "log2_length = ", log2_length, "\n",
-    "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
-    "nOctaves = ", nOctaves, ".\n"
-    "The inequality log2_length-nOctaves>log2(nFilters_per_octave) should ",
-    "be satisfied.")
-  end
-  max_qualityfactor>=1.0 || error("max_qualityfactor cannot be lower than 1.0.")
-  nFilters_per_octave>=1 || error("nFilters_per_octave cannot be lower than 1.")
-  max_qualityfactor<=oftype(max_qualityfactor, nFilters_per_octave) ||
-      error("max_qualityfactor cannot be greater than nFilters_per_octave")
+function checkspec(ɛ, log2_length, max_qualityfactor,
+    nFilters_per_octave, nOctaves)
+    if ɛ>=oftype(ɛ, 1.0)
+        error("ɛ should be in [0.0, 1.0[. A typical value is 1e-4.")
+    end
+    if (log2_length-nOctaves)<2
+        error("Wavelet support is too large in low frequencies.\n",
+        "Either increase log2_length or decrease nOctaves.\n",
+        "log2_length = ", log2_length, "\n",
+        "nOctaves = ", nOctaves, "\n",
+        "The gap should be at least 2.")
+    end
+    if (log2_length-nOctaves)<log2(nFilters_per_octave)-1
+        error("Too many filters per octave for the given length.\n",
+        "Either increase log2_length, decrease nOctaves, ",
+        "or decrease nFilters_per_octave.\n",
+        "log2_length = ", log2_length, "\n",
+        "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
+        "nOctaves = ", nOctaves, ".\n"
+        "The inequality log2_length-nOctaves > log2(nFilters_per_octave) ",
+        "should be satisfied.")
+    end
+    if max_qualityfactor<1.0
+        error("max_qualityfactor cannot be lower than 1.0.")
+    end
+    if nFilters_per_octave<1
+        error("nFilters_per_octave cannot be lower than 1.")
+    end
+    if max_qualityfactor>oftype(max_qualityfactor, nFilters_per_octave)
+        error("max_qualityfactor cannot be greater than nFilters_per_octave")
+    end
 end
 
 # realtype provides the type parameter of a complex type e.g. Complex{Float32}.
@@ -36,11 +45,11 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 
 # specgammas yields log-scales γs, chromas χs, and octaves js of a given spec.
 function specgammas(spec::AbstractSpec)
-    nΓs = spec.nFilters_per_octave * spec.nOctaves
-    γs = collect(0:(nΓs-1))
-    chromas = collect(0:(spec.nFilters_per_octave-1))
-    χs = repmat(chromas, spec.nOctaves)
-    octaves = collect(0:(spec.nOctaves-1))
-    js = vec(repmat(transpose(octaves), spec.nFilters_per_octave))
-    return (γs, χs, js)
+  nΓs = spec.nFilters_per_octave * spec.nOctaves
+  γs = collect(0:(nΓs-1))
+  chromas = collect(0:(spec.nFilters_per_octave-1))
+  χs = repmat(chromas, spec.nOctaves)
+  octaves = collect(0:(spec.nOctaves-1))
+  js = vec(repmat(transpose(octaves), spec.nFilters_per_octave))
+  return (γs, χs, js)
 end

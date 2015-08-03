@@ -10,7 +10,8 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
                                      max_qualityfactor, max_scale,
                                      nFilters_per_octave::Int, nOctaves::Int)
         RealT = realtype(T)
-        checkspec(max_qualityfactor, nFilters_per_octave)
+        checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
+            nFilters_per_octave, nOctaves)
         new(RealT(ɛ), T, log2_length, RealT(max_qualityfactor),
             RealT(max_scale), nFilters_per_octave, nOctaves)
     end
