@@ -12,8 +12,8 @@ for T in numerictypes
     max_scale = 10000.0
     nFilters_per_octave = 12
     nOctaves = 8
-    spec = Morlet1DSpec{T}(ɛ, T, log2_length, max_qualityfactor, max_scale,
-        nFilters_per_octave, nOctaves)
+    spec = Morlet1DSpec{T}(ɛ, log2_length, max_qualityfactor, max_scale,
+        nFilters_per_octave, nOctaves, T)
     @test isa(spec.ɛ, RealT)
     @test spec.signaltype == T
     @test isa(spec.max_qualityfactor, RealT)

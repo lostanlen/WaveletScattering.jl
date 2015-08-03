@@ -1,19 +1,18 @@
 immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     ɛ # ::realtype(T) (imposed by inner constructor)
-    signaltype::Type{T}
     log2_length::Int
     max_qualityfactor # ::realtype(T) (imposed by inner constructor)
     max_scale # ::realtype(T) (imposed by inner constructor)
     nFilters_per_octave::Int
     nOctaves::Int
-    function Morlet1DSpec(ɛ, signaltype::Type{T}, log2_length::Int,
-                                     max_qualityfactor, max_scale,
-                                     nFilters_per_octave::Int, nOctaves::Int)
+    signaltype::Type{T}
+    function Morlet1DSpec(ɛ, log2_length::Int, max_qualityfactor, max_scale,
+                          nFilters_per_octave::Int, nOctaves::Int, signaltype)
         RealT = realtype(T)
         checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
             nFilters_per_octave, nOctaves)
-        new(RealT(ɛ), T, log2_length, RealT(max_qualityfactor),
-            RealT(max_scale), nFilters_per_octave, nOctaves)
+        new(RealT(ɛ), log2_length, RealT(max_qualityfactor),
+            RealT(max_scale), nFilters_per_octave, nOctaves, signaltype)
     end
 end
 
@@ -42,8 +41,8 @@ function Morlet1DSpec(opts::Options{CheckError})
     gap = max(2, 1+ceil(Int, log2(nFilters_per_octave)))
     @defaults opts nOctaves = log2_length - gap
     @check_used opts
-    Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
-                 nFilters_per_octave, nOctaves)
+    Morlet1DSpec{T}(ɛ, log2_length, max_qualityfactor, max_scale,
+                 nFilters_per_octave, nOctaves, signaltype)
 end
 
 # A zero-argument constructor falls back to default options, see above
@@ -65,9 +64,5 @@ function localize{T<:Number}(spec::Morlet1DSpec{T})
     qualityfactors = clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
     bandwidths = resolutions ./ qualityfactors
     scales = scale_multiplier * qualityfactors./centerfrequencies
-    if scales[end]>exp2(spec.log2_length)
-        error("""Wavelet support is too large in low frequencies.
-        Either increase log2_length or decrease nOctaves""")
-    end
     return (bandwidths, centerfrequencies, qualityfactors, scales)
 end
