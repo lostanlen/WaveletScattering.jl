@@ -7,8 +7,14 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 # Littlewood-Paley inequality. See documentation for details.
 function checkspec(ɛ, log2_length, max_qualityfactor,
     nFilters_per_octave, nOctaves)
-    if ɛ>=oftype(ɛ, 1.0)
+    if ɛ>=one(ɛ) || ɛ<zero(ɛ)
         error("ɛ should be in [0.0, 1.0[. A typical value is 1e-4.")
+    end
+    if log2_length<2
+        error("log2_length cannot be lower than 2.")
+    end
+    if nOctaves<1
+        error("nOctaves cannot be lower than 1.")
     end
     if (log2_length-nOctaves)<2
         error("Wavelet support is too large in low frequencies.\n",
@@ -17,7 +23,7 @@ function checkspec(ɛ, log2_length, max_qualityfactor,
         "nOctaves = ", nOctaves, "\n",
         "The gap should be at least 2.")
     end
-    if (log2_length-nOctaves)<log2(nFilters_per_octave)-1
+    if (log2_length-nOctaves) < (1+log2(nFilters_per_octave))
         error("Too many filters per octave for the given length.\n",
         "Either increase log2_length, decrease nOctaves, ",
         "or decrease nFilters_per_octave.\n",

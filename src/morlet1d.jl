@@ -29,7 +29,6 @@ function Morlet1DSpec(opts::Options{CheckError})
     @defaults opts log2_length = 15
     # max_qualityfactor and nFilters_per_octave are mutual defaults.
     # If none is present, both are set to one.
-    @defaults opts max_qualityfactor = one(RealT)
     if opts[:nFilters_per_octave] == nothing
         @defaults opts max_qualityfactor = one(RealT)
     else
@@ -40,8 +39,8 @@ function Morlet1DSpec(opts::Options{CheckError})
     @defaults opts max_scale = RealT(Inf)
     # By default, the filter bank covers the whole frequency range, while
     # ensuring that wavelet scales remain below 2^(log2_length-1)
-    @defaults opts nOctaves =
-        log2_length - 1 - max(1, ceil(Int, log2(nFilters_per_octave)))
+    gap = max(2, 1+ceil(Int, log2(nFilters_per_octave)))
+    @defaults opts nOctaves = log2_length - gap
     @check_used opts
     Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
                  nFilters_per_octave, nOctaves)
