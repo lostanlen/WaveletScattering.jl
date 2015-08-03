@@ -16,8 +16,8 @@ for T in numerictypes
         nFilters_per_octave, nOctaves, T)
     @test isa(spec.ɛ, RealT)
     @test spec.signaltype == T
-    @test isa(spec.max_qualityfactor, RealT)
-    @test isa(spec.max_scale, RealT)
+    @test isa(spec.max_qualityfactor, Float64)
+    @test isa(spec.max_scale, Float64)
 end
 
 # Morlet1DSpec default options
@@ -69,7 +69,7 @@ for RealT in [Float16, Float32, Float64]
         @test all(qualityfactors.>=1.0)
         @test all(qualityfactors.<=max_q)
         @test all(scales.>0.0)
-        @test all(scales[qualityfactors.>1.0].< (max_s+eps(RealT)) )
+        @test all(scales[qualityfactors.>1.0].< (max_s+eps(RealT)))
         @test all(scales.< (exp2(spec.log2_length)+eps(RealT)))
         resolutions = centerfrequencies / centerfrequencies[1]
         @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
