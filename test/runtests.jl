@@ -1,5 +1,7 @@
 using Base.Test
 
+require("Options")
+
 using DataStructures
 using OptionsMod
 
