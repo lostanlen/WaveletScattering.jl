@@ -7,10 +7,8 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 # Littlewood-Paley inequality. See documentation for details.
 function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
   nFilters_per_octave, nOctaves)
-    for (k,v) in Dict("ɛ"=>ɛ, "log2_length"=>log2_length,
-      "max_qualityfactor"=>max_qualityfactor,
-      "nFilters_per_octave"=>nFilters_per_octave, "nOctaves"=>nOctaves)
-        isfinite(v) || errror(k, "cannot be infinite")
+    if isinf(ɛ)
+      error("ɛ must be finite. A typical value is 1e-4.")
     end
     if ɛ>=one(ɛ) || ɛ<zero(ɛ)
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
@@ -41,6 +39,9 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         must be satisfied. Either increase log2_length, decrease nOctaves,
         or decrease nFilters_per_octave.""")
     end
+    if isinf(max_qualityfactor)
+        error("max_qualityfactor must be finite.")
+    end
     if max_qualityfactor < 1.0
         error("Too small maximum quality factor.\n",
         "max_qualityfactor = ", max_qualityfactor, "\n",
@@ -64,6 +65,7 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         """The inequality nFilters_per_octave≧max_qualityfactor must be
         satisfied.""")
     end
+    return true
 end
 
 # realtype provides the type parameter of a complex type e.g. Complex{Float32}.
