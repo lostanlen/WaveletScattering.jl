@@ -23,8 +23,8 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
             end
             nOctaves = log2_length - gap
         end
-        checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
-          nFilters_per_octave, nOctaves)
+        checkspec(ɛ, log2_length, max_qualityfactor,
+          max_scale, nFilters_per_octave, nOctaves)
         new(realtype(T)(ɛ), log2_length, max_qualityfactor,
           max_scale, nFilters_per_octave, nOctaves, signaltype)
     end
