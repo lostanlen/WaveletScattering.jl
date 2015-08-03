@@ -30,7 +30,7 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         "nOctaves = ", nOctaves, "\n",
         "The difference (log2_length-nOctaves) must be ≧2.")
     end
-    if (log2_length-nOctaves) <= 1+log2(nFilters_per_octave)
+    if (log2_length-nOctaves) < 1+log2(nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
         "log2_length = ", log2_length, "\n",
         "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
