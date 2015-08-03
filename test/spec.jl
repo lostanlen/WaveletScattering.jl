@@ -16,13 +16,51 @@ end
 @test Test2DSpec <: AbstractSpec
 
 # checkspec
-max_qualityfactor = 2.0
-nFilters_per_octave = 4
-@test checkspec(max_qualityfactor, nFilters_per_octave)
-max_qualityfactor = 0.5
-@test_throws ErrorException checkspec(max_qualityfactor, nFilters_per_octave)
-max_qualityfactor = 8.0
-@test_throws ErrorException checkspec(max_qualityfactor, nFilters_per_octave)
+ɛ = eps(Float32)
+log2_length = 15
+max_qualityfactor = 12.0
+max_scale = 1e5
+nFilters_per_octave = 12
+nOctaves = 8
+# normal behavior
+@test checkspec(ɛ, log2_length, max_qualityfactor,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if ɛ is infinite
+@test_throws ErrorException checkspec(Inf, log2_length, max_qualityfactor,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if ɛ is strictly negative zero
+@test_throws ErrorException checkspec(-1.0, log2_length, max_qualityfactor,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if ɛ equal or greater than one
+@test_throws ErrorException checkspec(1.0, log2_length, max_qualityfactor,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if log2_length is smaller than 2
+@test_throws ErrorException checkspec(ɛ, 1, max_qualityfactor,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if nOctaves is smaller than 1
+@test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
+    max_scale, nFilters_per_octave, 0)
+# error if the difference (log2_length-nOctaves) is smaller than 2
+@test_throws ErrorException checkspec(ɛ, 9, max_qualityfactor,
+    max_scale, 1, 8)
+# error if log2_length-nOctaves <= log2(nFilters_per_octave)
+@test_throws ErrorException checkspec(ɛ, 12, max_qualityfactor,
+    max_scale, 32, 9)
+# error if max_qualityfactor is infinite
+@test_throws ErrorException checkspec(ɛ, log2_length, Inf,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if max_qualityfactor is strictly smaller than 1.0
+@test_throws ErrorException checkspec(ɛ, log2_length, 0.9,
+    max_scale, nFilters_per_octave, nOctaves)
+# error if max_scale < (5.0*max_qualityfactor)
+@test_throws ErrorException checkspec(ɛ, log2_length, 32.0,
+    100.0, nFilters_per_octave, nOctaves)
+# error if nFilters_per_octave < 1
+@test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
+    max_scale, 0, nOctaves)
+# error if max_qualityfactor > nFilters_per_octave
+@test_throws ErrorException checkspec(ɛ, log2_length, 8.0,
+    max_scale, 4, nOctaves)
 
 # realtype
 @test realtype(Float32) == Float32
