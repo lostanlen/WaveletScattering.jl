@@ -5,42 +5,64 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 # checkspec enforces properties of the wavelets to satisfy null mean and
 # Littlewood-Paley inequality. See documentation for details.
-function checkspec(ɛ, log2_length, max_qualityfactor,
-    nFilters_per_octave, nOctaves)
+function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
+  nFilters_per_octave, nOctaves)
+    for (k,v) in Dict("ɛ"=>ɛ, "log2_length"=>log2_length,
+      "max_qualityfactor"=>max_qualityfactor,
+      "nFilters_per_octave"=>nFilters_per_octave, "nOctaves"=>nOctaves)
+        isfinite(v) || errror(k, "cannot be infinite")
+    end
     if ɛ>=one(ɛ) || ɛ<zero(ɛ)
-        error("ɛ should be in [0.0, 1.0[. A typical value is 1e-4.")
+        error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
-    if log2_length<2
-        error("log2_length cannot be lower than 2.")
+    if log2_length < 2
+        error("Too short signal length.\n",
+        "log2_length = ", log2_length, "\n",
+        "log2_length must be ≧2")
     end
-    if nOctaves<1
-        error("nOctaves cannot be lower than 1.")
+    if nOctaves < 1
+        error("Too few octaves.\n",
+        "nOctaves = ", nOctaves, "\n",
+        "nOctaves must be ≧1")
     end
-    if (log2_length-nOctaves)<2
+    if (log2_length-nOctaves) < 2
         error("Wavelet support is too large in low frequencies.\n",
         "Either increase log2_length or decrease nOctaves.\n",
         "log2_length = ", log2_length, "\n",
         "nOctaves = ", nOctaves, "\n",
-        "The gap should be at least 2.")
+        "The difference (log2_length-nOctaves) must be ≧2.")
     end
-    if (log2_length-nOctaves) < (1+log2(nFilters_per_octave))
+    if (log2_length-nOctaves) <= log2(nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
-        "Either increase log2_length, decrease nOctaves, ",
-        "or decrease nFilters_per_octave.\n",
         "log2_length = ", log2_length, "\n",
         "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
-        "nOctaves = ", nOctaves, ".\n"
-        "The inequality log2_length-nOctaves > log2(nFilters_per_octave) ",
-        "should be satisfied.")
+        "nOctaves = ", nOctaves, "\n",
+        """The inequality log2_length-nOctaves > log2(nFilters_per_octave)
+        must be satisfied. Either increase log2_length, decrease nOctaves,
+        or decrease nFilters_per_octave.""")
     end
-    if max_qualityfactor<1.0
-        error("max_qualityfactor cannot be lower than 1.0.")
+    if max_qualityfactor < 1.0
+        error("Too small maximum quality factor.\n",
+        "max_qualityfactor = ", max_qualityfactor, "\n",
+        "max_qualityfactor must be ≧1.0.")
     end
-    if nFilters_per_octave<1
-        error("nFilters_per_octave cannot be lower than 1.")
+    if max_scale < (5.0*max_qualityfactor)
+        error("Too small maximum scale for the given quality factor.\n",
+        "max_qualityfactor = ", max_qualityfactor, "\n",
+        "max_scale = ", max_scale, "\n",
+        "The ratio (max_qualityfactor/max_scale) must be ≧5.0.")
     end
-    if max_qualityfactor>oftype(max_qualityfactor, nFilters_per_octave)
-        error("max_qualityfactor cannot be greater than nFilters_per_octave")
+    if nFilters_per_octave < 1
+        error("Too few filters per octave.\n",
+        "nFilters_per_octave = ", nFilters_per_octave, "\n",
+        "nFilters_per_octave must be ≧1.")
+    end
+    if max_qualityfactor > oftype(max_qualityfactor, nFilters_per_octave)
+        error("Too few filters per octave for the given quality factor.\n",
+        "max_qualityfactor = ", max_qualityfactor, "\n",
+        "nFilters_per_octave = ", nFilters_per_octave, "\n",
+        """The inequality nFilters_per_octave≧max_qualityfactor must be
+        satisfied.""")
     end
 end
 
