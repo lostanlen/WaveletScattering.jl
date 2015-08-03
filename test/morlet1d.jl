@@ -38,7 +38,7 @@ for T in numerictypes
   # max_qualityfactor defaults to nFilters_per_octave when it is provided
   spec = Morlet1DSpec(@options nFilters_per_octave=12)
   @test_approx_eq spec.max_qualityfactor 12.0
-  @test spec.nOctaves == 9
+  @test spec.nOctaves == 10
 end
 
 # Zero-argument constructor
