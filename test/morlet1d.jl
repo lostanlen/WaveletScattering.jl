@@ -23,7 +23,7 @@ end
 # Morlet1DSpec default options
 for T in numerictypes
   RealT = realtype(T)
-  # nOctaves no longers defaults to log2_length when specified by user
+  # ordinary defaults, user-specified nOctaves
   spec = Morlet1DSpec(@options signaltype=T nOctaves=8)
   @test spec.ɛ == eps(RealT)
   @test spec.log2_length == 15
@@ -43,7 +43,7 @@ end
 
 # Zero-argument constructor
 spec = Morlet1DSpec()
-@test spec.nOctaves == spec.log2_length - 1
+@test spec.nOctaves == spec.log2_length - 2
 
 # localize
 # in the dyadic case, check that the mother center center frequency is 0.39
