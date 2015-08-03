@@ -39,21 +39,8 @@ function Morlet1DSpec(opts::Options{CheckError})
     @defaults opts max_scale = RealT(Inf)
     # By default, the filter bank covers the whole frequency range, while
     # ensuring that wavelet scales remain below 2^(log2_length-1)
-    gap_a = ceil(Int, log2(nFilters_per_octave)) + 1
-    scale_multiplier = sqrt(log(RealT(10.0))/log(RealT(2.0)))
-    mother_centerfrequency = nFilters_per_octave==1 ? RealT(0.39) :
-        RealT(inv(3.0 - exp2(-1.0/nFilters_per_octave)))
-    mother_scale = scale_multiplier / mother_centerfrequency
-    gap_b = 1 + Int(div(log2(mother_scale) - 1.0/nFilters_per_octave, 1))
-    minimum_gap = max(gap_a, gap_b)
-    @defaults opts nOctaves = log2_length - minimum_gap
-    if (log2_length-nOctaves)<minimum_gap
-        error("Wavelet support is too large in low frequencies.\n",
-        "Either increase log2_length or decrease nOctaves.\n",
-        "log2_length = ", log2_length, "\n",
-        "nOctaves = ", nOctaves, "\n",
-        "The gap should be at least ", minimum_gap, ".")
-    end
+    @defaults opts nOctaves =
+        log2_length - 1 - max(1, ceil(Int, log2(nFilters_per_octave)))
     @check_used opts
     Morlet1DSpec{T}(ɛ, signaltype, log2_length, max_qualityfactor, max_scale,
                  nFilters_per_octave, nOctaves)
