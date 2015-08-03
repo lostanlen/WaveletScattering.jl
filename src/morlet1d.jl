@@ -35,7 +35,7 @@ function Morlet1DSpec(opts::Options{CheckError})
     end
     @defaults opts nFilters_per_octave = ceil(Int, max_qualityfactor)
     # By default, no upper limit on the scale of the lowest-frequency wavelets.
-    @defaults opts max_scale = RealT(1 << log2_length)
+    @defaults opts max_scale = RealT(Inf)
     # By default, the filter bank covers the whole frequency range, while
     # ensuring that wavelet scales remain below 2^(log2_length-1)
     gap = 2 + ceil(Int, log2(nFilters_per_octave))
