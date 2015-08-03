@@ -38,8 +38,8 @@ function Morlet1DSpec(opts::Options{CheckError})
     @defaults opts max_scale = RealT(Inf)
     # By default, the filter bank covers the whole frequency range, while
     # ensuring that wavelet scales remain below 2^log2_length
-    log2_nFilters_per_octave = floor(Int, log2(nFilters_per_octave))
-    log2_max_qualityfactor = floor(Int, log2(max_qualityfactor))
+    log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
+    log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
     if max_scale < (exp2(log2_length)+eps(RealT))
         gap = max(1 + log2_nFilters_per_octave, 2)
     else
