@@ -23,6 +23,7 @@ VariableTree{V}(value::V) =
     VariableTree(value, Dict{Symbol, Vector{VariableTree{V}}}())
 
 # A VariableTree leaf can be read/written with a VariableKey accessor
+import Base.getindex, Base.setindex!
 getindex(t::VariableTree, key::Nil) = t.value
 getindex(t::VariableTree, key::Cons) =
     getindex(t.symbols[key.head.symbol][key.head.level], key.tail)
