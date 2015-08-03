@@ -1,20 +1,6 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
                           checkspec, realtype, specgammas
 
-immutable Test1DSpec <: Abstract1DSpec
-    nFilters_per_octave::Int
-    nOctaves::Int
-end
-immutable Test2DSpec <: Abstract2DSpec
-    nFilters_per_octave::Int
-    nOctaves::Int
-    nOrientations::Int
-end
-
-# abstract subtype testing
-@test Test1DSpec <: AbstractSpec
-@test Test2DSpec <: AbstractSpec
-
 # checkspec
 ɛ = eps(Float32)
 log2_length = 15
@@ -70,6 +56,10 @@ nOctaves = 8
 @test_throws MethodError realtype(ASCIIString)
 
 # specgammas
+immutable Test1DSpec <: Abstract1DSpec
+    nFilters_per_octave::Int
+    nOctaves::Int
+end
 spec = Test1DSpec(1, 1)
 (γs, χs, js) = specgammas(spec)
 @test γs == [0]
