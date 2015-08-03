@@ -1,4 +1,4 @@
-import WaveletScattering: Morlet1DSpec, realtype
+import WaveletScattering: Morlet1DSpec, localize, realtype
 
 numerictypes = [Float16, Float32, Float64,
     Complex{Float16}, Complex{Float32}, Complex{Float64}]
