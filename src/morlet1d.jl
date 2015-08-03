@@ -6,53 +6,29 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nFilters_per_octave::Int
     nOctaves::Int
     signaltype::Type{T}
-    function Morlet1DSpec(ɛ, log2_length::Int, max_qualityfactor, max_scale,
-                          nFilters_per_octave::Int, nOctaves::Int, signaltype)
-        RealT = realtype(T)
+    function Morlet1DSpec{T}(signaltype::Type{T},
+      ɛ=eps(realtype(T)),
+      log2_length=15,
+      max_qualityfactor=realtype(T)(nFilters_per_octave),
+      max_scale=Inf,
+      nFilters_per_octave=1,
+      nOctaves=Inf)
+        if isinf(nOctaves)
+            log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
+            log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
+            if max_scale < (exp2(log2_length)+eps(RealT))
+                gap = max(1+log2_nFilters_per_octave, 2)
+            else
+                gap = max(1+log2_nFilters_per_octave, 2+log2_max_qualityfactor)
+            end
+            nOctaves = log2_length - gap
+        end
         checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
-            nFilters_per_octave, nOctaves)
-        new(RealT(ɛ), log2_length, max_qualityfactor,
-            max_scale, nFilters_per_octave, nOctaves, signaltype)
+          nFilters_per_octave, nOctaves)
+        new(realtype(T)(ɛ), log2_length, max_qualityfactor,
+          max_scale, nFilters_per_octave, nOctaves, signaltype)
     end
 end
-
-function Morlet1DSpec(opts::Options{CheckError})
-    # Single-precision real input by default
-    @defaults opts signaltype=Float32
-    T = signaltype
-    RealT = realtype(T)
-    # Default threshold is equal to floating-point machine precision, i.e. the
-    # distance between 1.0 and the next numbe of type RealT.
-    @defaults opts ɛ = eps(RealT)
-    # Default window length is 32768 samples, i.e. about 740 ms at 44.1kHz
-    @defaults opts log2_length = 15
-    # max_qualityfactor and nFilters_per_octave are mutual defaults.
-    # If none is present, both are set to one.
-    if opts[:nFilters_per_octave] == nothing
-        @defaults opts max_qualityfactor = one(RealT)
-    else
-        @defaults opts max_qualityfactor = float(opts[:nFilters_per_octave])
-    end
-    @defaults opts nFilters_per_octave = ceil(Int, max_qualityfactor)
-    # By default, no upper limit on the scale of the lowest-frequency wavelets.
-    @defaults opts max_scale = RealT(Inf)
-    # By default, the filter bank covers the whole frequency range, while
-    # ensuring that wavelet scales remain below 2^log2_length
-    log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
-    log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
-    if max_scale < (exp2(log2_length)+eps(RealT))
-        gap = max(1 + log2_nFilters_per_octave, 2)
-    else
-        gap = max(1 + log2_nFilters_per_octave, 2 + log2_max_qualityfactor)
-    end
-    @defaults opts nOctaves = log2_length - gap
-    @check_used opts
-    Morlet1DSpec{T}(ɛ, log2_length, max_qualityfactor, max_scale,
-                 nFilters_per_octave, nOctaves, signaltype)
-end
-
-# A zero-argument constructor falls back to default options, see above
-Morlet1DSpec() = Morlet1DSpec(@options)
 
 function localize{T<:Number}(spec::Morlet1DSpec{T})
     RealT = realtype(T)
