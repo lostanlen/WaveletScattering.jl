@@ -28,7 +28,7 @@ for T in numerictypes
   @test spec.ɛ == eps(RealT)
   @test spec.log2_length == 15
   @test_approx_eq spec.max_qualityfactor 1.0
-  @test_approx_eq spec.max_scale Inf
+  @test_approx_eq spec.max_scale 1<<log2_length
   @test spec.nFilters_per_octave == 1
   @test spec.nOctaves == 8
   # nFilters_per_octave defaults to max_qualityfactor when it is provided
