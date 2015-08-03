@@ -69,11 +69,11 @@ for RealT in [Float16, Float32, Float64]
         @test all(qualityfactors.>=1.0)
         @test all(qualityfactors.<=max_q)
         @test all(scales.>0.0)
-        @test all(scales.<=max_s)
+        @test all(scales[qualityfactors.>1.0].<=max_s)
+        @test all(scales.<=exp2(log2_length))
         resolutions = centerfrequencies / centerfrequencies[1]
         @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
         heisenberg_tradeoff = bandwidths .* scales
-        nWavelets = length(heisenberg_tradeoff)
         @test all(abs(diff(heisenberg_tradeoff)) .< 10.0*eps(RealT))
         # TODO: test bandwidths and scales on actual wavelets
     end
