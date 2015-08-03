@@ -5,7 +5,24 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 # checkspec enforces properties of the wavelets to satisfy null mean and
 # Littlewood-Paley inequality. See documentation for details.
-function checkspec(max_qualityfactor, nFilters_per_octave)
+function checkspec(log2_length, max_qualityfactor, nFilters_per_octave, nOctaves)
+  if (log2_length-nOctaves)<2
+      error("Wavelet support is too large in low frequencies.\n",
+      "Either increase log2_length or decrease nOctaves.\n",
+      "log2_length = ", log2_length, "\n",
+      "nOctaves = ", nOctaves, "\n",
+      "The gap should be at least 2.")
+  end
+  if (log2_length-nOctaves)<log2(nFilters_per_octave)-1
+    error("Too many filters per octave for the given length.\n",
+    "Either increase log2_length, decrease nOctaves, ",
+    "or decrease nFilters_per_octave.\n",
+    "log2_length = ", log2_length, "\n",
+    "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
+    "nOctaves = ", nOctaves, ".\n"
+    "The inequality log2_length-nOctaves>log2(nFilters_per_octave) should ",
+    "be satisfied.")
+  end
   max_qualityfactor>=1.0 || error("max_qualityfactor cannot be lower than 1.0.")
   nFilters_per_octave>=1 || error("nFilters_per_octave cannot be lower than 1.")
   max_qualityfactor<=oftype(max_qualityfactor, nFilters_per_octave) ||
