@@ -50,8 +50,9 @@ spec = Morlet1DSpec()
 spec = Morlet1DSpec(@options nFilters_per_octave=1)
 (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
 @test_approx_eq centerfrequencies[1] 0.39
-for n in [2, 4, 8, 12, 16, 24, 32]
-    spec = Morlet1DSpec(@options nFilters_per_octave=n)
+nfos = [2, 4, 8, 12, 16, 24, 32]
+for nfo in nfos[2:end]
+    spec = Morlet1DSpec(@options nFilters_per_octave=nfo)
     # check that the mother center frequency is at the right place
     (bandwidths, centerfreqs, qualityfactors, scales) = localize(spec)
     @test_approx_eq (centerfreqs[1]-centerfreqs[2]) (1.0 - 2*centerfreqs[1])
@@ -61,20 +62,26 @@ for n in [2, 4, 8, 12, 16, 24, 32]
     # check that all center frequencies are strictly positive
     @test all(centerfreqs.>0.0)
 end
-for RealT in [Float16, Float32, Float64]
-    for max_q in [1, 2, 4, 8, 12, 16, 24, 32], max_s in [exp2(11:16); Inf]
-        opts = @options signaltype=RealT max_qualityfactor=max_q max_scale=max_s
-        spec = Morlet1DSpec(opts)
-        (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
-        @test all(qualityfactors.>=1.0)
-        @test all(qualityfactors.<=max_q)
-        @test all(scales.>0.0)
-        @test all(scales[qualityfactors.>1.0].< (max_s+eps(RealT)))
-        @test all(scales.< (exp2(spec.log2_length)+eps(RealT)))
-        resolutions = centerfrequencies / centerfrequencies[1]
-        @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
-        heisenberg_tradeoff = bandwidths .* scales
-        @test all(abs(diff(heisenberg_tradeoff)) .< 10.0*eps(RealT))
-        # TODO: test bandwidths and scales on actual wavelets
-    end
+for RealT in [Float16, Float32, Float64], nfo in nfos,
+  max_q in 1:nfo, max_s in [exp2(11:16); Inf]
+    machine_precision = max(1e-10, eps(RealT))
+    opts = @options begin
+      signaltype=RealT
+      max_qualityfactor=max_q
+      max_scale=max_s
+      nFilters_per_octave=nfo end
+    spec = Morlet1DSpec(opts)
+    (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
+    ten_epsilon = 10.0*eps(RealT)
+    @test all(qualityfactors.>=1.0)
+    @test all(qualityfactors.<=max_q)
+    @test all(scales.>0.0)
+    @test all(scales[qualityfactors.>1.0].< (max_s+machine_precision))
+    @test all(scales.< (exp2(spec.log2_length)+machine_precision))
+    # TODO @test scales[end] > (0.5 * exp2(spec.log2_length))
+    resolutions = centerfrequencies / centerfrequencies[1]
+    @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
+    heisenberg_tradeoff = bandwidths .* scales
+    @test all(abs(diff(heisenberg_tradeoff)) .< 1e-6)
+    # TODO: test bandwidths and scales on actual wavelets
 end
