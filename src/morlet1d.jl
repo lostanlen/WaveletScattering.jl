@@ -41,7 +41,7 @@ function Morlet1DSpec(opts::Options{CheckError})
     log2_nFilters_per_octave = floor(Int, log2(nFilters_per_octave))
     log2_max_qualityfactor = floor(Int, log2(max_qualityfactor))
     if max_scale < (exp2(log2_length)+eps(RealT))
-        gap = 1 + log2_nFilters_per_octave
+        gap = max(1 + log2_nFilters_per_octave, 2)
     else
         gap = max(1 + log2_nFilters_per_octave, 2 + log2_max_qualityfactor)
     end
