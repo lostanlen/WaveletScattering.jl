@@ -64,5 +64,9 @@ function localize{T<:Number}(spec::Morlet1DSpec{T})
     qualityfactors = clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
     bandwidths = resolutions ./ qualityfactors
     scales = scale_multiplier * qualityfactors./centerfrequencies
+    if scales[end]>exp2(spec.log2_length)
+        error("""Wavelet support is too large in low frequencies.
+        Either increase log2_length or decrease nOctaves""")
+    end
     return (bandwidths, centerfrequencies, qualityfactors, scales)
 end
