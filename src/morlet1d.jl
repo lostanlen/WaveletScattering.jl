@@ -47,3 +47,21 @@ end
 
 # A zero-argument constructor falls back to default options, see above
 Morlet1DSpec() = Morlet1DSpec(@options)
+
+function localize{T<:Number}(spec::Morlet1DSpec{T})
+    RealT = realtype(T)
+    mother_centerfrequency = spec.nFilters_per_octave==1 ? RealT(0.39) :
+        RealT(inv(3.0 - exp2(-1.0/spec.nFilters_per_octave)))
+    nΓs = spec.nFilters_per_octave * spec.nOctaves
+    resolutions =
+        exp2(range(zero(RealT), -one(T)/spec.nFilters_per_octave, nΓs))
+    centerfrequencies = mother_centerfrequency * resolutions
+    scale_multiplier = sqrt(log(RealT(10.0))/log(RealT(2.0)))
+    unbounded_scales =
+        scale_multiplier * (spec.max_qualityfactor./centerfrequencies)
+    scales = min(unbounded_scales, spec.max_scale)
+    unbounded_qualityfactors = scales .* centerfrequencies / scale_multiplier
+    qualityfactors = clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
+    bandwidths = resolutions ./ qualityfactors
+    return (bandwidths, centerfrequencies, qualityfactors, scales)
+end
