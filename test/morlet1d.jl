@@ -70,7 +70,7 @@ for RealT in [Float16, Float32, Float64]
         @test all(qualityfactors.<=max_q)
         @test all(scales.>0.0)
         @test all(scales[qualityfactors.>1.0].< (max_s+eps(RealT)) )
-        @test all(scales.< exp2(spec.log2_length))
+        @test all(scales.< (exp2(spec.log2_length)+eps(RealT)))
         resolutions = centerfrequencies / centerfrequencies[1]
         @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(RealT)
         heisenberg_tradeoff = bandwidths .* scales
