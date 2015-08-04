@@ -40,7 +40,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     end
 end
 
-Morlet1DSpec(T=Float32 ; args...) = Morlet1DSpec{T}(T ; args...)
+Morlet1DSpec(T=Float32; args...) = Morlet1DSpec{T}(T; args...)
 
 function localize{T<:Number}(spec::Morlet1DSpec{T})
     RealT = realtype(T)
