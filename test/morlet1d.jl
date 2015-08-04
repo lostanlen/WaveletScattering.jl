@@ -56,7 +56,6 @@ for T in [Float16, Float32, Float64], nfo in nfos,
     @test all(scales.>0.0)
     @test all(scales[qualityfactors.>1.0].< (max_s+machine_precision))
     @test all(scales.< (exp2(spec.log2_length)+machine_precision))
-    @show(scales[end],(0.5 * exp2(spec.log2_length)))
     resolutions = centerfrequencies / centerfrequencies[1]
     @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(T)
     heisenberg_tradeoff = bandwidths .* scales
