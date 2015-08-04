@@ -1,0 +1,62 @@
+immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
+    ɛ::Float64
+    log2_length::Int
+    max_qualityfactor::Float64
+    max_scale::Float64
+    nFilters_per_octave::Int
+    nOctaves::Int
+    signaltype::Type{T}
+    function call{T<:Number}(::Type{Morlet1DSpec{T}}, signaltype::Type{T};
+                     ɛ=default_epsilon(T),
+                     log2_length=15,
+                     max_qualityfactor=nothing,
+                     nFilters_per_octave=nothing,
+                     max_scale=Inf,
+                     nOctaves=nothing)
+        if max_qualityfactor==nothing
+            if nFilters_per_octave==nothing
+                max_qualityfactor = 1.0
+                nFilters_per_octave = 1
+            else
+                max_qualityfactor = Float64(nFilters_per_octave)
+            end
+        else
+            nFilters_per_octave = ceil(Int, max_qualityfactor)
+        end
+        if nOctaves==nothing
+            log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
+            log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
+            if max_scale < (exp2(log2_length)+default_epsilon(T))
+                gap = max(1+log2_nFilters_per_octave, 2)
+            else
+                gap = max(1+log2_nFilters_per_octave, 2+log2_max_qualityfactor)
+            end
+            nOctaves = log2_length - gap
+        end
+        checkspec(ɛ, log2_length, max_qualityfactor,
+                  max_scale, nFilters_per_octave, nOctaves)
+        new{T}(ɛ, log2_length, max_qualityfactor,
+            max_scale, nFilters_per_octave, nOctaves, signaltype)
+    end
+end
+
+Morlet1DSpec(T=Float32; args...) = Morlet1DSpec{T}(T; args...)
+
+function localize{T<:Number}(spec::Morlet1DSpec{T})
+    RealT = realtype(T)
+    mother_centerfrequency = spec.nFilters_per_octave==1 ? RealT(0.39) :
+        RealT(inv(3.0 - exp2(-1.0/spec.nFilters_per_octave)))
+    nΓs = spec.nFilters_per_octave * spec.nOctaves
+    resolutions =
+        exp2(range(zero(RealT), -one(T)/spec.nFilters_per_octave, nΓs))
+    centerfrequencies = mother_centerfrequency * resolutions
+    scale_multiplier = sqrt(log(RealT(10.0))/log(RealT(2.0)))
+    unbounded_scales =
+        scale_multiplier * (spec.max_qualityfactor./centerfrequencies)
+    scales = min(unbounded_scales, spec.max_scale)
+    unbounded_qualityfactors = scales .* centerfrequencies / scale_multiplier
+    qualityfactors = clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
+    bandwidths = resolutions ./ qualityfactors
+    scales = scale_multiplier * qualityfactors./centerfrequencies
+    return (bandwidths, centerfrequencies, qualityfactors, scales)
+end
