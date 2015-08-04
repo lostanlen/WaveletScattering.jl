@@ -1,5 +1,5 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-                          checkspec, realtype, specgammas
+                          checkspec, default_epsilon, realtype, specgammas
 
 # checkspec
 ɛ = eps(Float32)
