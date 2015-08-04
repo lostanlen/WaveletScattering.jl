@@ -1,15 +1,22 @@
-# A Spec object contains the immutable specifications of a filter bank
+"""An AbstractSpec object contains all the immutable specifications in a
+wavelet filter bank"""
 abstract AbstractSpec
 abstract Abstract1DSpec{T<:Number} <: AbstractSpec
 abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
-# checkspec enforces properties of the wavelets to satisfy null mean and
-# Littlewood-Paley inequality. See documentation for details.
+"""Enforces properties of the wavelets to satisfy null mean, limited spatial
+support, and Littlewood-Paley inequality.
+* The truncation threshold ɛ must be in [0.0, 1.0[.
+* The signal length must be a power of two above 4.
+* The maximum required quality factor must be between 1.0 and the number of
+  filters per octaves.
+* The maximum scale must be at least 5 times above the maximum quality factor.
+* The lowest center frequency must be higher than 1, i.e. log2_length>nOctaves.
+* The lowest center frequency must be higher than half the number of filters
+  per octaves, i.e. (log2_length-nOctaves) >= log2(nFilters_per_octave).
+"""
 function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
   nFilters_per_octave, nOctaves)
-    if isinf(ɛ)
-      error("ɛ must be finite. A typical value is 1e-4.")
-    end
     if ɛ>=one(ɛ) || ɛ<zero(ɛ)
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
@@ -38,9 +45,6 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         """The inequality log2_length-nOctaves > log2(nFilters_per_octave)
         must be satisfied. Either increase log2_length, decrease nOctaves,
         or decrease nFilters_per_octave.""")
-    end
-    if isinf(max_qualityfactor)
-        error("max_qualityfactor must be finite.")
     end
     if max_qualityfactor < 1.0
         error("Too small maximum quality factor.\n",
