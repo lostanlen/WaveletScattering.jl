@@ -50,6 +50,13 @@ nOctaves = 8
 @test_approx_eq default_epsilon(Complex{Float32}) 1e-7
 @test_approx_eq default_epsilon(Complex{Float64}) 1e-15
 
+# realtype
+@test realtype(Float32) == Float32
+@test realtype(Float64) == Float64
+@test realtype(Complex{Float32}) == Float32
+@test realtype(Complex{Float64}) == Float64
+@test_throws MethodError realtype(ASCIIString)
+
 # specgammas
 immutable Test1DSpec <: Abstract1DSpec
     nFilters_per_octave::Int

@@ -86,6 +86,15 @@ default_epsilon(T::Type{Float32}) = 1e-7
 default_epsilon(T::Type{Float64}) = 1e-15
 default_epsilon{RealT}(T::Type{Complex{RealT}}) = default_epsilon(RealT)
 
+
+"""Provides the type parameter of a complex type.
+
+For example, realtype(Complex{Float32}) yields Float32.
+For numeric real types, e.g. Float32, it is a no-op."""
+realtype{T<:Real}(::Type{T}) = T
+realtype{T<:Real}(::Type{Complex{T}}) = T
+
+
 """Yields log-scales γs, chromas χs, and octaves js of a given spec.
 
 The input spec should have fields nFilters_per_octave and nOctaves."""
