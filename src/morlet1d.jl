@@ -1,5 +1,5 @@
 immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
-    ɛ # ::realtype(T) (imposed by inner constructor)
+    ɛ::Float64
     log2_length::Int
     max_qualityfactor::Float64
     max_scale::Float64
@@ -7,16 +7,16 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nOctaves::Int
     signaltype::Type{T}
     function Morlet1DSpec{T}(signaltype::Type{T};
-                             ɛ=eps(realtype(T)),
+                             ɛ=default_epsilon(T),
                              log2_length=15,
                              nFilters_per_octave=1,
-                             max_qualityfactor=realtype(T)(nFilters_per_octave),
+                             max_qualityfactor=Float64(nFilters_per_octave),
                              max_scale=Inf,
                              nOctaves=Inf)
         if isinf(nOctaves)
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
             log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
-            if max_scale < (exp2(log2_length)+eps(RealT))
+            if max_scale < (exp2(log2_length)+eps(realtype(T)))
                 gap = max(1+log2_nFilters_per_octave, 2)
             else
                 gap = max(1+log2_nFilters_per_octave, 2+log2_max_qualityfactor)
@@ -25,19 +25,19 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         end
         checkspec(ɛ, log2_length, max_qualityfactor,
                   max_scale, nFilters_per_octave, nOctaves)
-        new(realtype(T)(ɛ), log2_length, max_qualityfactor,
+        new(ɛ, log2_length, max_qualityfactor,
             max_scale, nFilters_per_octave, nOctaves, signaltype)
     end
 end
 
 function Morlet1DSpec(;
-                      ɛ=eps(signaltype),
+                      signaltype=Float32,
+                      ɛ=default_epsilon(Float32),
                       log2_length=15,
+                      nFilters_per_octave=1,
                       max_qualityfactor=nFilters_per_octave,
                       max_scale=Inf,
-                      nFilters_per_octave=1,
-                      nOctaves=Inf,
-                      signaltype=Float32)
+                      nOctaves=Inf)
     Morlet1DSpec{signaltype}(ɛ, log2_length, max_qualityfactor,
                              max_scale, nFilters_per_octave, nOctaves)
 end
