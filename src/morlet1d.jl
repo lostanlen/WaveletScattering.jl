@@ -9,9 +9,9 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     function Morlet1DSpec{T}(signaltype::Type{T};
                              ɛ=eps(realtype(T)),
                              log2_length=15,
+                             nFilters_per_octave=1,
                              max_qualityfactor=realtype(T)(nFilters_per_octave),
                              max_scale=Inf,
-                             nFilters_per_octave=1,
                              nOctaves=Inf)
         if isinf(nOctaves)
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
