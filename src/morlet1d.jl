@@ -6,7 +6,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nFilters_per_octave::Int
     nOctaves::Int
     signaltype::Type{T}
-    function Morlet1DSpec{T}(signaltype::Type{T},
+    function Morlet1DSpec{T}(signaltype::Type{T};
       ɛ=eps(realtype(T)),
       log2_length=15,
       max_qualityfactor=realtype(T)(nFilters_per_octave),
