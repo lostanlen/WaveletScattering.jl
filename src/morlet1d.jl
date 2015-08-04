@@ -39,7 +39,7 @@ function Morlet1DSpec(;
                       nOctaves=Inf,
                       signaltype=Float32)
     Morlet1DSpec{signaltype}(ɛ, log2_length, max_qualityfactor,
-                          max_scale, nFilters_per_octave, nOctaves)
+                             max_scale, nFilters_per_octave, nOctaves)
 end
 
 function localize{T<:Number}(spec::Morlet1DSpec{T})

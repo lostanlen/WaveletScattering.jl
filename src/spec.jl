@@ -6,14 +6,20 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
+
 * The truncation threshold ɛ must be in [0.0, 1.0[.
+
 * The signal length must be a power of two above 4.
+
 * The maximum required quality factor must be between 1.0 and the number of
-  filters per octaves.
+filters per octaves.
+
 * The maximum scale must be at least 5 times above the maximum quality factor.
+
 * The lowest center frequency must be higher than 1, i.e. log2_length>nOctaves.
-* The lowest center frequency must be higher than half the number of filters
-  per octaves, i.e. (log2_length-nOctaves) >= log2(nFilters_per_octave).
+
+* The lowest center frequency must be higher than half the number of
+filters per octaves, i.e. (log2_length-nOctaves) >= log2(nFilters_per_octave).
 """
 function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
   nFilters_per_octave, nOctaves)
@@ -73,12 +79,14 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
 end
 
 """Provides the type parameter of a complex type.
+
 For example, realtype(Complex{Float32}) yields Float32.
 For numeric real types, e.g. Float32, it is a no-op."""
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
 """Yields log-scales γs, chromas χs, and octaves js of a given spec.
+
 The input spec should have fields nFilters_per_octave and nOctaves."""
 function specgammas(spec::AbstractSpec)
   nΓs = spec.nFilters_per_octave * spec.nOctaves
