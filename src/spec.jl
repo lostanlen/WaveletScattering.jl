@@ -31,9 +31,6 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         "log2_length = ", log2_length, "\n",
         "log2_length must be ≧2")
     end
-    if isinf(log2_length)
-        error("Signal length must be finite.\n log2_length = ", log2_length)
-    end
     if nOctaves < 1
         error("Too few octaves.\n",
         "nOctaves = ", nOctaves, "\n",
