@@ -9,7 +9,7 @@ support, and Littlewood-Paley inequality.
 
 * The truncation threshold ɛ must be in [0.0, 1.0[.
 
-* The signal length must be a power of two above 4.
+* The signal length must be a finite power of two above 4.
 
 * The maximum required quality factor must be between 1.0 and the number of
 filters per octaves.
@@ -30,6 +30,9 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         error("Too short signal length.\n",
         "log2_length = ", log2_length, "\n",
         "log2_length must be ≧2")
+    end
+    if isinf(log2_length)
+        error("Signal length must be finite.\n log2_length = ", log2_length)
     end
     if nOctaves < 1
         error("Too few octaves.\n",
