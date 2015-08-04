@@ -68,12 +68,14 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
     return true
 end
 
-# realtype provides the type parameter of a complex type e.g. Complex{Float32}.
-# For numeric real types, e.g. Float32, it is a no-op.
+"""Provides the type parameter of a complex type.
+For example, realtype(Complex{Float32}) yields Float32.
+For numeric real types, e.g. Float32, it is a no-op."""
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
-# specgammas yields log-scales γs, chromas χs, and octaves js of a given spec.
+"""Yields log-scales γs, chromas χs, and octaves js of a given spec.
+The input should have fields nFilters_per_octave and nOctaves."""
 function specgammas(spec::AbstractSpec)
   nΓs = spec.nFilters_per_octave * spec.nOctaves
   γs = collect(0:(nΓs-1))
