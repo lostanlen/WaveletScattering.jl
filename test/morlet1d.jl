@@ -3,16 +3,6 @@ import WaveletScattering: Morlet1DSpec, default_epsilon, localize
 numerictypes = [Float16, Float32, Float64,
     Complex{Float16}, Complex{Float32}, Complex{Float64}]
 
-# Morlet1DSpec constructor
-for T in numerictypes
-    spec = Morlet1DSpec{T}(T, ɛ=1e-5, log2_length=15, max_qualityfactor=8.0,
-        max_scale=1e4, nFilters_per_octave=12, nOctaves=8)
-    @test isa(spec.ɛ, Type(T))
-    @test spec.signaltype == T
-    @test isa(spec.max_qualityfactor, Float64)
-    @test isa(spec.max_scale, Float64)
-end
-
 # Morlet1DSpec default options
 for T in numerictypes
   # ordinary defaults, user-specified nOctaves
