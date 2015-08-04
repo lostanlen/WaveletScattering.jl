@@ -75,7 +75,7 @@ realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
 """Yields log-scales γs, chromas χs, and octaves js of a given spec.
-The input should have fields nFilters_per_octave and nOctaves."""
+The input spec should have fields nFilters_per_octave and nOctaves."""
 function specgammas(spec::AbstractSpec)
   nΓs = spec.nFilters_per_octave * spec.nOctaves
   γs = collect(0:(nΓs-1))
