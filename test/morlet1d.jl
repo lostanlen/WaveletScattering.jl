@@ -1,7 +1,7 @@
 import WaveletScattering: Morlet1DSpec, default_epsilon, localize
 
 numerictypes = [Float16, Float32, Float64,
-    Complex{Float16}, Complex{Float32}, Complex{Float64}]
+                Complex{Float16}, Complex{Float32}, Complex{Float64}]
 
 # Morlet1DSpec default options
 for T in numerictypes
@@ -49,7 +49,7 @@ for T in [Float16, Float32, Float64], nfo in nfos,
   max_q in 1:nfo, max_s in [exp2(11:16); Inf]
     machine_precision = max(1e-10, default_epsilon(T))
     spec = Morlet1DSpec(T, max_qualityfactor=max_q, max_scale=max_s,
-        nFilters_per_octave=nfo)
+                        nFilters_per_octave=nfo)
     (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
     @test all(qualityfactors.>=1.0)
     @test all(qualityfactors.<=max_q)

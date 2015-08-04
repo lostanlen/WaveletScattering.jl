@@ -22,7 +22,7 @@ filters per octaves.
 filters per octaves, i.e. (log2_length-nOctaves) >= log2(nFilters_per_octave).
 """
 function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
-  nFilters_per_octave, nOctaves)
+                  nFilters_per_octave, nOctaves)
     if ɛ>=one(ɛ) || ɛ<zero(ɛ)
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
@@ -96,11 +96,11 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 
 The input spec should have fields nFilters_per_octave and nOctaves."""
 function specgammas(spec::AbstractSpec)
-  nΓs = spec.nFilters_per_octave * spec.nOctaves
-  γs = collect(0:(nΓs-1))
-  chromas = collect(0:(spec.nFilters_per_octave-1))
-  χs = repmat(chromas, spec.nOctaves)
-  octaves = collect(0:(spec.nOctaves-1))
-  js = vec(repmat(transpose(octaves), spec.nFilters_per_octave))
-  return (γs, χs, js)
+    nΓs = spec.nFilters_per_octave * spec.nOctaves
+    γs = collect(0:(nΓs-1))
+    chromas = collect(0:(spec.nFilters_per_octave-1))
+    χs = repmat(chromas, spec.nOctaves)
+    octaves = collect(0:(spec.nOctaves-1))
+    js = vec(repmat(transpose(octaves), spec.nFilters_per_octave))
+    return (γs, χs, js)
 end
