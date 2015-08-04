@@ -6,7 +6,7 @@ numerictypes = [Float16, Float32, Float64,
 # Morlet1DSpec default options
 for T in numerictypes
   # ordinary defaults, user-specified nOctaves
-  spec = Morlet1DSpec(signaltype=T, nOctaves=8)
+  spec = Morlet1DSpec(T, nOctaves=8)
   @test spec.ɛ == default_epsilon(T)
   @test spec.log2_length == 15
   @test_approx_eq spec.max_qualityfactor 1.0
@@ -14,7 +14,7 @@ for T in numerictypes
   @test spec.nFilters_per_octave == 1
   @test spec.nOctaves == 8
   # nFilters_per_octave defaults to max_qualityfactor when it is provided
-  spec = Morlet1DSpec(max_qualityfactor=8.0)
+  spec = Morlet1DSpec(nFilters_per_octave = 8)
   @test spec.nFilters_per_octave == 8
   @test spec.nOctaves == 10
   # max_qualityfactor defaults to nFilters_per_octave when it is provided
@@ -25,6 +25,7 @@ end
 
 # Zero-argument constructor
 spec = Morlet1DSpec()
+@test spec.signaltype == Float32
 @test spec.nOctaves == spec.log2_length - 2
 
 # localize
@@ -47,8 +48,8 @@ end
 for T in [Float16, Float32, Float64], nfo in nfos,
   max_q in 1:nfo, max_s in [exp2(11:16); Inf]
     machine_precision = max(1e-10, default_epsilon(T))
-    spec = Morlet1DSpec(max_qualityfactor=max_q, max_scale=max_s,
-        nFilters_per_octave=nfo, signaltype=T)
+    spec = Morlet1DSpec(T, max_qualityfactor=max_q, max_scale=max_s,
+        nFilters_per_octave=nfo)
     (bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
     @test all(qualityfactors.>=1.0)
     @test all(qualityfactors.<=max_q)
