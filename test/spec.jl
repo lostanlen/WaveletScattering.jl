@@ -11,9 +11,6 @@ nOctaves = 8
 # normal behavior
 @test checkspec(ɛ, log2_length, max_qualityfactor,
     max_scale, nFilters_per_octave, nOctaves)
-# error if ɛ is infinite
-@test_throws ErrorException checkspec(Inf, log2_length, max_qualityfactor,
-    max_scale, nFilters_per_octave, nOctaves)
 # error if ɛ is strictly negative zero
 @test_throws ErrorException checkspec(-1.0, log2_length, max_qualityfactor,
     max_scale, nFilters_per_octave, nOctaves)
@@ -32,9 +29,9 @@ nOctaves = 8
 # error if log2_length-nOctaves <= log2(nFilters_per_octave)
 @test_throws ErrorException checkspec(ɛ, 12, max_qualityfactor,
     max_scale, 32, 9)
-# error if max_qualityfactor is infinite
-@test_throws ErrorException checkspec(ɛ, log2_length, Inf,
-    max_scale, nFilters_per_octave, nOctaves)
+# error if max_qualityfactor > nFilters_per_octave
+@test_throws ErrorException checkspec(ɛ, log2_length, 8.0,
+    max_scale, 4, nOctaves)
 # error if max_qualityfactor is strictly smaller than 1.0
 @test_throws ErrorException checkspec(ɛ, log2_length, 0.9,
     max_scale, nFilters_per_octave, nOctaves)
@@ -44,9 +41,6 @@ nOctaves = 8
 # error if nFilters_per_octave < 1
 @test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
     max_scale, 0, nOctaves)
-# error if max_qualityfactor > nFilters_per_octave
-@test_throws ErrorException checkspec(ɛ, log2_length, 8.0,
-    max_scale, 4, nOctaves)
 
 # realtype
 @test realtype(Float32) == Float32
