@@ -30,7 +30,8 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     end
 end
 
-function Morlet1DSpec(ɛ=eps(signaltype),
+function Morlet1DSpec(;
+                      ɛ=eps(signaltype),
                       log2_length=15,
                       max_qualityfactor=nFilters_per_octave,
                       max_scale=Inf,
