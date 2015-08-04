@@ -30,9 +30,12 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     end
 end
 
-function Morlet1DSpec(ɛ=eps(Float32), log2_length=15,
-                      max_qualityfactor=nFilters_per_octave, max_scale=Inf,
-                      nFilters_per_octave=1, nOctaves=Inf))
+function Morlet1DSpec(ɛ=eps(Float32),
+                      log2_length=15,
+                      max_qualityfactor=nFilters_per_octave,
+                      max_scale=Inf,
+                      nFilters_per_octave=1,
+                      nOctaves=Inf)
     Morlet1DSpec{Float32}(ɛ, log2_length, max_qualityfactor,
                           max_scale, nFilters_per_octave, nOctaves)
 end
