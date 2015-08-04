@@ -7,12 +7,12 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nOctaves::Int
     signaltype::Type{T}
     function Morlet1DSpec{T}(signaltype::Type{T};
-      ɛ=eps(realtype(T)),
-      log2_length=15,
-      max_qualityfactor=realtype(T)(nFilters_per_octave),
-      max_scale=Inf,
-      nFilters_per_octave=1,
-      nOctaves=Inf)
+                             ɛ=eps(realtype(T)),
+                             log2_length=15,
+                             max_qualityfactor=realtype(T)(nFilters_per_octave),
+                             max_scale=Inf,
+                             nFilters_per_octave=1,
+                             nOctaves=Inf)
         if isinf(nOctaves)
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
             log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
@@ -24,10 +24,17 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
             nOctaves = log2_length - gap
         end
         checkspec(ɛ, log2_length, max_qualityfactor,
-          max_scale, nFilters_per_octave, nOctaves)
+                  max_scale, nFilters_per_octave, nOctaves)
         new(realtype(T)(ɛ), log2_length, max_qualityfactor,
-          max_scale, nFilters_per_octave, nOctaves, signaltype)
+            max_scale, nFilters_per_octave, nOctaves, signaltype)
     end
+end
+
+function Morlet1DSpec(ɛ=eps(Float32), log2_length=15,
+                      max_qualityfactor=nFilters_per_octave, max_scale=Inf,
+                      nFilters_per_octave=1, nOctaves=Inf))
+    Morlet1DSpec{Float32}(ɛ, log2_length, max_qualityfactor,
+                          max_scale, nFilters_per_octave, nOctaves)
 end
 
 function localize{T<:Number}(spec::Morlet1DSpec{T})
