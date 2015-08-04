@@ -16,7 +16,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         if isinf(nOctaves)
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
             log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
-            if max_scale < (exp2(log2_length)+eps(realtype(T)))
+            if max_scale < (exp2(log2_length)+default_epsilon(T))
                 gap = max(1+log2_nFilters_per_octave, 2)
             else
                 gap = max(1+log2_nFilters_per_octave, 2+log2_max_qualityfactor)
