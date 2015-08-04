@@ -14,7 +14,7 @@ for T in numerictypes
   @test spec.nFilters_per_octave == 1
   @test spec.nOctaves == 8
   # nFilters_per_octave defaults to max_qualityfactor when it is provided
-  spec = Morlet1DSpec(nFilters_per_octave = 8)
+  spec = Morlet1DSpec(nFilters_per_octave=8)
   @test spec.nFilters_per_octave == 8
   @test spec.nOctaves == 10
   # max_qualityfactor defaults to nFilters_per_octave when it is provided
@@ -56,7 +56,7 @@ for T in [Float16, Float32, Float64], nfo in nfos,
     @test all(scales.>0.0)
     @test all(scales[qualityfactors.>1.0].< (max_s+machine_precision))
     @test all(scales.< (exp2(spec.log2_length)+machine_precision))
-    # TODO @test scales[end] > (0.5 * exp2(spec.log2_length))
+    @show(scales[end],(0.5 * exp2(spec.log2_length)))
     resolutions = centerfrequencies / centerfrequencies[1]
     @test_approx_eq_eps bandwidths resolutions./qualityfactors eps(T)
     heisenberg_tradeoff = bandwidths .* scales
