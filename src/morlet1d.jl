@@ -6,13 +6,13 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nFilters_per_octave::Int
     nOctaves::Int
     signaltype::Type{T}
-    function Morlet1DSpec{T}(signaltype::Type{T};
-                             ɛ=default_epsilon(T),
-                             log2_length=15,
-                             nFilters_per_octave=1,
-                             max_qualityfactor=Float64(nFilters_per_octave),
-                             max_scale=Inf,
-                             nOctaves=Inf)
+    function call{T<:Number}(::Type{Morlet1DSpec{T}}, signaltype::Type{T};
+                     ɛ=default_epsilon(T),
+                     log2_length=15,
+                     nFilters_per_octave=1,
+                     max_qualityfactor=Float64(nFilters_per_octave),
+                     max_scale=Inf,
+                     nOctaves=Inf)
         if isinf(nOctaves)
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
             log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
@@ -25,22 +25,12 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         end
         checkspec(ɛ, log2_length, max_qualityfactor,
                   max_scale, nFilters_per_octave, nOctaves)
-        new(ɛ, log2_length, max_qualityfactor,
+        new{T}(ɛ, log2_length, max_qualityfactor,
             max_scale, nFilters_per_octave, nOctaves, signaltype)
     end
 end
 
-function Morlet1DSpec(;
-                      signaltype=Float32,
-                      ɛ=default_epsilon(Float32),
-                      log2_length=15,
-                      nFilters_per_octave=1,
-                      max_qualityfactor=nFilters_per_octave,
-                      max_scale=Inf,
-                      nOctaves=Inf)
-    Morlet1DSpec{signaltype}(ɛ, log2_length, max_qualityfactor,
-                             max_scale, nFilters_per_octave, nOctaves)
-end
+Morlet1DSpec(T=Float32 ; args...) = Morlet1DSpec{T}(T ; args...)
 
 function localize{T<:Number}(spec::Morlet1DSpec{T})
     RealT = realtype(T)
