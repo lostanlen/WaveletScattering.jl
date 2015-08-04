@@ -9,11 +9,21 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     function call{T<:Number}(::Type{Morlet1DSpec{T}}, signaltype::Type{T};
                      ɛ=default_epsilon(T),
                      log2_length=15,
-                     nFilters_per_octave=1,
-                     max_qualityfactor=Float64(nFilters_per_octave),
+                     max_qualityfactor=nothing,
+                     nFilters_per_octave=nothing,
                      max_scale=Inf,
-                     nOctaves=Inf)
-        if isinf(nOctaves)
+                     nOctaves=nothing)
+        if max_qualityfactor==nothing
+            if nFilters_per_octave==nothing
+                max_qualityfactor = 1.0
+                nFilters_per_octave = 1
+            else
+                max_qualityfactor = Float64(nFilters_per_octave)
+            end
+        else
+            nFilters_per_octave = ceil(Int, max_qualityfactor)
+        end
+        if nOctaves==nothing
             log2_nFilters_per_octave = ceil(Int, log2(nFilters_per_octave))
             log2_max_qualityfactor = ceil(Int, log2(max_qualityfactor))
             if max_scale < (exp2(log2_length)+default_epsilon(T))
