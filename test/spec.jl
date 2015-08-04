@@ -42,12 +42,13 @@ nOctaves = 8
 @test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
     max_scale, 0, nOctaves)
 
-# realtype
-@test realtype(Float32) == Float32
-@test realtype(Float64) == Float64
-@test realtype(Complex{Float32}) == Float32
-@test realtype(Complex{Float64}) == Float64
-@test_throws MethodError realtype(ASCIIString)
+# default_epsilon
+@test_approx_eq default_epsilon(Float16) 1e-3
+@test_approx_eq default_epsilon(Float32) 1e-7
+@test_approx_eq default_epsilon(Float64) 1e-15
+@test_approx_eq default_epsilon(Complex{Float16}) 1e-3
+@test_approx_eq default_epsilon(Complex{Float32}) 1e-7
+@test_approx_eq default_epsilon(Complex{Float64}) 1e-15
 
 # specgammas
 immutable Test1DSpec <: Abstract1DSpec
