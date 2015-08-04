@@ -1,7 +1,6 @@
 using Base.Test
 
 using DataStructures
-using OptionsMod
 
 tests = [
     "spec",
