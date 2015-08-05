@@ -28,23 +28,23 @@ spec = Morlet1DSpec()
 @test spec.signaltype == Float32
 @test spec.nOctaves == spec.log2_length - 2
 
-# localize
-# in the dyadic case, check that the mother center center frequency is 0.39
-spec = Morlet1DSpec(nFilters_per_octave=1)
-(bandwidths, centerfrequencies, qualityfactors, scales) = localize(spec)
-@test_approx_eq centerfrequencies[1] 0.39
-nfos = [2, 4, 8, 12, 16, 24, 32]
-for nfo in nfos[2:end]
+# localize center frequencies
+for nfo in nfos
     spec = Morlet1DSpec(nFilters_per_octave=nfo)
-    # check that the mother center frequency is at the right place
+    # 1. check that the mother center frequency is at the right place
     (bandwidths, centerfreqs, qualityfactors, scales) = localize(spec)
-    @test_approx_eq (centerfreqs[1]-centerfreqs[2]) (1.0 - 2*centerfreqs[1])
-    # check that log-frequencies are evenly spaced
+    if nfo==1
+        @test_approx_eq centerfrequencies[1] 0.39
+    else
+        @test_approx_eq (centerfreqs[1]-centerfreqs[2]) (1.0 - 2*centerfreqs[1])
+    end
+    # 2. check that log-frequencies are evenly spaced
     difflogfreqs = diff(log2(centerfreqs))
     @test_approx_eq difflogfreqs (-ones(difflogfreqs)/spec.nFilters_per_octave)
-    # check that all center frequencies are strictly positive
+    # 3. check that all center frequencies are strictly positive
     @test all(centerfreqs.>0.0)
 end
+# localize qualityfactors, scales, bandwidths, and time-frequency tradeoff.
 for T in [Float16, Float32, Float64], nfo in nfos,
   max_q in 1:nfo, max_s in [exp2(11:16); Inf]
     machine_precision = max(1e-10, default_epsilon(T))

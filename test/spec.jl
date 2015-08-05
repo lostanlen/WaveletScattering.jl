@@ -1,5 +1,5 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-                          checkspec, default_epsilon, realtype, specgammas
+                          checkspec, default_ɛ, realtype, specgammas
 
 # checkspec
 ɛ = eps(Float32)
@@ -11,7 +11,7 @@ nOctaves = 8
 # normal behavior
 @test checkspec(ɛ, log2_length, max_qualityfactor,
                 max_scale, nFilters_per_octave, nOctaves)
-# error if ɛ is strictly negative zero
+# error if ɛ is strictly negative
 @test_throws ErrorException checkspec(-1.0, log2_length, max_qualityfactor,
                                       max_scale, nFilters_per_octave, nOctaves)
 # error if ɛ equal or greater than one
@@ -23,9 +23,9 @@ nOctaves = 8
 # error if nOctaves is smaller than 1
 @test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
                                       max_scale, nFilters_per_octave, 0)
-# error if the difference (log2_length-nOctaves) is smaller than 2
+# error if nOctave >= log2_length
 @test_throws ErrorException checkspec(ɛ, 9, max_qualityfactor,
-                                      max_scale, 1, 8)
+                                      max_scale, 1, 9)
 # error if log2_length-nOctaves <= log2(nFilters_per_octave)
 @test_throws ErrorException checkspec(ɛ, 12, max_qualityfactor,
                                       max_scale, 32, 9)
@@ -42,13 +42,23 @@ nOctaves = 8
 @test_throws ErrorException checkspec(ɛ, log2_length, max_qualityfactor,
                                       max_scale, 0, nOctaves)
 
-# default_epsilon
-@test_approx_eq default_epsilon(Float16) 1e-3
-@test_approx_eq default_epsilon(Float32) 1e-7
-@test_approx_eq default_epsilon(Float64) 1e-15
-@test_approx_eq default_epsilon(Complex{Float16}) 1e-3
-@test_approx_eq default_epsilon(Complex{Float32}) 1e-7
-@test_approx_eq default_epsilon(Complex{Float64}) 1e-15
+# default_ɛ
+@test_approx_eq default_ɛ(Float16) 1e-3
+@test_approx_eq default_ɛ(Float32) 1e-7
+@test_approx_eq default_ɛ(Float64) 1e-15
+@test_approx_eq default_ɛ(Complex{Float16}) 1e-3
+@test_approx_eq default_ɛ(Complex{Float32}) 1e-7
+@test_approx_eq default_ɛ(Complex{Float64}) 1e-15
+
+# default_max_qualityfactor
+@test_approx_eq default_max_qualityfactor(8.0, nothing) 8.0
+@test_approx_eq default_max_qualityfactor(nothing, 8) 8.0
+@test_approx_eq default_max_qualityfactor(nothing, nothing) 1.0
+
+# default_nFilters_per_octave
+@test default_nFilters_per_octave(nothing, 12) == 12.0
+@test default_nFilters_per_octave(7.9, nothing) == 8
+@test default_nFilters_per_octave(nothing, nothing) == 1
 
 # realtype
 @test realtype(Float32) == Float32
