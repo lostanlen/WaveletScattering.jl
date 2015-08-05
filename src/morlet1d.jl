@@ -3,7 +3,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     log2_length::Int
     max_qualityfactor::Float64
     max_scale::Float64
-    mother_frequency::Float64
+    motherfrequency::Float64
     nFilters_per_octave::Int
     nOctaves::Int
     signaltype::Type{T}

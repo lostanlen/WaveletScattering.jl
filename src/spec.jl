@@ -145,7 +145,7 @@ For example, to tune a 12-chroma filter bank to a concert pitch of 440 Hz at
 a sample rate of 44,1 kHz:
 
     ξ = tune(Morlet1DSpec, 12, 440.0/44100.0)
-    Morlet1DSpec(nFilters_per_octave=12, mother_frequency=ξ)"""
+    Morlet1DSpec(nFilters_per_octave=12, motherfrequency=ξ)"""
 function tune{T<:AbstractSpec}(::Type{T}, nFilters_per_octave, tuning_frequency)
     max_centerfrequency = default_motherfrequency(T, nFilters_per_octave)
     tuning_ratio = max_centerfrequency / tuning_frequency
