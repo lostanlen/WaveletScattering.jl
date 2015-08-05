@@ -77,10 +77,8 @@ function checkspec(spec::AbstractSpec)
         "max_scale = ", max_scale, "\n",
         "motherfrequency = ", motherfrequency, "\n",
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
-        "motherfrequency / max_qualityfactor = ",
         motherfrequency / max_qualityfactor, "and a scale < ", max_scale,".\n",
-        "Either decrease max_qualityfactor or decrease max_scale. It is
-        advised to leave motherfrequency automatically initialized.")
+        "Either decrease max_qualityfactor or decrease max_scale.")
     end
     if any(scales[end] .> collect(spec.log2_size))
         max_bandwidth = spec.motherfrequency *
@@ -95,8 +93,7 @@ function checkspec(spec::AbstractSpec)
         "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
         "and a scale < 2^(log2_size) = ", tuple(2.^collect(t)...), ".\n"
         """Either increase log2size, decrease max_qualityfactor,
-        set max_scale<=log2_length, or decrease nOctaves. It is advised to
-        leave motherfrequency automatically initialized.""")
+        set max_scale<=log2_length, or decrease nOctaves.""")
     end
     return true
 end
@@ -122,19 +119,29 @@ default_ɛ{RealT}(T::Type{Complex{RealT}}) = default_ɛ(RealT)
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the maximum quality factor in a wavelet filter
 bank."""
-default_max_qualityfactor(max_q::Float64, nfo::Any) = max_q
+default_max_qualityfactor(max_q::Float64, nfo) = max_q
 default_max_qualityfactor(max_q::Void, nfo::Integer) = Float64(nfo)
 default_max_qualityfactor(max_q::Void, nfo::Void) = 1.0
+
+"""The dimensionless mother center frequency ξ (corresponding to a log-period
+γ=0) is computed as the midpoint between the center frequency of the second
+center frequency ξ*2^(-1/nFilters_per_octave) (corresponding to γ=1) and the
+negative mother center frequency (1-ξ). Hence the equation
+2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ), of which we
+derive ξ = 1 / (3 - 2^(1/nFilters_per_octave)). This formula is valid
+only when the wavelet is a symmetric bump in the Fourier domain."""
+default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
+    inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the default number of filters per octave in a
 wavelet filter bank."""
-default_nFilters_per_octave(max_q::Any, nfo::Int) = nfo
+default_nFilters_per_octave(max_q, nfo::Int) = nfo
 default_nFilters_per_octave(max_q::Float64, nfo::Void) = ceil(Int, max_q)
 default_nFilters_per_octave(max_q::Void, nfo::Void) = 1
 
 "Generic fallback for `default_nOctaves when `nOctaves` is not a `Void` input."
-default_nOctaves{T<:AbstractSpec}(::Type{T}, nOctaves::Int, args...) = nOctaves
+default_nOctaves(nOctaves, spectype, args...) = nOctaves
 
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
 proportional to 2^(-γ). γ ranges from 0 to nFilters_per_octave*nOctaves, where
@@ -174,9 +181,11 @@ a sample rate of 44,1 kHz:
 
     ξ = tune(Morlet1DSpec, 12, 440.0/44100.0)
     Morlet1DSpec(nFilters_per_octave=12, motherfrequency=ξ)"""
-function tune{T<:AbstractSpec}(::Type{T}, nFilters_per_octave, tuning_frequency)
-    max_centerfrequency = default_motherfrequency(T, nFilters_per_octave)
+function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
+    max_centerfrequency = default_motherfrequency(spectype, nFilters_per_octave)
     tuning_ratio = max_centerfrequency / tuning_frequency
     tuning_γ = floor(log2(spec.nFilters_per_octave*tuning_ratio))
     return tuning_frequency * exp2(tuning_γ/spec.nFilters_per_octave)
 end
+tune_motherfrequency(tuningfrequency::Void, spectype, nFilters_per_octave) =
+    default_motherfrequency(spectype, nFilters_per_octave)
