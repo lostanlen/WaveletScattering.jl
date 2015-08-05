@@ -1,6 +1,7 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-                          checkspec, chromas, default_ɛ,
-                          gammas, octaves, realtype,
+    checkspec, chromas, default_ɛ, default_max_qualityfactor,
+    default_nFilters_per_octave, default_nOctaves, gammas, realtype, octaves,
+    tune
 
 # checkspec
 ɛ = eps(Float32)
