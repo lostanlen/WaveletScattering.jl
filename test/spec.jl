@@ -6,7 +6,7 @@ import WaveletScattering: Morlet1DSpec
 
 # checkspec
 ɛ = eps(Float32)
-log2_size = 15
+log2_size = (15,)
 max_qualityfactor = 12.0
 max_scale = 1e5
 motherfrequency = 0.48
