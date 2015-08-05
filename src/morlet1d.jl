@@ -1,6 +1,6 @@
 immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     ɛ::Float64
-    log2_length::Int
+    log2_size::Tuple{Int}
     max_qualityfactor::Float64
     max_scale::Float64
     motherfrequency::Float64
@@ -12,6 +12,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
                              max_qualityfactor=nothing, max_scale=Inf,
                              motherfrequency=nothing,
                              nFilters_per_octave=nothing, nOctaves=nothing)
+        isa(log2_length, Int) && log2_length = tuple(log2_size)
         max_qualityfactor, nFilters_per_octave =
             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
             default_nFilters_per_octave(max_qualityfactor, nFilters_per_octave)
