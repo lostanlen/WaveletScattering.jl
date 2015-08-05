@@ -16,74 +16,95 @@ filters per octaves.
 
 * The maximum scale must be at least 5 times above the maximum quality factor.
 
-* The lowest center frequency must be above 1.0, i.e. `log2_length>nOctaves`.
+* The mother frequency must be in ]0.0, 0.5].
 
-* The lowest center frequency must be higher than half the number of filters
-per octaves, i.e. `(log2_length-nOctaves) >= log2(nFilters_per_octave)`."""
-function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
-                   motherfrequency, nFilters_per_octave, nOctaves)
-    if ɛ>=1.0 || ɛ<0.0
+* The lowest center frequency must be greater or equal than the number of
+per octaves, i.e. `(log2_size-nOctaves) >= log2(nFilters_per_octave)`."""
+function checkspec(spec::AbstractSpec)
+    if spec.ɛ>=1.0 || spec.ɛ<0.0
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
-    if log2_length < 2
+    if any(collect(spec.log2_size) .< 2)
         error("Too short signal length.\n",
-        "log2_length = ", log2_length, "\n",
-        "log2_length must be ≧2")
+        "log2_size = ", spec.log2_size, "\n",
+        "All elements in log2_size must be ≧2")
     end
-    if max_qualityfactor < 1.0
+    if spec.max_qualityfactor < 1.0
         error("Too small maximum quality factor.\n",
-        "max_qualityfactor = ", max_qualityfactor, "\n",
+        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
         "max_qualityfactor must be ≧1.0.")
     end
-    if motherfrequency<=0.0 || mother_centerfrequency>0.5
+    if spec.motherfrequency<=0.0 || spec.mother_centerfrequency>0.5
         error("motherfrequency must be in ]0.0, 0.5].")
     end
-    if nFilters_per_octave < 1
+    if spec.nFilters_per_octave < 1
         error("Too few filters per octave.\n",
-        "nFilters_per_octave = ", nFilters_per_octave, "\n",
+        "nFilters_per_octave = ", spec.nFilters_per_octave, "\n",
         "nFilters_per_octave must be ≧1.")
     end
-    if nOctaves < 1
+    if spec.nOctaves < 1
         error("Too few octaves.\n",
-        "nOctaves = ", nOctaves, "\n",
+        "nOctaves = ", spec.nOctaves, "\n",
         "nOctaves must be ≧1")
     end
-    if max_qualityfactor > nFilters_per_octave
+    if spec.max_qualityfactor > spec.nFilters_per_octave
         error("Too few filters per octave for the given quality factor.\n",
-        "max_qualityfactor = ", max_qualityfactor, "\n",
-        "nFilters_per_octave = ", nFilters_per_octave, "\n",
+        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
+        "nFilters_per_octave = ", spec.nFilters_per_octave, "\n",
         """The inequality nFilters_per_octave ≧ max_qualityfactor must be
         satisfied.""")
     end
-    if nOctaves >= log2_length
-        error("To many octaves.\n",
-        "log2_length = ", log2_length, "\n",
-        "nOctaves = ", nOctaves, "\n",
-        """The inequality log2_length > nOctaves must be satisfied. Either
-        increase log2_length or decrease nOctaves.""")
+    if any(spec.nOctaves .>= collect(spec.log2_size))
+        error("Too many octaves.\n",
+        "log2_size = ", spec.log2_size, "\n",
+        "nOctaves = ", spec.nOctaves, "\n",
+        """The inequality minimum(log2_size) > nOctaves must be satisfied.
+        Either increase log2_size or decrease nOctaves.""")
     end
-    if (log2_length-nOctaves) < log2(nFilters_per_octave)
+    if any(collect(spec.log2_size)-spec.nOctaves) < log2(spec.nFilters_per_octave))
         error("Too many filters per octave for the given length.\n",
-        "log2_length = ", log2_length, "\n",
+        "log2_size = ", log2_size, "\n",
         "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
         "nOctaves = ", nOctaves, "\n",
-        """The inequality log2_length-nOctaves ≧ log2(nFilters_per_octave)
-        must be satisfied. Either increase log2_length, decrease nOctaves,
+        """The inequality minimum(log2_size)-nOctaves ≧ log2(nFilters_per_octave)
+        must be satisfied. Either increase log2_size, decrease nOctaves,
         or decrease nFilters_per_octave.""")
     end
-    if max_scale < (5.0*max_qualityfactor)
-        error("Too small maximum scale for the given quality factor.\n",
-        "max_qualityfactor = ", max_qualityfactor, "\n",
+    scales = scales(spec)
+    if spec.max_scale < scales[1]
+        error("Required time-frequency localization is too tight.\n",
+        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
         "max_scale = ", max_scale, "\n",
-        "The ratio (max_qualityfactor/max_scale) must be ≧5.0.")
+        "motherfrequency = ", motherfrequency, "\n",
+        "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
+        "motherfrequency / max_qualityfactor = ",
+        motherfrequency / max_qualityfactor, "and a scale < ", max_scale,".\n",
+        "Either decrease max_qualityfactor or decrease max_scale. It is
+        advised to leave motherfrequency automatically initialized.")
+    end
+    if any(scales[end] .> collect(spec.log2_size))
+        max_bandwidth = spec.motherfrequency *
+                        2^(-nOctaves/nFilters_per_octave) / max_qualityfactor
+        error("Spatial localization is coarser than signal length.\n",
+        "log2_size = ", spec.log2_size,
+        "max_qualityfactor = ", spec.max_qualityfactor,
+        "max_scale = ", spec.max_scale,
+        "motherfrequency = ", spec.motherfrequency, "\n",
+        "nOctaves = ", spec.nOctaves, "\n",
+        "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
+        "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
+        "and a scale < 2^(log2_size) = ", tuple(2.^collect(t)...), ".\n"
+        """Either increase log2size, decrease max_qualityfactor,
+        set max_scale<=log2_length, or decrease nOctaves. It is advised to
+        leave motherfrequency automatically initialized.""")
     end
     return true
 end
 
-"""Returns the chroma indices `χs` (locations within the octave).
-Chroma indices range from `0` to `nFilters_per_octave-1`. The convention is
-that higher chroma indices `χs` mean *lower* center frequencies. Log-periods
-`γs`, chromas ``χs`, and octaves `js` are linked by
+"""Returns the chroma indices `χs`, i.e. locations within the octave, of a
+wavelet spec. Chroma indices range from `0` to `nFilters_per_octave-1`. The
+convention is that higher chroma indices `χs` mean *lower* center frequencies.
+Log-periods `γs`, chromas ``χs`, and octaves `js` are linked by
     γ = j + nFilters_per_octave * χ"""
 function chromas(spec::AbstractSpec)
     repmat(collect(0:(spec.nFilters_per_octave-1)), spec.nOctaves)
@@ -139,6 +160,10 @@ For example, `realtype(Complex{Float32})` returns `Float32`.
 For numeric real types, e.g. `Float32`, it is a no-op."""
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
+
+"""Returns the scales of a wavelet spec, defined as the full width at tenth
+maximum (FWTM) of the squared-magnitude spatial support."""
+scales(spec::AbstractSpec) = localize(spec)[4]
 
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the

@@ -21,10 +21,9 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         nOctaves =
             default_nOctaves(Morlet1DSpec, nOctaves, log2_length,
                              max_qualityfactor, max_scale, nFilters_per_octave)
-        checkspec(ɛ, log2_length, max_qualityfactor, motherfrequency,
-                  max_scale, nFilters_per_octave, nOctaves)
         new{T}(ɛ, log2_length, max_qualityfactor, max_scale, motherfrequency,
                nFilters_per_octave, nOctaves, signaltype)
+        checkspec(spec)
     end
 end
 
