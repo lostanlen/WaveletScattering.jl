@@ -105,7 +105,7 @@ max_scale, we proceed with the following steps:
 function localize{T<:Number}(spec::Morlet1DSpec{T})
     RealT = realtype(T)
     γs = gammas(spec)
-    resolutions = exp2(γs/spec.nFilters_per_octave))
+    resolutions = exp2(γs/spec.nFilters_per_octave)
     centerfrequencies = spec.mother_centerfrequency * resolutions
     scale_multiplier = sqrt(log(10.0)/log(2.0))
     unbounded_scales =
