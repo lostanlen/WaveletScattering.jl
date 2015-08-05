@@ -21,8 +21,8 @@ filters per octaves.
 * The lowest center frequency must be higher than half the number of filters
 per octaves, i.e. `(log2_length-nOctaves) >= log2(nFilters_per_octave)`."""
 function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
-                  nFilters_per_octave, nOctaves)
-    if ɛ>=one(ɛ) || ɛ<zero(ɛ)
+                   motherfrequency, nFilters_per_octave, nOctaves)
+    if ɛ>=1.0 || ɛ<0.0
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
     if log2_length < 2
@@ -34,6 +34,9 @@ function checkspec(ɛ, log2_length, max_qualityfactor, max_scale,
         error("Too small maximum quality factor.\n",
         "max_qualityfactor = ", max_qualityfactor, "\n",
         "max_qualityfactor must be ≧1.0.")
+    end
+    if motherfrequency<=0.0 || mother_centerfrequency>0.5
+        error("motherfrequency must be in ]0.0, 0.5].")
     end
     if nFilters_per_octave < 1
         error("Too few filters per octave.\n",

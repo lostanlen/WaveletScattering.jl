@@ -10,20 +10,20 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     function call{T<:Number}(::Type{Morlet1DSpec{T}}, signaltype::Type{T};
                              ɛ=default_ɛ(T), log2_length=15,
                              max_qualityfactor=nothing, max_scale=Inf,
-                             mother_centerfrequency=nothing,
+                             motherfrequency=nothing,
                              nFilters_per_octave=nothing, nOctaves=nothing)
         max_qualityfactor, nFilters_per_octave =
             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
             default_nFilters_per_octave(max_qualityfactor, nFilters_per_octave)
-        motherfrequency =
-            default_motherfrequency(Morlet1DSpec, nFilters_per_octave)
+        motherfrequency = default_motherfrequency(Morlet1DSpec,
+            motherfrequency, nFilters_per_octave)
         nOctaves =
             default_nOctaves(Morlet1DSpec, nOctaves, log2_length,
                              max_qualityfactor, max_scale, nFilters_per_octave)
-        checkspec(ɛ, log2_length, max_qualityfactor,
+        checkspec(ɛ, log2_length, max_qualityfactor, motherfrequency,
                   max_scale, nFilters_per_octave, nOctaves)
-        new{T}(ɛ, log2_length, max_qualityfactor,
-               max_scale, nFilters_per_octave, nOctaves, signaltype)
+        new{T}(ɛ, log2_length, max_qualityfactor, max_scale, motherfrequency,
+               nFilters_per_octave, nOctaves, signaltype)
     end
 end
 
