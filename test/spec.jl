@@ -112,3 +112,19 @@ nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(gammas(spec)) == nWavelets
 @test length(chromas(spec)) == nWavelets
 @test length(octaves(spec)) == nWavelets
+
+# tune
+nfos = [1, 2, 4, 8, 12, 16, 24]
+pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
+spectypes = [Morlet1DSpec]
+for nfo in nfos, pitchfork in pitchforks, spectype in spectypes
+    tuning_frequency = pitchfork / 44100.0
+    ξ = tune(spectype, nfo, tuning_frequency)
+    spec = spectype(nFilters_per_octave=nfo, motherfrequency=ξ)
+    γs = gammas(spec)
+    ωs = ξ * 2^(-γs / spec.nFilters_per_octave)
+    @test any(abs(ωs - ξ) < 1e-4)
+    max_ξ = default_motherfrequency(spec)
+    @test ξ < max_ξ
+    @test ξ * 2^(1/spec.nFilters_per_octave) > max_ξ
+end
