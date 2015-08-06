@@ -216,7 +216,7 @@ max_scale, we proceed with the following steps:
 """
 function qualityfactors(spec::AbstractSpec)
     bandwidths = centerfrequencies(spec)/spec.max_qualityfactor
-    scales = min(uncertainty(spec) * bandwidths, spec.max_scale)
+    scales = min(uncertainty(spec) ./ bandwidths, spec.max_scale)
     qualityfactors = scales .* centerfrequencies(spec) / uncertainty(spec)
     # we also bound qualityfactors from above for better numerical accuracy
     qualityfactors = clamp(qualityfactors, 1.0, spec.max_qualityfactor)
