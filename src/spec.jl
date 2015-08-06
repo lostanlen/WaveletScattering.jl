@@ -32,6 +32,7 @@ filters per octaves.
 * The lowest center frequency must be greater or equal than the number of
 per octaves, i.e. `(log2_size-nOctaves) >= log2(nFilters_per_octave)`."""
 function checkspec(spec::AbstractSpec)
+    @show spec.log2_size
     if spec.ɛ>=1.0 || spec.ɛ<0.0
         error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
     end
@@ -74,7 +75,7 @@ function checkspec(spec::AbstractSpec)
     end
     if any(collect(spec.log2_size)-spec.nOctaves) < log2(spec.nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
-        "log2_size = ", log2_size, "\n",
+        "log2_size = ", spec.log2_size, "\n",
         "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
         "nOctaves = ", nOctaves, "\n",
         """The inequality minimum(log2_size)-nOctaves ≧ log2(nFilters_per_octave)
