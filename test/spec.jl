@@ -1,7 +1,7 @@
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     checkspec, chromas, default_ɛ, default_max_qualityfactor,
     default_nFilters_per_octave, default_nOctaves, gammas, realtype, octaves,
-    tune
+    tune_motherfrequency
 import WaveletScattering: Morlet1DSpec
 
 # checkspec
@@ -113,13 +113,13 @@ nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(chromas(spec)) == nWavelets
 @test length(octaves(spec)) == nWavelets
 
-# tune
+# tune_motherfrequency
 nfos = [1, 2, 4, 8, 12, 16, 24]
 pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
 spectypes = [Morlet1DSpec]
 for nfo in nfos, pitchfork in pitchforks, spectype in spectypes
     tuning_frequency = pitchfork / 44100.0
-    ξ = tune(spectype, nfo, tuning_frequency)
+    ξ = tune_motherfrequency(spectype, nfo, tuning_frequency)
     spec = spectype(nFilters_per_octave=nfo, motherfrequency=ξ)
     γs = gammas(spec)
     ωs = ξ * 2^(-γs / spec.nFilters_per_octave)
