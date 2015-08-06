@@ -22,7 +22,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
                                     max_qualityfactor, max_scale,
                                     motherfrequency, nFilters_per_octave)
         spec = new{T}(ɛ, log2_size, max_qualityfactor, max_scale,
-                      motherfrequency, nFilters_per_octave, nOctaves, signaltype)
+                      motherfrequency, nFilters_per_octave, nOctaves, T)
         checkspec(spec) && return spec
     end
 end
