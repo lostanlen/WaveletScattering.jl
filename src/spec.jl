@@ -76,7 +76,7 @@ function checkspec(spec::AbstractSpec)
     if any(collect(spec.log2_size)-spec.nOctaves) < log2(spec.nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
         "log2_size = ", spec.log2_size, "\n",
-        "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
+        "log2(nFilters_per_octave) = ", log2(spec.nFilters_per_octave), "\n",
         "nOctaves = ", nOctaves, "\n",
         """The inequality minimum(log2_size)-nOctaves ≧ log2(nFilters_per_octave)
         must be satisfied. Either increase log2_size, decrease nOctaves,
