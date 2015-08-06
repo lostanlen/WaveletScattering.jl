@@ -85,10 +85,11 @@ function checkspec(spec::AbstractSpec)
     if spec.max_scale < maximumscale
         error("Required time-frequency localization is too tight.\n",
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
-        "max_scale = ", max_scale, "\n",
+        "max_scale = ", spec.max_scale, "\n",
         "motherfrequency = ", motherfrequency, "\n",
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
-        motherfrequency / max_qualityfactor, "and a scale < ", max_scale, ".\n",
+        motherfrequency / max_qualityfactor,
+        "and a scale < ", spec.max_scale, ".\n",
         "Either decrease max_qualityfactor or decrease max_scale.")
     end
     if maximumscale > 2^minimum(spec.log2_size)
