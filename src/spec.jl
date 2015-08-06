@@ -4,6 +4,17 @@ abstract AbstractSpec
 abstract Abstract1DSpec{T<:Number} <: AbstractSpec
 abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 
+"""Returns the 3dB bandwidths, i.e. the full widths at half maximum (FWHM) of
+the squared magnitude in the Fourier domain, of a given spec.
+Bandwidths are decreasing because they are indexed by `γ`"""
+bandwidths(spec::AbstractSpec) = centerfrequencies(spec) ./ qualityfactors(spec)
+
+"""Return the center frequencies of a given spec. They are exponentially
+decreasing because they are indexed by `γ`. The first coefficient corresponds
+to the so-called ""mother"" frequency, i.e. γ=0."""
+centerfrequencies(spec::AbstractSpec) =
+    exp2(-gammas(spec)/spec.nFilters_per_octave)
+
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
 
@@ -61,7 +72,7 @@ function checkspec(spec::AbstractSpec)
         """The inequality minimum(log2_size) > nOctaves must be satisfied.
         Either increase log2_size or decrease nOctaves.""")
     end
-    if any(collect(spec.log2_size)-spec.nOctaves) < log2(spec.nFilters_per_octave))
+    if any(collect(spec.log2_size)-spec.nOctaves) < log2(spec.nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
         "log2_size = ", log2_size, "\n",
         "log2(nFilters_per_octave) = ", log2(nFilters_per_octave), "\n",
@@ -71,16 +82,16 @@ function checkspec(spec::AbstractSpec)
         or decrease nFilters_per_octave.""")
     end
     scales = scales(spec)
-    if spec.max_scale < scales[1]
+    if spec.max_scale < max(scales)
         error("Required time-frequency localization is too tight.\n",
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
         "max_scale = ", max_scale, "\n",
         "motherfrequency = ", motherfrequency, "\n",
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
-        motherfrequency / max_qualityfactor, "and a scale < ", max_scale,".\n",
+        motherfrequency / max_qualityfactor, "and a scale < ", max_scale, ".\n",
         "Either decrease max_qualityfactor or decrease max_scale.")
     end
-    if any(scales[end] .> collect(spec.log2_size))
+    if max(scales) > minimum(spec.log2_size)
         max_bandwidth = spec.motherfrequency *
                         2^(-nOctaves/nFilters_per_octave) / max_qualityfactor
         error("Spatial localization is coarser than signal length.\n",
@@ -91,7 +102,7 @@ function checkspec(spec::AbstractSpec)
         "nOctaves = ", spec.nOctaves, "\n",
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
         "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
-        "and a scale < 2^(log2_size) = ", tuple(2.^collect(t)...), ".\n"
+        "and a scale < 2^(log2_size) = ", tuple(2.^collect(t)...), ".\n",
         """Either increase log2size, decrease max_qualityfactor,
         set max_scale<=log2_length, or decrease nOctaves.""")
     end
@@ -140,8 +151,19 @@ default_nFilters_per_octave(max_q, nfo::Int) = nfo
 default_nFilters_per_octave(max_q::Float64, nfo::Void) = ceil(Int, max_q)
 default_nFilters_per_octave(max_q::Void, nfo::Void) = 1
 
-"Generic fallback for `default_nOctaves when `nOctaves` is not a `Void` input."
-default_nOctaves(nOctaves, spectype, args...) = nOctaves
+"""Returns the maximal number octaves in a filter bank such that all scales are
+below 2^(log2_size)."""
+default_nOctaves(nOctaves::Int, args...) = nOctaves
+function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
+    siglength = 1 << minimum(log2_size)
+    if max_scale > siglength
+        min_centerfrequency = uncertainty(T) / siglength * max_qualityfactor
+    else
+        min_centerfrequency = uncertainty(T) / max_scale * 1.0
+    end
+    return log2(floor(motherfrequency / min_centerfrequency))
+end
 
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
 proportional to 2^(-γ). γ ranges from 0 to nFilters_per_octave*nOctaves, where
@@ -162,6 +184,42 @@ function octaves(spec::AbstractSpec)
     vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
 end
 
+"""Returns the quality factors
+
+There is a classical tradeoff between spatial and frequential localizations
+in a filter bank. We address it by supporting two user specifications
+* spatial localization: `max_scale` sets the maximal wavelet scale, in the sense
+  of squared-magnitude full width at tenth maximum (FWTM).
+* frequential localization: `max_qualityfactor` set the quality factor (ratio
+  between center frequency and 3dB bandwidth) in absence of spatial localization
+  constraints.
+
+For each center frequency, the quality factor and the scale are governed by the
+following criteria, in decreasing priority order:
+1. quality factor is equal or greater than 1.0
+2. scale is equal or smaller than max_scale
+3. quality factor is equal to max_qualityfactor
+
+To localize Morlet wavelets according to user-defined max_qualityfactor and
+max_scale, we proceed with the following steps:
+1. compute ""unbounded scales""  h/max_qualityfactor.
+2. bound scales from above s = min(unbounded_scales, max_scale)
+3. compute ""unbounded quality factors"" 1/(h*s)
+4. bound quality factors from below q = max(unbounded_qualityfactors, 1.0)
+5. compute corresponding scales.
+"""
+function qualityfactors(spec::AbstractSpec)
+    γs = gammas(spec)
+    centerfrequencies = centerfrequencies(spec)
+    heisenberg = heisenberg(spec)
+    bandwidths = centerfrequencies/spec.max_qualityfactor
+    scales = heisenberg * bandwidths
+    scales = min(scales, spec.max_scale)
+    qualityfactors = scales .* centerfrequencies / heisenberg
+    # we also bound qualityfactors from above for better numerical accuracy
+    qualityfactors = clamp(qualityfactors, 1.0, spec.max_qualityfactor)
+end
+
 """Returns the type parameter of a complex type.
 For example, `realtype(Complex{Float32})` returns `Float32`.
 For numeric real types, e.g. `Float32`, it is a no-op."""
@@ -170,7 +228,7 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 
 """Returns the scales of a wavelet spec, defined as the full width at tenth
 maximum (FWTM) of the squared-magnitude spatial support."""
-scales(spec::AbstractSpec) = localize(spec)[4]
+scales(spec::AbstractSpec) = heisenberg(spec) / bandwidths(spec)
 
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
