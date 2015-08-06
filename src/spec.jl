@@ -154,8 +154,10 @@ default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 """Returns the maximal number octaves in a filter bank such that all scales are
 below 2^(log2_size)."""
 default_nOctaves(nOctaves::Int, args...) = nOctaves
-function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
+function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
+                             max_qualityfactor::Float64, max_scale::Float64,
+                             motherfrequency::Float64, nFilters_per_octave::Int,
+                             args...)
     siglength = 1 << minimum(log2_size)
     if max_scale > siglength
         min_centerfrequency = uncertainty(T) / siglength * max_qualityfactor
@@ -228,7 +230,7 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 
 """Returns the scales of a wavelet spec, defined as the full width at tenth
 maximum (FWTM) of the squared-magnitude spatial support."""
-scales(spec::AbstractSpec) = heisenberg(spec) / bandwidths(spec)
+scales(spec::AbstractSpec) = uncertainty(spec) / bandwidths(spec)
 
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
@@ -245,3 +247,7 @@ function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
 end
 tune_motherfrequency(tuningfrequency::Void, spectype, nFilters_per_octave) =
     default_motherfrequency(spectype, nFilters_per_octave)
+
+"""Fallback of the uncertainty constant from the spec to its type. The RHS
+method must be specifically implemented by AbstractSpec concrete subtypes."""
+uncertainty(spec::AbstractSpec, args...) = uncertainty(typeof(spec), args...)
