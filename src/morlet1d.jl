@@ -19,7 +19,8 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         motherfrequency = tune_motherfrequency(tuningfrequency, Morlet1DSpec,
                                                nFilters_per_octave)
         nOctaves = default_nOctaves(nOctaves, Morlet1DSpec, log2_size,
-                              max_qualityfactor, max_scale, nFilters_per_octave)
+                                    max_qualityfactor, max_scale,
+                                    motherfrequency, nFilters_per_octave)
         spec = new{T}(ɛ, log2_size, max_qualityfactor, max_scale,
                       motherfrequency, nFilters_per_octave, nOctaves, signaltype)
         checkspec(spec) && return spec
