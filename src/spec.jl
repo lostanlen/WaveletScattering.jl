@@ -13,7 +13,7 @@ bandwidths(spec::AbstractSpec) = centerfrequencies(spec) ./ qualityfactors(spec)
 decreasing because they are indexed by `γ`. The first coefficient corresponds
 to the so-called ""mother"" frequency, i.e. γ=0."""
 centerfrequencies(spec::AbstractSpec) =
-    exp2(-gammas(spec)/spec.nFilters_per_octave)
+    spec.motherfrequency * exp2(-gammas(spec)/spec.nFilters_per_octave)
 
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
@@ -141,15 +141,15 @@ negative mother center frequency (1-ξ). Hence the equation
 2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ), of which we
 derive ξ = 1 / (3 - 2^(1/nFilters_per_octave)). This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
-default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
+default_motherfrequency{T<:Abstract1DSpec}(nFilters_per_octave, ::Type{T}) =
     inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the default number of filters per octave in a
 wavelet filter bank."""
-default_nFilters_per_octave(max_q, nfo::Int) = nfo
-default_nFilters_per_octave(max_q::Float64, nfo::Void) = ceil(Int, max_q)
-default_nFilters_per_octave(max_q::Void, nfo::Void) = 1
+default_nFilters_per_octave(nfo::Int, max_q) = nfo
+default_nFilters_per_octave(nfo::Void, max_q::Float64) = ceil(Int, max_q)
+default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 
 """Returns the maximal number octaves in a filter bank such that all scales are
 below 2^(log2_size)."""
@@ -236,9 +236,7 @@ tuning frequency.
 
 For example, to tune a 12-chroma filter bank to a concert pitch of 440 Hz at
 a sample rate of 44,1 kHz:
-
-    ξ = tune(Morlet1DSpec, 12, 440.0/44100.0)
-    Morlet1DSpec(nFilters_per_octave=12, motherfrequency=ξ)"""
+    Morlet1DSpec(nFilters_per_octave=12, tuning_frequency=440.0/44100.0)"""
 function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
     max_centerfrequency = default_motherfrequency(spectype, nFilters_per_octave)
     tuning_ratio = max_centerfrequency / tuning_frequency

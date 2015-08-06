@@ -15,7 +15,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         isa(log2_size, Int) && log2_size = tuple(log2_size)
         max_qualityfactor, nFilters_per_octave =
             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
-            default_nFilters_per_octave(max_qualityfactor, nFilters_per_octave)
+            default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
         motherfrequency = tune_motherfrequency(tuningfrequency, Morlet1DSpec,
                                                nFilters_per_octave)
         nOctaves =
