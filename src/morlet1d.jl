@@ -12,18 +12,17 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
                              max_qualityfactor=nothing, max_scale=Inf,
                              nFilters_per_octave=nothing, nOctaves=nothing,
                              tuningfrequency=nothing)
-        isa(log2_size, Int) && log2_size = tuple(log2_size)
+        isa(log2_size, Int) && (log2_size = tuple(log2_size))
         max_qualityfactor, nFilters_per_octave =
-            default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
-            default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
+             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
+             default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
         motherfrequency = tune_motherfrequency(tuningfrequency, Morlet1DSpec,
                                                nFilters_per_octave)
-        nOctaves =
-            default_nOctaves(nOctaves, Morlet1DSpec, log2_size,
-                             max_qualityfactor, max_scale, nFilters_per_octave)
-        new{T}(ɛ, log2_length, max_qualityfactor, max_scale, motherfrequency,
-               nFilters_per_octave, nOctaves, signaltype)
-        checkspec(spec)
+        nOctaves = default_nOctaves(nOctaves, Morlet1DSpec, log2_size,
+                              max_qualityfactor, max_scale, nFilters_per_octave)
+        spec = new{T}(ɛ, log2_size, max_qualityfactor, max_scale,
+                      motherfrequency, nFilters_per_octave, nOctaves, signaltype)
+        checkspec(spec) && return spec
     end
 end
 
