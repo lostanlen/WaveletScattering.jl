@@ -141,7 +141,7 @@ negative mother center frequency (1-ξ). Hence the equation
 2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ), of which we
 derive ξ = 1 / (3 - 2^(1/nFilters_per_octave)). This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
-default_motherfrequency{T<:Abstract1DSpec}(nFilters_per_octave, ::Type{T}) =
+default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
     inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
 """Given a maximum quality factor and a number of filter per octaves (both of
@@ -234,8 +234,8 @@ scales(spec::AbstractSpec) = heisenberg(spec) / bandwidths(spec)
 mother frequency such that the subsequent wavelets will be in tune with the
 tuning frequency.
 
-For example, to tune a 12-chroma filter bank to a concert pitch of 440 Hz at
-a sample rate of 44,1 kHz:
+For example, to tune a 12-chroma Morlet filter bank to a concert pitch of
+440 Hz at a sample rate of 44,1 kHz:
     Morlet1DSpec(nFilters_per_octave=12, tuning_frequency=440.0/44100.0)"""
 function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
     max_centerfrequency = default_motherfrequency(spectype, nFilters_per_octave)
