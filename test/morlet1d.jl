@@ -48,11 +48,15 @@ for nfo in nfos
 end
 # qualityfactors, scales, bandwidths, and time-frequency tradeoff.
 for T in [Float16, Float32, Float64], nfo in nfos,
-  max_q in 1:nfo, max_s in [exp2(9:13); Inf]
+  max_q in 1:nfo, max_s in [exp2(7:16); Inf]
   @show T, nfo, max_q, max_s
+    try
+        spec = Morlet1DSpec(T, max_qualityfactor=max_q, max_scale=max_s,
+                            nFilters_per_octave=nfo)
+    catch
+        continue
+    end
     machine_precision = max(1e-10, default_ɛ(T))
-    spec = Morlet1DSpec(T, max_qualityfactor=max_q, max_scale=max_s,
-                        nFilters_per_octave=nfo)
     bws = bandwidths(spec)
     ξs = centerfrequencies(spec)
     qs = qualityfactors(spec)
