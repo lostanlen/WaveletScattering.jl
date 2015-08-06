@@ -7,14 +7,14 @@ numerictypes = [Float16, Float32, Float64,
 for T in numerictypes
   # ordinary defaults, user-specified nOctaves
   spec = Morlet1DSpec(T, nOctaves=8)
-  @test spec.ɛ == default_epsilon(T)
-  @test spec.log2_length == 15
+  @test_approx_eq spec.ɛ default_ɛ(T)
+  @test spec.log2_size == (15,)
   @test_approx_eq spec.max_qualityfactor 1.0
   @test_approx_eq spec.max_scale Inf
   @test spec.nFilters_per_octave == 1
   @test spec.nOctaves == 8
   # nFilters_per_octave defaults to max_qualityfactor when it is provided
-  spec = Morlet1DSpec(nFilters_per_octave=8)
+  spec = Morlet1DSpec(max_qualityfactor=8)
   @test spec.nFilters_per_octave == 8
   @test spec.nOctaves == 10
   # max_qualityfactor defaults to nFilters_per_octave when it is provided
