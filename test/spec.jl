@@ -1,8 +1,19 @@
+using Base.Test
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-    checkspec, chromas, default_ɛ, default_max_qualityfactor,
-    default_nFilters_per_octave, default_nOctaves, gammas, realtype, octaves,
-    tune_motherfrequency
+    bandwidths, checkspec, centerfrequencies, chromas, default_ɛ,
+    default_max_qualityfactor, default_nFilters_per_octave, default_nOctaves,
+    gammas, realtype, octaves, qualityfactors, scales, tune_motherfrequency
 import WaveletScattering: Morlet1DSpec
+
+# bandwidths
+numerictypes = [Float16, Float32, Float64]
+nfos = [1, 2, 4, 8, 12, 24, 32]
+for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
+    log2_s in (4+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(4:14); Inf]
+    spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q,
+                        log2_size=log2_s, max_scale=max_s)
+
+end
 
 # default_ɛ
 @test_approx_eq default_ɛ(Float16) 1e-3
