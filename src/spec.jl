@@ -150,7 +150,7 @@ default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
 which may be `Void`), returns the default number of filters per octave in a
 wavelet filter bank."""
 default_nFilters_per_octave(nfo::Integer, max_q) = Int(nfo)
-default_nFilters_per_octave(nfo::Void, max_q::Float64) = ceil(Int, max_q)
+default_nFilters_per_octave(nfo::Void, max_q::Real) = ceil(Int, max_q)
 default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 
 """Returns the maximal number octaves in a filter bank such that all scales are
