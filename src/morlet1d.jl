@@ -7,7 +7,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nFilters_per_octave::Int
     nOctaves::Int
     signaltype::Type{T}
-    function call{T<:Number}(::Type{Morlet1DSpec{T}}, signaltype::Type{T};
+    function call{T<:Number}(::Type{Morlet1DSpec{T}}, ::Type{T};
                              ɛ=default_ɛ(T), log2_size=15,
                              max_qualityfactor=nothing, max_scale=Inf,
                              nFilters_per_octave=nothing, nOctaves=nothing,
