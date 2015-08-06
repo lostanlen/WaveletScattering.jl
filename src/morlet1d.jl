@@ -54,4 +54,4 @@ constant of the Morlet wavelet, defined as the (scale*bandwidth) constant,
 is equal to
     h = b*s = sqrt(log(10)/log(2)) = 1.8226...
 """
-uncertainty(::Morlet1DSpec) = sqrt(log(10.0) / log(2.0))
+uncertainty(::Type{Morlet1DSpec}) = sqrt(log(10.0) / log(2.0))
