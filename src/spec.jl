@@ -166,7 +166,9 @@ function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
     else
         min_centerfrequency = uncertainty(T) / max_scale * 1.0
     end
-    return floor(Int, log2(motherfrequency / min_centerfrequency))
+    nOctaves_a = floor(Int, log2(motherfrequency / min_centerfrequency))
+    nOctaves_b = minimum(log2_size) - 1 - ceil(Int, log2(nFilters_per_octave))
+    return min(nOctaves_a, nOctaves_b)
 end
 
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
