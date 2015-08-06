@@ -45,7 +45,7 @@ function checkspec(spec::AbstractSpec)
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
         "max_qualityfactor must be ≧1.0.")
     end
-    if spec.motherfrequency<=0.0 || spec.mother_centerfrequency>0.5
+    if spec.motherfrequency<=0.0 || spec.motherfrequency>0.5
         error("motherfrequency must be in ]0.0, 0.5].")
     end
     if spec.nFilters_per_octave < 1
