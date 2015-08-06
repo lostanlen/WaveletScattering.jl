@@ -81,8 +81,8 @@ function checkspec(spec::AbstractSpec)
         must be satisfied. Either increase log2_size, decrease nOctaves,
         or decrease nFilters_per_octave.""")
     end
-    scales = scales(spec)
-    if spec.max_scale < max(scales)
+    maximumscale = maximum(scales(spec))
+    if spec.max_scale < maximumscale
         error("Required time-frequency localization is too tight.\n",
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
         "max_scale = ", max_scale, "\n",
@@ -91,9 +91,11 @@ function checkspec(spec::AbstractSpec)
         motherfrequency / max_qualityfactor, "and a scale < ", max_scale, ".\n",
         "Either decrease max_qualityfactor or decrease max_scale.")
     end
-    if max(scales) > minimum(spec.log2_size)
-        max_bandwidth = spec.motherfrequency *
-                        2^(-nOctaves/nFilters_per_octave) / max_qualityfactor
+    if maximumscale > 2^minimum(spec.log2_size)
+        min_resolution = 2^(-spec.nOctaves/spec.nFilters_per_octave)
+        min_centerfrequency = spec.motherfrequency * min_resolution
+        max_bandwidth = min_centerfrequency / spec.max_qualityfactor
+        size = tuple(2.^collect(spec.log2_size)...)
         error("Spatial localization is coarser than signal length.\n",
         "log2_size = ", spec.log2_size,
         "max_qualityfactor = ", spec.max_qualityfactor,
@@ -102,7 +104,7 @@ function checkspec(spec::AbstractSpec)
         "nOctaves = ", spec.nOctaves, "\n",
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
         "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
-        "and a scale < 2^(log2_size) = ", tuple(2.^collect(t)...), ".\n",
+        "and a scale < 2^(log2_size) = ", size, ".\n",
         """Either increase log2size, decrease max_qualityfactor,
         set max_scale<=log2_length, or decrease nOctaves.""")
     end
@@ -130,7 +132,7 @@ default_ɛ{RealT}(T::Type{Complex{RealT}}) = default_ɛ(RealT)
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the maximum quality factor in a wavelet filter
 bank."""
-default_max_qualityfactor(max_q::Float64, nfo) = max_q
+default_max_qualityfactor(max_q::Real, nfo) = Float64(max_q)
 default_max_qualityfactor(max_q::Void, nfo::Integer) = Float64(nfo)
 default_max_qualityfactor(max_q::Void, nfo::Void) = 1.0
 
@@ -147,7 +149,7 @@ default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the default number of filters per octave in a
 wavelet filter bank."""
-default_nFilters_per_octave(nfo::Int, max_q) = nfo
+default_nFilters_per_octave(nfo::Integer, max_q) = Int(nfo)
 default_nFilters_per_octave(nfo::Void, max_q::Float64) = ceil(Int, max_q)
 default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 
@@ -211,13 +213,9 @@ max_scale, we proceed with the following steps:
 5. compute corresponding scales.
 """
 function qualityfactors(spec::AbstractSpec)
-    γs = gammas(spec)
-    centerfrequencies = centerfrequencies(spec)
-    heisenberg = heisenberg(spec)
-    bandwidths = centerfrequencies/spec.max_qualityfactor
-    scales = heisenberg * bandwidths
-    scales = min(scales, spec.max_scale)
-    qualityfactors = scales .* centerfrequencies / heisenberg
+    bandwidths = centerfrequencies(spec)/spec.max_qualityfactor
+    scales = min(uncertainty(spec) * bandwidths, spec.max_scale)
+    qualityfactors = scales .* centerfrequencies(spec) / uncertainty(spec)
     # we also bound qualityfactors from above for better numerical accuracy
     qualityfactors = clamp(qualityfactors, 1.0, spec.max_qualityfactor)
 end
@@ -230,7 +228,7 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 
 """Returns the scales of a wavelet spec, defined as the full width at tenth
 maximum (FWTM) of the squared-magnitude spatial support."""
-scales(spec::AbstractSpec) = uncertainty(spec) / bandwidths(spec)
+scales(spec::AbstractSpec) = uncertainty(spec) ./ bandwidths(spec)
 
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
