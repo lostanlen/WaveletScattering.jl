@@ -81,7 +81,7 @@ function checkspec(spec::AbstractSpec)
         must be satisfied. Either increase log2_size, decrease nOctaves,
         or decrease nFilters_per_octave.""")
     end
-    maximumscale = max(scales(spec))
+    maximumscale = maximum(scales(spec))
     if maximumscale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
@@ -144,8 +144,8 @@ negative mother center frequency (1-ξ). Hence the equation
 2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ), of which we
 derive ξ = 1 / (3 - 2^(1/nFilters_per_octave)). This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
-default_motherfrequency{T<:Abstract1DSpec}(::Type{T}, nFilters_per_octave) =
-    inv(3.0 - exp2(-1.0/nFilters_per_octave))
+default_motherfrequency{S<:AbstractSpec}(::Type{S}, nFilters_per_octave) =
+    inv(3.0 - exp2(-inv(nFilters_per_octave)))
 
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the default number of filters per octave in a
@@ -242,9 +242,9 @@ For example, to tune a 12-chroma Morlet filter bank to a concert pitch of
     Morlet1DSpec(nFilters_per_octave=12, tuning_frequency=440.0/44100.0)"""
 function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
     max_centerfrequency = default_motherfrequency(spectype, nFilters_per_octave)
-    tuning_ratio = max_centerfrequency / tuning_frequency
-    tuning_γ = floor(log2(spec.nFilters_per_octave*tuning_ratio))
-    return tuning_frequency * exp2(tuning_γ/spec.nFilters_per_octave)
+    tuning_ratio = max_centerfrequency / tuningfrequency
+    tuning_γ = floor(nFilters_per_octave*log2(tuning_ratio))
+    return tuningfrequency * exp2(tuning_γ/nFilters_per_octave)
 end
 tune_motherfrequency(tuningfrequency::Void, spectype, nFilters_per_octave) =
     default_motherfrequency(spectype, nFilters_per_octave)
