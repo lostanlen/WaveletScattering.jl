@@ -1,7 +1,8 @@
 using Base.Test
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     bandwidths, checkspec, centerfrequencies, chromas, default_ɛ,
-    default_max_qualityfactor, default_nFilters_per_octave, default_nOctaves,
+    default_max_qualityfactor, default_motherfrequency,
+    default_nFilters_per_octave, default_nOctaves,
     gammas, realtype, octaves, qualityfactors, scales, tune_motherfrequency
 import WaveletScattering: Morlet1DSpec, uncertainty
 
