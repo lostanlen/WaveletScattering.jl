@@ -11,7 +11,7 @@ nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     log2_s in (4+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(4:14); Inf]
     machine_precision = max(1e-10, default_ɛ(T))
-    spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q
+    spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q,
                         log2_size=log2_s, max_scale=max_s)
     bws = bandwidths(spec)
     ξs = centerfrequencies(spec)
@@ -68,7 +68,7 @@ end
 
 # default_nOctaves (fallback)
 type WhateverType end
-@test default_nOctaves(5, WhateverType) = 5
+@test default_nOctaves(5, WhateverType) == 5
 
 # realtype
 @test realtype(Float32) == Float32
@@ -78,23 +78,23 @@ type WhateverType end
 @test_throws MethodError realtype(ASCIIString)
 
 # gammas, chromas, octaves
-immutable Test1DSpec <: Abstract1DSpec
+immutable TestSpec <: AbstractSpec
     nFilters_per_octave::Int
     nOctaves::Int
 end
-spec = Test1DSpec(1, 1)
+spec = TestSpec(1, 1)
 @test gammas(spec) == [0]
 @test chromas(spec) == [0]
 @test octaves(spec) == [0]
-spec = Test1DSpec(2, 1)
+spec = TestSpec(2, 1)
 @test gammas(spec) == [0, 1]
 @test chromas(spec) == [0, 1]
 @test octaves(spec) == [0, 0]
-spec = Test1DSpec(1, 2)
+spec = TestSpec(1, 2)
 @test gammas(spec) == [0, 1]
 @test chromas(spec) == [0, 0]
 @test octaves(spec) == [0, 1]
-spec = Test1DSpec(12, 8)
+spec = TestSpec(12, 8)
 nWavelets = spec.nFilters_per_octave * spec.nOctaves
 @test length(gammas(spec)) == nWavelets
 @test length(chromas(spec)) == nWavelets
@@ -104,13 +104,13 @@ nWavelets = spec.nFilters_per_octave * spec.nOctaves
 nfos = [1, 2, 4, 8, 12, 16, 24]
 pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
 for nfo in nfos, pitchfork in pitchforks
-    tuning_frequency = pitchfork / 44100.0
-    ξ = tune_motherfrequency(spectype, nfo, tuning_frequency)
-    spec = Test1DSpec(nFilters_per_octave=nfo)
+    tuningfrequency = pitchfork / 44100.0
+    ξ = tune_motherfrequency(tuningfrequency, TestSpec, nfo)
+    spec = TestSpec(nfo, 15)
     γs = gammas(spec)
-    ωs = ξ * 2^(-γs / spec.nFilters_per_octave)
-    @test any(abs(ωs - ξ) < 1e-4)
-    max_ξ = default_motherfrequency(spec)
+    ωs = ξ * exp2(-γs / nfo)
+    @test any(abs(ωs - ξ) .< 1e-4)
+    max_ξ = default_motherfrequency(TestSpec, nfo)
     @test ξ < max_ξ
-    @test ξ * 2^(1/spec.nFilters_per_octave) > max_ξ
+    @test ξ * exp2(inv(nfo)) > max_ξ
 end
