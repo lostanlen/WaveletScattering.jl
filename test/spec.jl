@@ -86,7 +86,7 @@ scales(::UncheckedSpec) = [1e3]
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
     max_qualityfactor, max_scale, motherfrequency, 0, nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octaves, 0))
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 0))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
     max_qualityfactor, max_scale, motherfrequency, 11, nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
