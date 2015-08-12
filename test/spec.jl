@@ -9,7 +9,7 @@ import WaveletScattering: Morlet1DSpec
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
-    log2_s in (4+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(4:14); Inf]
+    log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
     machine_precision = max(1e-10, default_ɛ(T))
     spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q,
                         log2_size=log2_s, max_scale=max_s)
@@ -20,19 +20,23 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     # bandwidths
     @test_approx_eq bws ξs./qs
     # centerfrequencies
-    @test_approx_eq ξs[1] spec.mother_frequency
+    @test_approx_eq ξs[1] spec.motherfrequency
     difflogξs = diff(log2(ξs))
     @test_approx_eq difflogξs (-ones(difflogξs)/spec.nFilters_per_octave)
     @test all(ξs.>0.0)
     @test_approx_eq ξs bws.*qs
     # default_nOctaves
     siglength = 1 << log2_s
-    min_centerfrequency = min(ξs)
-    nOctaves = default_nOctaves(nOctaves, Morlet1DSpec, log2_s, max_q, max_s,
-        spec.motherfrequency, nfo)
-    nOctaves_a = floor(Int, log2(ξs[1] / min(ξs)))
+    if max_s > siglength
+        min_centerfrequency = uncertainty(Morlet1DSpec) / siglength * max_q
+    else
+        min_centerfrequency = uncertainty(Morlet1DSpec) / max_s * 1.0
+    end
+    nOctaves = default_nOctaves(nothing, Morlet1DSpec, tuple(log2_s),
+                                Float64(max_q), max_s, spec.motherfrequency, nfo)
+    nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
     nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
-    @test nOctaves = min(nOctaves_a, nOctaves_b)
+    @test nOctaves == min(nOctaves_a, nOctaves_b)
     # qualityfactors
     qs = qualityfactors(spec)
     @test all(qs.>=0.0)
@@ -44,8 +48,8 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     @test all(scs .< (exp2(spec.log2_size[1])+machine_precision))
     # uncertainty
     empirical_uncertainty = bws .* scs
-    @test all(abs(diff(empirical_uncertainty)) .< 1e-6)
-    @test_approx_eq all(abs(uncertainty(spec)-empirical_uncertainty).<1e-6)
+    @test all(abs(diff(empirical_uncertainty)) .< machine_precision)
+    @test all(abs(uncertainty(spec)-empirical_uncertainty).< machine_precision)
 end
 
 # default_ɛ
