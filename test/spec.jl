@@ -3,7 +3,7 @@ import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     bandwidths, checkspec, centerfrequencies, chromas, default_ɛ,
     default_max_qualityfactor, default_nFilters_per_octave, default_nOctaves,
     gammas, realtype, octaves, qualityfactors, scales, tune_motherfrequency
-import WaveletScattering: Morlet1DSpec
+import WaveletScattering: Morlet1DSpec, uncertainty
 
 # bandwidths, centerfrequencies, default_nOctaves, qualityfactors, scales
 numerictypes = [Float16, Float32, Float64]
