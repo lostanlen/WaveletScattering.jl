@@ -107,8 +107,8 @@ function checkspec(spec::AbstractSpec)
         "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
         "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
         "and a scale < 2^(log2_size) = ", size, ".\n",
-        """Either increase log2size, decrease max_qualityfactor,
-        set max_scale<=log2_length, or decrease nOctaves.""")
+        """Either increase log2_size, decrease max_qualityfactor,
+        set max_scale<=log2_size, or decrease nOctaves.""")
     end
     return true
 end

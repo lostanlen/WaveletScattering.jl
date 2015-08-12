@@ -97,8 +97,8 @@ scales(::UncheckedSpec) = [1e3]
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 12))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
     1.0, 1e1, motherfrequency, 1, 12))
-@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (1,),
-    1.0, max_scale, motherfrequency, 1, 12))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (9,),
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 1))
 
 # default_ɛ
 @test_approx_eq default_ɛ(Float16) 1e-3
