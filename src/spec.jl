@@ -65,14 +65,15 @@ function checkspec(spec::AbstractSpec)
         """The inequality nFilters_per_octave ≧ max_qualityfactor must be
         satisfied.""")
     end
-    if any(spec.nOctaves .>= collect(spec.log2_size))
+    log2_sizes = collect(spec.log2_size)
+    if any(spec.nOctaves .>= log2_sizes)
         error("Too many octaves.\n",
         "log2_size = ", spec.log2_size, "\n",
         "nOctaves = ", spec.nOctaves, "\n",
         """The inequality minimum(log2_size) > nOctaves must be satisfied.
         Either increase log2_size or decrease nOctaves.""")
     end
-    if any(collect(spec.log2_size)-spec.nOctaves) < 1+log2(spec.nFilters_per_octave)
+    if any(log2_sizes-spec.nOctaves < 1+log2(spec.nFilters_per_octave))
         error("Too many filters per octave for the given length.\n",
         "log2_size = ", spec.log2_size, "\n",
         "log2(nFilters_per_octave) = ", log2(spec.nFilters_per_octave), "\n",
