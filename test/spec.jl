@@ -53,6 +53,51 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     @test all(abs(uncertainty(spec)-empirical_uncertainty).< machine_precision)
 end
 
+# checkspec
+immutable UncheckedSpec
+    ɛ::Float64
+    log2_size::Tuple{Int}
+    max_qualityfactor::Float64
+    max_scale::Float64
+    motherfrequency::Float64
+    nFilters_per_octave::Int
+    nOctaves::Int
+end
+ɛ = 1e-3
+log2_size = (13,)
+max_qualityfactor = 12.0
+max_scale = 5e3
+motherfrequency = 0.45
+nFilters_per_octave = 16
+nOctaves = 8
+scales(::UncheckedSpec) = 1e3
+@test_throws ErrorException checkspec(UncheckedSpec(-0.1, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(1.0, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (1,),
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    0.9, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, 0.0, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, 0.51, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, 0, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, 11, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    16.1, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 14))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 12))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
+    max_qualityfactor, 1e2, motherfrequency, nFilters_per_octave, 12))
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (8,),
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 12))
+
 # default_ɛ
 @test_approx_eq default_ɛ(Float16) 1e-3
 @test_approx_eq default_ɛ(Float32) 1e-7
