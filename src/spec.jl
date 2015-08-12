@@ -81,6 +81,7 @@ function checkspec(spec::AbstractSpec)
         must be satisfied. Either increase log2_size, decrease nOctaves,
         or decrease nFilters_per_octave.""")
     end
+    maximumscale = max(scales(spec))
     if maximumscale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
         "max_qualityfactor = ", spec.max_qualityfactor, "\n",
@@ -91,11 +92,11 @@ function checkspec(spec::AbstractSpec)
         "and a scale < ", spec.max_scale, ".\n",
         "Either decrease max_qualityfactor or decrease max_scale.")
     end
-    if maximumscale > (2^minimum(spec.log2_size) + 1e-3)
-        min_resolution = 2^(-spec.nOctaves/spec.nFilters_per_octave)
+    if maximumscale > (2.0^minimum(spec.log2_size) + 1e-3)
+        min_resolution = 2.0^(-spec.nOctaves/spec.nFilters_per_octave)
         min_centerfrequency = spec.motherfrequency * min_resolution
         max_bandwidth = min_centerfrequency / spec.max_qualityfactor
-        size = tuple(2.^collect(spec.log2_size)...)
+        size = tuple(1 .<< collect(spec.log2_size)...)
         error("Spatial localization is coarser than signal length.\n",
         "log2_size = ", spec.log2_size,
         "max_qualityfactor = ", spec.max_qualityfactor,
