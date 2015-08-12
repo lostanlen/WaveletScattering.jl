@@ -54,7 +54,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
 end
 
 # checkspec
-immutable UncheckedSpec
+immutable UncheckedSpec <: AbstractSpec
     ɛ::Float64
     log2_size::Tuple{Int}
     max_qualityfactor::Float64
