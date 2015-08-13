@@ -60,9 +60,9 @@ function morlet1d{T<:Real}(ωs::Vector{T}, σ::T, ξ::T, N::T)
     den = σ_squared + σ_squared
     corr0 = gauss(zero(T)-ξ, den)
     corrN = gauss(N-ξ, den)
-    return @inbounds
-        [gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
-          for ω in ωs]
+    @fastmath @inbounds return [
+        gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
+        for ω in ωs]
 end
 
 """
