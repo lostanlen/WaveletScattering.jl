@@ -1,6 +1,6 @@
 using Base.Test
 import WaveletScattering: Morlet1DSpec, bandwidths, centerfrequencies,
-    default_ɛ, gauss, morlet1d, qualityfactors, scales, uncertainty
+    default_ɛ, gauss, qualityfactors, scales, uncertainty
 
 numerictypes = [Float16, Float32, Float64,
                 Complex{Float16}, Complex{Float32}, Complex{Float64}]
