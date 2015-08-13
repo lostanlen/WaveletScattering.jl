@@ -1,7 +1,7 @@
 # Bank
 abstract AbstractBank{T<:Number}
-abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T<:Number}
-abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T<:Number}
+abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
+abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
