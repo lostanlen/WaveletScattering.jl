@@ -48,6 +48,8 @@ function AbstractFourier1DFilter(y, first, last, N)
             pos = y[(2-first):(-first+N/2)]
             posfirst = 1
             an = Analytic1DFilter(pos, posfirst)
+            midpoint = y[1-first+N/2]
+            return VanishingWithMidpoint1DFilter(an, coan, midpoint)
         elseif last>N && last<(3N/2+1)
             # support is in ]-N/2;3N/2]
             # we sum ]-N/2;0[ (or a subset) with ]N/2;N[
