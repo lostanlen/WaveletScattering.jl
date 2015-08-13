@@ -39,12 +39,14 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
         elseif last>(halfN-1) && last<N
             # support is in ]-N/2;N[
             # we sum ]-N/2;0[ (or a subset) with ]N/2;N[ (or a subset)
+            # if the subsets are not overlapping, we zero-pad in between
             # we define ]0;N/2[ as the analytic part
             # the midpoint N/2 is handled separately
             neg = vcat(
-                y[(2-first+halfN):N],
-                y[(1+N):end] + y[1:(1+last-first-N)],
-                y[(2+last-first-N):(-first)])
+                y[(2-first+halfN):min(N,length(y))],
+                zeros(eltype(y), N-min(N,length(y))),
+                y[1+min(N,length(y)):end] + y[1:(1+last-first-N)],
+                y[max(1,2+last-first-N):(-first)])
             neglast = -1
             coan = Coanalytic1DFilter(neg, neglast)
             pos = y[(2-first):(-first+halfN)]
