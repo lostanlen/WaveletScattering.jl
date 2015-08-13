@@ -6,7 +6,8 @@ import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     gammas, realtype, octaves, qualityfactors, scales, tune_motherfrequency
 import WaveletScattering: Morlet1DSpec, uncertainty
 
-# bandwidths, centerfrequencies, default_nOctaves, qualityfactors, scales
+# bandwidths, centerfrequencies, default_nOctaves, qualityfactors, scales,
+# uncertainty
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
