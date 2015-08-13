@@ -11,3 +11,10 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     spec::Abstract1DSpec{T}
 end
 
+
+# Behavior
+type Behavior
+    γ_range::UnitRange
+    log2_oversampling::Int
+    min_log2_resolution::Int
+end
