@@ -55,7 +55,8 @@ signals of finite length N, the corrective term must also be applied around the
 frequency N.
 """
 function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
-    half_length = 1 << (log2_size - 1)
+    log2_length = spec.log2_size[1]
+    half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
     ξ = N * T(meta.centerfrequency)
     bw = T(meta.bandwidth)
@@ -73,7 +74,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     y = y(sub_first:sub_last)
     first = gauss_first + (sub_first-1)
     last = gauss_last - (length(y)-sub_last)
-    AbstractFourier1DFilter(y, first, last, half_length<<1)
+    AbstractFourier1DFilter(y, first, last, log2_length)
 end
 
 """
