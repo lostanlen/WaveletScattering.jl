@@ -47,6 +47,24 @@ Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω
 """
 gauss{T<:Real}(ω::T, den::T) = @fastmath exp(- ω*ω/den)
 
+
+"""Computes a one-dimensional Morlet wavelet in the Fourier domain.
+A Morlet wavelet of center frequency ξ and of variance σ looks almost like
+a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
+substract a corrective term around the zeroth frequency. Since we operate over
+signals of finite length N, the corrective term must also be applied around the
+frequency N.
+"""
+function morlet1d{T<:Real}(ωs::Vector{T}, σ::T, ξ::T, N::T)
+    σ_squared = σ * σ
+    den = σ_squared + σ_squared
+    corr0 = gauss(zero(T)-ξ, den)
+    corrN = gauss(N-ξ, den)
+    return @inbounds
+        [gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
+          for ω in ωs]
+end
+
 """
 By neglecting the low-frequency corective term, we write the Morlet wavelet as a
 Gaussian of variance σ in the Fourier domain. Its 3 dB bandwidth, defined as the
