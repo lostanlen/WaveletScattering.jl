@@ -56,7 +56,7 @@ end
 # morlet1d
 N = 1024.0
 σ = 10.0
-ωs = collect(0.0:1.0:N)
+ωs = 0.0:1.0:N
 for ξ in 0.4*exp2(2:9)
     ψ = morlet1d(ωs, σ, ξ, N)
     @test all(ψ .>= 0.0)
