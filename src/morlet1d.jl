@@ -55,7 +55,7 @@ substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
 frequency N.
 """
-function morlet1d{T<:Real}(ωs::Vector{T}, σ::T, ξ::T, N::T)
+function morlet1d{T<:Real}(ωs::FloatRange{T}, σ::T, ξ::T, N::T)
     σ_squared = σ * σ
     den = σ_squared + σ_squared
     corr0 = gauss(zero(T)-ξ, den)
