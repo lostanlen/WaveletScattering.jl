@@ -43,7 +43,7 @@ for nfo in nfos
 end
 
 # gauss
-@test_approx_eq gauss(1.0, 0.0) == 1.0
+@test_approx_eq gauss(0.0, 1.0) 1.0
 for ω in 1.0:10.0
     for den in logspace(0, 3, 4)
         g = gauss(ω, den)
