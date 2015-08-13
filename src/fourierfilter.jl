@@ -24,6 +24,7 @@ end
 
 function AbstractFourier1DFilter(y, first, last, log2_length)
     N = 1 << log2_length
+    halfN = N >> 1
     if first>(-halfN) && first<0
         if last>0 && last<(halfN)
             # support is in ]-N/2;N/2[
