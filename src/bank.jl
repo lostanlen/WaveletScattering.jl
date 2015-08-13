@@ -19,11 +19,11 @@ bank, without having to recompute the underlying architecture. Fields:
 Default is all of them (see outer constructor).
 
 * log2_oversampling: base-2 logarithm of the oversampling factor with respect
-to the critical sampling rate 2^(-j+1). Must be positive.
+to the critical sampling rate 2^(-j-1). Must be positive.
 Default is 0, i.e. no oversampling.
 
 * min_log2_resolution : base-2 logarithm of the minimal undersampling factor.
-Default is (-J-1), i.e. it has no effect. Set min_log2_resolution to 0 to avoid
+Default is (-J+1), i.e. it has no effect. Set min_log2_resolution to 0 to avoid
 any undersampling."""
 type Behavior
     γ_range::UnitRange
@@ -31,8 +31,8 @@ type Behavior
     min_log2_resolution::Int
 end
 function Behavior(js::Vector{Int8})
-    γ_range = 1:length(js)
+    γ_range = 0:(length(js)-1)
     log2_oversampling = 0
-    min_log2_resolution = -js[end] - 1
+    min_log2_resolution = -js[end] + 1
     Behavior(γ_range, log2_oversampling, min_log2_resolution)
 end
