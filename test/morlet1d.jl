@@ -52,3 +52,14 @@ for ω in 1.0:10.0
         @test_approx_eq sqrt(-log(g) * den) ω
     end
 end
+
+# morlet1d
+N = 1024.0
+σ = 10.0
+ωs = collect(0.0:1.0:N)
+for ξ in 0.4*exp2(2:9)
+    ψ = morlet1d(ωs, σ, ξ, N)
+    @test all(ψ .>= 0.0)
+    @test_approx_eq ψ[1] 0.0
+    @test_approx_eq ψ[end] 0.0
+end
