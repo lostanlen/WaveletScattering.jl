@@ -18,7 +18,7 @@ centerfrequencies(spec::AbstractSpec) =
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
 
-* The truncation threshold `ɛ`` must be in [0.0, 1.0[.
+* The truncation threshold `ɛ` must be in [0.0, 1.0[.
 
 * The signal length must be a finite power of two above 4.
 
@@ -179,9 +179,8 @@ proportional to 2^(-γ). γ ranges from 0 to nFilters_per_octave*nOctaves, where
 `γs` mean *lower* center frequencies. Log-periods γs`, chromas ``χs`, and
 octaves `js` are linked by
     γ = j + nFilters_per_octave * χ"""
-function gammas(spec::AbstractSpec)
+gammas(spec::AbstractSpec) =
     collect(0:(spec.nFilters_per_octave * spec.nOctaves-1))
-end
 
 """Returns the octave indices js of a wavelet spec.
 Octave indices range from `0` to `nOctaves-1`. The convention is that
