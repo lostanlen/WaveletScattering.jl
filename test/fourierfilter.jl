@@ -1,4 +1,5 @@
 using Base.Test
+import WaveletScattering: AbstractFourier1DFilter, Vanishing1DFilter
 
 N = 8
 first = -1
