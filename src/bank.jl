@@ -5,7 +5,7 @@ abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
-    ϕs::FourierSymmetric1DFilter{T}
+    ϕs::Symmetric1DFilter{T}
     behavior::Behavior
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
