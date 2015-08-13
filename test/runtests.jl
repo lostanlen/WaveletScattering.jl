@@ -4,6 +4,9 @@ using DataStructures
 
 tests = [
     "spec",
+    "meta",
+    "filter",
+    "fourierfilter",
     "bank",
     "morlet1d",
     "variables"
