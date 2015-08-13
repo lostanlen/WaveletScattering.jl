@@ -7,5 +7,5 @@ last = 3
 y = 1 .<< collect(0:(last-first))
 ψ = AbstractFourier1DFilter(y, first, last, N)
 @test isa(ψ, Vanishing1DFilter)
-@test ψ.an = [1]
-@test ψ.coan = [4,8,16]
+@test ψ.an == [1]
+@test ψ.coan == [4,8,16]
