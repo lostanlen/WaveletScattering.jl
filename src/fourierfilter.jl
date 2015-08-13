@@ -12,7 +12,7 @@ immutable Coanalytic1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
 end
 
 immutable Vanishing1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
-    an::Analytic1D{T}
-    coan::Coanalytic1D{T}
+    an::Analytic1DFilter{T}
+    coan::Coanalytic1DFilter{T}
     midpoint::T
 end
