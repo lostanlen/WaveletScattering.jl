@@ -47,7 +47,6 @@ Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω
 """
 gauss{T<:Real}(ω::T, den::T) = @fastmath exp(- ω*ω/den)
 
-
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
 A Morlet wavelet of center frequency ξ and of variance σ looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
@@ -55,14 +54,26 @@ substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
 frequency N.
 """
-function morlet1d{T<:Real}(ωs::FloatRange{T}, σ::T, ξ::T, N::T)
-    σ_squared = σ * σ
-    den = σ_squared + σ_squared
-    corr0 = gauss(zero(T)-ξ, den)
+function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
+    half_length = 1 << (log2_size - 1)
+    N = T(half_length << 1)
+    ξ = N * T(meta.centerfrequency)
+    bw = T(meta.bandwidth)
+    den = @fastmath bw * bw / T(4.0 * log(2.0))
+    corr0 = gauss(zero(spec.signaltype)-ξ, den)
     corrN = gauss(N-ξ, den)
-    @fastmath @inbounds return [
+    σ_factor = @fastmath T(0.5 * sqrt(log(2.0/spec.ɛ)))
+    gauss_first = max(floor(Int, ξ-σ_factor*σ), -half_length+1)
+    gauss_last = min(ceil(Int, ξ+σ_factor*σ), 3*half_length)
+    y = @fastmath @inbounds [
         gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
-        for ω in ωs]
+        for ω in gauss_first:gauss_last]
+    sub_first = findfirst(y > spec.ɛ)
+    sub_last = findlast(y > spec.ɛ)
+    y = y(sub_first:sub_last)
+    first = gauss_first + (sub_first-1)
+    last = gauss_last - (length(y)-sub_last)
+    AbstractFourier1DFilter(y, first, last, half_length<<1)
 end
 
 """
