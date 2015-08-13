@@ -52,3 +52,5 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
+FourierNonOriented1DBank(spec::Abstract1DSpec) =
+    FourierNonOriented1DBank{spec.signaltype}(spec)
