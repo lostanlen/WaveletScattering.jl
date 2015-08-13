@@ -1,16 +1,3 @@
-# Bank
-abstract AbstractBank{T<:Number}
-abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
-abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
-
-immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
-    ψs::Vector{AbstractFourier1DFilter{T}}
-    ϕs::Symmetric1DFilter{T}
-    behavior::Behavior
-    metas::Vector{NonOrientedMeta}
-    spec::Abstract1DSpec{T}
-end
-
 """A `Behavior` object contains the mutable information in a filter bank. The
 values of these fields may be changed *after* the construction of the filter
 bank, without having to recompute the underlying architecture. Fields:
@@ -35,4 +22,17 @@ function Behavior(js::Vector{Int8})
     log2_oversampling = 0
     min_log2_resolution = -js[end] + 1
     Behavior(γ_range, log2_oversampling, min_log2_resolution)
+end
+
+# Bank
+abstract AbstractBank{T<:Number}
+abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
+abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
+
+immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
+    ψs::Vector{AbstractFourier1DFilter{T}}
+    ϕs::Symmetric1DFilter{T}
+    behavior::Behavior
+    metas::Vector{NonOrientedMeta}
+    spec::Abstract1DSpec{T}
 end
