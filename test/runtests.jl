@@ -4,6 +4,7 @@ using DataStructures
 
 tests = [
     "spec",
+    "bank",
     "morlet1d",
     "variables"
 ]
