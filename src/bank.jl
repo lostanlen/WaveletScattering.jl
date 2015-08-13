@@ -31,8 +31,24 @@ abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
-    ϕs::Symmetric1DFilter{T}
+    ϕ::Symmetric1DFilter{T}
     behavior::Behavior
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
+    function call{T<:Number}(::Type{FourierNonOriented1DBank{T}},
+      spec::Abstract1DSpec)
+        T == spec.signaltype || error("")
+        γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+        ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+        scs, bws = scales(spec), bandwidths(spec)
+        metas = @inbounds [
+            NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+            for i in eachindex(γs)]
+        ψs = @inbounds [fourierwavelet(meta, spec) for meta in metas]
+        lp = littlewoodpaleysum(ψs)
+        renormalize!(ψs, lp, spec)
+        ϕ = scalingfunction(lp)
+        behavior = Behavior(js)
+        new{T}(ψs, ϕ, behavior, metas, spec)
+    end
 end
