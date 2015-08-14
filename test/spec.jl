@@ -4,7 +4,7 @@ import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     checkspec, default_ɛ, default_max_qualityfactor, default_motherfrequency,
     default_nFilters_per_octave, default_nOctaves, tune_motherfrequency
 # meta.jl
-import WaveletScattering: gammas
+import WaveletScattering: centerfrequencies, gammas
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, uncertainty
 
@@ -23,6 +23,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     end
     nOctaves = default_nOctaves(nothing, Morlet1DSpec, tuple(log2_s),
                                 Float64(max_q), max_s, spec.motherfrequency, nfo)
+    ξs = centerfrequencies(spec)
     nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
     nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
     @test nOctaves == min(nOctaves_a, nOctaves_b)
