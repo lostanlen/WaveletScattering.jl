@@ -1,6 +1,6 @@
 using Base.Test
-import WaveletScattering: AbstractFourier1DFilter, Vanishing1DFilter,
-    VanishingWithMidpoint1DFilter
+import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
+    Vanishing1DFilter, VanishingWithMidpoint1DFilter
 
 function test_periodize(y, first, last, log2_length)
     N = 1 << log2_length
