@@ -77,7 +77,7 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
             return VanishingWithMidpoint1DFilter(an, coan, midpoint)
         end
     elseif first>0 && first<(halfN)
-        if last<0 && last<(halfN)
+        if last>0 && last<(halfN)
             # support is in ]0;N/2[
             # we just define y as the analytic part
             pos = y
