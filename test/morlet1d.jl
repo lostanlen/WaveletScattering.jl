@@ -42,6 +42,16 @@ for nfo in nfos
     end
 end
 
+# fourierwavelet
+spec = Morlet1DSpec()
+γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+scs, bws = scales(spec), bandwidths(spec)
+@inbounds metas =
+    [NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+    for i in eachindex(γs)]
+ψs = @inbounds [fourierwavelet(meta, spec) for meta in metas]
+
 # gauss
 @test_approx_eq gauss(0.0, 1.0) 1.0
 for ω in 1.0:10.0
