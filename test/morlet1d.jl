@@ -1,7 +1,11 @@
 using Base.Test
-import WaveletScattering: Morlet1DSpec, gauss
+# morlet1d.jl
+import WaveletScattering: Morlet1DSpec, default_motherfreqency,
+    fourierwavelet, gauss
+# spec.jl
 import WaveletScattering: bandwidths, centerfrequencies,
     default_ɛ, gauss, qualityfactors, scales, uncertainty
+# meta.jl
 import WaveletScattering: NonOrientedMeta
 
 numerictypes = [Float16, Float32, Float64,
