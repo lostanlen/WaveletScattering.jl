@@ -100,10 +100,11 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
             # we sum ]0;N/2[ (or a subset) with ]N;N/2[ (or a subset)
             # we define ]N/2;N[ as the coanalytic part
             # the midpoint N/2 is handled separately
+            m = min(N, length(y))
             pos = vcat(
-                y[(2+N-first):N],
-                y[1:(halfN-first)]+y[(1+N):(3halfN-first)],
-                y[3halfN-first+1:end])
+                y[(2+N-first):m],
+                y[(1+m-N):(1-first+last-N)] + y[(1+m):(1-first+last)],
+                y[(2-first+last):end])
             posfirst = 1
             an = Analytic1DFilter(pos, posfirst)
             neg = y[(2+halfN-first):(N-first)]
