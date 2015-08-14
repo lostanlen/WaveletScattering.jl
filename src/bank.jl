@@ -44,7 +44,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         @inbounds metas = [
             NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
             for i in eachindex(γs)]
-        ψs = @inbounds [fourierwavelet(meta, spec) for meta in metas]
+        @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
         lp = littlewoodpaleysum(ψs)
         renormalize!(ψs, lp, spec)
         ϕ = scalingfunction(lp)
