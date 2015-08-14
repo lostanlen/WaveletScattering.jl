@@ -99,6 +99,10 @@ type WhateverType end
 @test default_nOctaves(5, WhateverType) == 5
 
 # tune_motherfrequency
+immutable TestSpec <: AbstractSpec
+    nFilters_per_octave::Int
+    nOctaves::Int
+end
 nfos = [1, 2, 4, 8, 12, 16, 24]
 pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
 for nfo in nfos, pitchfork in pitchforks
