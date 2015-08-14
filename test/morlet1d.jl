@@ -1,6 +1,8 @@
 using Base.Test
-import WaveletScattering: Morlet1DSpec, bandwidths, centerfrequencies,
+import WaveletScattering: Morlet1DSpec, gauss
+import WaveletScattering: bandwidths, centerfrequencies,
     default_ɛ, gauss, qualityfactors, scales, uncertainty
+import WaveletScattering: NonOrientedMeta
 
 numerictypes = [Float16, Float32, Float64,
                 Complex{Float16}, Complex{Float32}, Complex{Float64}]
