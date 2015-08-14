@@ -153,12 +153,6 @@ function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
     return min(nOctaves_a, nOctaves_b)
 end
 
-"""Returns the type parameter of a complex type.
-For example, `realtype(Complex{Float32})` returns `Float32`.
-For numeric real types, e.g. `Float32`, it is a no-op."""
-realtype{T<:Real}(::Type{T}) = T
-realtype{T<:Real}(::Type{Complex{T}}) = T
-
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
 tuning frequency.

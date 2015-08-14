@@ -123,13 +123,6 @@ scales(::UncheckedSpec) = [1e3]
 type WhateverType end
 @test default_nOctaves(5, WhateverType) == 5
 
-# realtype
-@test realtype(Float32) == Float32
-@test realtype(Float64) == Float64
-@test realtype(Complex{Float32}) == Float32
-@test realtype(Complex{Float64}) == Float64
-@test_throws MethodError realtype(ASCIIString)
-
 # gammas, chromas, octaves
 immutable TestSpec <: AbstractSpec
     nFilters_per_octave::Int
