@@ -2,7 +2,7 @@ using Base.Test
 # spec.jl
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
     checkspec, default_ɛ, default_max_qualityfactor, default_motherfrequency,
-    default_nFilters_per_octave, default_nOctaves, tune_motherfrequency
+    default_nFilters_per_octave, default_nOctaves, scales, tune_motherfrequency
 # meta.jl
 import WaveletScattering: centerfrequencies, gammas
 # morlet1d.jl
