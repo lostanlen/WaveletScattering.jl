@@ -63,21 +63,26 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     corr0 = gauss(zero(spec.signaltype)-ξ, den)
     corrN = gauss(N-ξ, den)
-    bw_factor = @fastmath T(0.5 * sqrt(- log2(spec.ɛ)))
-    gauss_first = max(floor(Int, ξ-bw_factor*bw), -half_length+1)
-    gauss_last = min(ceil(Int, ξ+bw_factor*bw), 3*half_length)
+    if spec.ɛ == 0.0
+        gauss_first = -half_length + 1
+        gauss_last = 3 * half_length
+    else
+        bw_factor = @fastmath T(0.5 * sqrt(- log2(spec.ɛ)))
+        gauss_first = max(floor(Int, ξ-bw_factor*bw), -half_length+1)
+        gauss_last = min(ceil(Int, ξ+bw_factor*bw), 3*half_length)
+    end
     ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
-    @fastmath @inbounds y = T[
+    @fastmath @inbounds morlet = T[
         gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
         for ω in ωs]
-    ɛ_squared = T(spec.ɛ) * T(spec.ɛ)
-    abs2y = abs2(y)
-    sub_first = findfirst(abs2y .> ɛ_squared)
-    sub_last = findlast(abs2y .> ɛ_squared)
-    y = y[sub_first:sub_last]
+    ɛ_squared = T(spec.ɛ * spec.ɛ)
+    energy_squared = abs2(morlet)
+    sub_first = findfirst(energy_squared .> ɛ_squared)
+    sub_last = findlast(energy_squared .> ɛ_squared)
+    morlet = morlet[sub_first:sub_last]
     first = gauss_first + (sub_first-1)
     last = gauss_last - (length(y)-sub_last)
-    AbstractFourier1DFilter(y, first, last, log2_length)
+    AbstractFourier1DFilter(morlet, first, last, log2_length)
 end
 
 """
