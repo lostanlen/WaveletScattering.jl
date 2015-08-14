@@ -1,6 +1,6 @@
 using Base.Test
 # morlet1d.jl
-import WaveletScattering: Morlet1DSpec, default_motherfreqency,
+import WaveletScattering: Morlet1DSpec, default_motherfrequency,
     fourierwavelet, gauss
 # spec.jl
 import WaveletScattering: bandwidths, centerfrequencies,
