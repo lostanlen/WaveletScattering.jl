@@ -43,14 +43,22 @@ for nfo in nfos
 end
 
 # fourierwavelet
-spec = Morlet1DSpec()
+spec = Morlet1DSpec(nFilters_per_octave = 16)
 γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
 ξs, qs = centerfrequencies(spec), qualityfactors(spec)
 scs, bws = scales(spec), bandwidths(spec)
-@inbounds metas =
-    [NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-    for i in eachindex(γs)]
-ψs = @inbounds [fourierwavelet(meta, spec) for meta in metas]
+metas = [NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+         for i in eachindex(γs)]
+for meta in metas
+    ψ = fourierwavelet(meta, spec)
+    if isa(ψ, Analytic1DFilter)
+        @test all(abs(ψ.pos) .> spec.ɛ)
+    elseif isa(ψ, VanishingWithMidpoint1DFilter)
+        @test all(abs(ψ.an.pos) .> spec.ɛ)
+        @test all(abs(ψ.coan.neg) .> spec.ɛ)
+        @test abs(ψ.midpoint) > spec.ɛ
+    end
+end
 
 # gauss
 @test_approx_eq gauss(0.0, 1.0) 1.0
@@ -62,14 +70,3 @@ for ω in 1.0:10.0
         @test_approx_eq sqrt(-log(g) * den) ω
     end
 end
-
-# morlet1d
-# N = 1024.0
-# σ = 10.0
-# ωs = 0.0:1.0:N
-# for ξ in 0.4*exp2(2:9)
-#     ψ = morlet1d(ωs, σ, ξ, N)
-#     @test all(ψ .>= 0.0)
-#     @test_approx_eq ψ[1] 0.0
-#     @test_approx_eq ψ[end] 0.0
-# end
