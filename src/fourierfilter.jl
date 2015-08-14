@@ -130,3 +130,12 @@ Base.(:.*){T}(ψ::Vanishing1DFilter, x::Number) =
     VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
+
+# renormalize!
+function renormalize!(ψs, lp, spec::AbstractSpec1D)
+    siglength = 1 .<< log2_size[1]
+    multiplier = inv(lp)
+    @inbounds for λ in eachindex(ψs)
+        ψs[λ] = ψs[λ] .* multiplier
+    end
+end
