@@ -120,3 +120,13 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
         end
     end
 end
+
+# element-wise product .*
+Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Number) =
+    Analytic1DFilter{T}(ψ.pos .* x, ψ.posfirst)
+Base.(:.*){T}(ψ::Coanalytic1DFilter, x::Number) =
+    Coanalytic1DFilter{T}(ψ.neg .* x, ψ.neglast)
+Base.(:.*){T}(ψ::Vanishing1DFilter, x::Number) =
+    VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
+Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter, x::Number) =
+    VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
