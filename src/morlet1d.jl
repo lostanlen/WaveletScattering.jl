@@ -59,19 +59,22 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
     ξ = N * T(meta.centerfrequency)
-    bw = T(meta.bandwidth)
+    bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(4.0 * log(2.0))
     corr0 = gauss(zero(spec.signaltype)-ξ, den)
     corrN = gauss(N-ξ, den)
-    σ_factor = @fastmath T(0.5 * sqrt(log(2.0/spec.ɛ)))
-    gauss_first = max(floor(Int, ξ-σ_factor*σ), -half_length+1)
-    gauss_last = min(ceil(Int, ξ+σ_factor*σ), 3*half_length)
-    y = @fastmath @inbounds [
+    bw_factor = @fastmath T(0.5 * sqrt(log(2.0/spec.ɛ)))
+    gauss_first = max(floor(Int, ξ-bw_factor*bw), -half_length+1)
+    gauss_last = min(ceil(Int, ξ+bw_factor*bw), 3*half_length)
+    ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
+    @fastmath @inbounds y = T[
         gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
-        for ω in gauss_first:gauss_last]
-    sub_first = findfirst(y > spec.ɛ)
-    sub_last = findlast(y > spec.ɛ)
-    y = y(sub_first:sub_last)
+        for ω in ωs]
+    ɛ_squared = T(spec.ɛ) * T(spec.ɛ)
+    abs2y = abs2(y)
+    sub_first = findfirst(abs2y .> ɛ_squared)
+    sub_last = findlast(abs2y .> ɛ_squared)
+    y = y[sub_first:sub_last]
     first = gauss_first + (sub_first-1)
     last = gauss_last - (length(y)-sub_last)
     AbstractFourier1DFilter(y, first, last, log2_length)
