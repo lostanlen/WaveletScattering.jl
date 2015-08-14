@@ -41,7 +41,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
         ξs, qs = centerfrequencies(spec), qualityfactors(spec)
         scs, bws = scales(spec), bandwidths(spec)
-        metas = @inbounds [
+        @inbounds metas = [
             NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
             for i in eachindex(γs)]
         ψs = @inbounds [fourierwavelet(meta, spec) for meta in metas]
