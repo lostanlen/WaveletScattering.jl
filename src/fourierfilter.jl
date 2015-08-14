@@ -104,7 +104,7 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
             pos = vcat(
                 y[(2+N-first):m],
                 y[(1+m-N):(1-first+last-N)] + y[(1+m):(1-first+last)],
-                zeros(Int, first+N-last-1),
+                zeros(Int, max(first+N-last-1,0)),
                 y[max(1,2-first+last-N):(halfN-first)])
             posfirst = 1
             an = Analytic1DFilter(pos, posfirst)
