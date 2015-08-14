@@ -73,10 +73,21 @@ periodized_y[1 + end >> 1] = ψ.midpoint
 @test periodized_y == test_periodize(y, first, last, log2_length)
 
 first = 2
-last = 4
+last = 3
 y = 1 .<< collect(0:(last-first))
 ψ = AbstractFourier1DFilter(y, first, last, log2_length)
 @test isa(ψ, Analytic1DFilter)
 periodized_y = zeros(Int, N)
 periodized_y[ψ.posfirst + (1:length(ψ.pos))] = ψ.pos
+@test periodized_y == test_periodize(y, first, last, log2_length)
+
+first = 2
+last = 15
+y = 1 .<< collect(0:(last-first))
+ψ = AbstractFourier1DFilter(y, first, last, log2_length)
+@test isa(ψ, VanishingWithMidpoint1DFilter)
+periodized_y = zeros(Int, N)
+periodized_y[ψ.an.posfirst + (1:length(ψ.an.pos))] = ψ.an.pos
+periodized_y[(N+ψ.coan.neglast+2) + ((-length(ψ.coan.neg)):(-1))] = ψ.coan.neg
+periodized_y[1 + end >> 1] = ψ.midpoint
 @test periodized_y == test_periodize(y, first, last, log2_length)
