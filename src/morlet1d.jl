@@ -81,7 +81,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     sub_last = findlast(energy_squared .> ɛ_squared)
     morlet = morlet[sub_first:sub_last]
     first = gauss_first + (sub_first-1)
-    last = gauss_last - (length(y)-sub_last)
+    last = gauss_last - (length(morlet)-sub_last)
     AbstractFourier1DFilter(morlet, first, last, log2_length)
 end
 
