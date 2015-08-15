@@ -133,7 +133,7 @@ function Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
     Coanalytic1DFilter{T}(ψ.neg .* x[x_range], ψ.neglast)
 end
 Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
-    VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
+    Vanishing1DFilter{T}(ψ.an .* x, ψ.coan .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
