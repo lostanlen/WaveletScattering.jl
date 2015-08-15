@@ -172,6 +172,13 @@ function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}})
     end
 end
 
+
+"""Returns the type parameter of a complex type.
+For example, `realtype(Complex{Float32})` returns `Float32`.
+For numeric real types, e.g. `Float32`, it is a no-op."""
+realtype{T<:Real}(::Type{T}) = T
+realtype{T<:Real}(::Type{Complex{T}}) = T
+
 # renormalize!
 function renormalize!(ψs, lp, metas, spec::Abstract1DSpec)
     siglength = 1 .<< log2_size[1]

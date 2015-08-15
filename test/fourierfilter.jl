@@ -133,3 +133,10 @@ x = 2.0
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test ψout.pos == Float32[0.2, 0.6, 0.8]
+
+# realtype
+@test realtype(Float32) == Float32
+@test realtype(Float64) == Float64
+@test realtype(Complex{Float32}) == Float32
+@test realtype(Complex{Float64}) == Float64
+@test_throws MethodError realtype(ASCIIString)
