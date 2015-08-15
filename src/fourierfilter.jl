@@ -165,12 +165,8 @@ end
 # littlewoodpaleysum
 function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}})
     lp = zeros(realtype(T), 1 .<< log2_size[1])
-    for λ in eachindex(ψs)
-        littlewoodpaleyadd!(lp, ψs[λ])
-    end
-    for ω in eachindex(lp)
-        lp[ω] = sqrt(lp[ω])
-    end
+    for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
+    for ω in eachindex(lp); lp[ω] = sqrt(lp[ω]); end
 end
 
 
