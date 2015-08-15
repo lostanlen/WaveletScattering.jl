@@ -148,8 +148,8 @@ function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
     offset = length(lp) + 1 - length(ψ)
-    @inbounds for ω in eachindex(ψ.coan)
-        @fastmath lp[offset+ω] += abs2(ψ.coan[ω])
+    @inbounds for ω in eachindex(ψ.neg)
+        @fastmath lp[offset+ω] += abs2(ψ.neg[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
