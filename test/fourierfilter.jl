@@ -217,6 +217,15 @@ littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
 @test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
+# littlewoodpaleyad!(lp::Vector, ψ::Vanishing1DFilter)
+lp = zeros(Float32, 8)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+ψ = Vanishing1DFilter(an, coan)
+littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
+allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
+@test allocatedmemory == 0
+@test_approx_eq lp [0.0, 0.0, 0.03, 0.27, 0.0, 0.04, 0.36, 0.64]
 
 # realtype
 @test realtype(Float32) == Float32
