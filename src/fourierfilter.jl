@@ -124,12 +124,20 @@ end
 # element-wise product .*
 Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Number) =
     Analytic1DFilter{T}(ψ.pos .* x, ψ.posfirst)
+Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Vector) =
+    Analytic1DFilter{T}(ψ.pos .* x[ψ.posfirst+(1:length(ψ.pos))], ψ.posfirst)
 Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
     Coanalytic1DFilter{T}(ψ.neg .* x, ψ.neglast)
-Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Number) =
+function Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
+    x_range = length(x) + ψ.neglast + 1 + ((-length(ψ.an)+1):0)
+    Coanalytic1DFilter{T}(ψ.neg .* x[x_range], ψ.neglast)
+end
+Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
     VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
+Base.(:.*){T}(ψ::VanishingWithMipoint1DFilter{T}, x::Vector) =
+    VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x[end>>1])
 
 # renormalize!
 function renormalize!(ψs, lp, spec::Abstract1DSpec)
