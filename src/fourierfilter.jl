@@ -140,7 +140,8 @@ Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x,
                                      ψ.midpoint .* x[1 + end>>1])
 
-# littlewoodpaleyadd!
+"""Adds the squared magnitude of a Fourier-domain wavelet ψ to an accumulator.
+These methods are called iteratively by littlewoodpaleysum"""
 function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
     @inbounds for ω in eachindex(ψ.pos)
         @fastmath lp[ψ.posfirst+ω] += abs2(ψ.pos[ω])
