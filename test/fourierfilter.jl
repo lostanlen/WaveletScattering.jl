@@ -183,8 +183,8 @@ midpoint = Float32(0.5)
 x = 2.0
 ψout = ψin .* x
 @test isa(ψout, VanishingWithMidpoint1DFilter{Float32})
-@test ψout.an.posfirst = ψin.an.posfirst
-@test ψout.coan.neglast = ψin.coan.neglast
+@test ψout.an.posfirst == ψin.an.posfirst
+@test ψout.coan.neglast == ψin.coan.neglast
 @test_approx_eq ψout.an.pos Float32[0.2, 0.6]
 @test_approx_eq ψout.coan.neg Float32[0.2, 0.4]
 @test_approx_eq ψout.midpoint Float32(1.0)
