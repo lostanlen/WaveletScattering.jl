@@ -2,6 +2,7 @@ using Base.Test
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Vanishing1DFilter, VanishingWithMidpoint1DFilter
 
+# constructors
 function test_periodize(y, first, last, log2_length)
     N = 1 << log2_length
     output = zeros(Int, N)
@@ -124,3 +125,11 @@ periodized_y[ψ.an.posfirst + (1:length(ψ.an.pos))] = ψ.an.pos
 periodized_y[(N+ψ.coan.neglast+2) + ((-length(ψ.coan.neg)):(-1))] = ψ.coan.neg
 periodized_y[1 + end >> 1] = ψ.midpoint
 @test periodized_y == test_periodize(y, first, last, log2_length)
+
+# element-wise product .*
+x = 2.0
+ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 5)
+ψout = ψin .* x
+@test ψout.posfirst == ψin.posfirst
+@test isa(ψout.pos, Float32)
+@test ψout.pos = [0.2, 0.6, 0.8]
