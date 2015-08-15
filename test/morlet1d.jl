@@ -77,12 +77,12 @@ for meta in metas
     ψ = fourierwavelet(meta, spec)
     if isa(ψ, Analytic1DFilter)
         @test length(ψ.pos) == (halfN - 1)
-        @test ψ.posfirst = 1
+        @test ψ.posfirst == 1
     elseif isa(ψ, VanishingWithMidpoint1DFilter)
         @test length(ψ.an.pos) == (halfN - 1)
-        @test ψ.an.posfirst = 1
+        @test ψ.an.posfirst == 1
         @test length(ψ.coan.neg) == (halfN - 1)
-        @test ψ.coan.neglast = -1
+        @test ψ.coan.neglast == -1
     end
 end
 
