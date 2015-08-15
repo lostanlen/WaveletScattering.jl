@@ -188,7 +188,19 @@ x = 2.0
 @test_approx_eq ψout.an.pos Float32[0.2, 0.6]
 @test_approx_eq ψout.coan.neg Float32[0.2, 0.4]
 @test_approx_eq ψout.midpoint Float32(1.0)
-
+# Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector)
+an = Analytic1DFilter{Float32}(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2], -2)
+midpoint = Float32(0.5)
+ψin = VanishingWithMidpoint1DFilter(an, coan, midpoint)
+x = collect(0.1:0.1:0.8)
+ψout = ψin .* x
+@test isa(ψout, VanishingWithMidpoint1DFilter{Float32})
+@test ψout.an.posfirst == ψin.an.posfirst
+@test ψout.coan.neglast == ψin.coan.neglast
+@test_approx_eq ψout.an.pos Float32[0.03, 0.12]
+@test_approx_eq ψout.coan.neg Float32[0.06, 0.14]
+@test_approx_eq ψout.midpoint Float32(0.20)
 
 # realtype
 @test realtype(Float32) == Float32
