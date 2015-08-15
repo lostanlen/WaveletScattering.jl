@@ -131,5 +131,5 @@ x = 2.0
 ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 5)
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
-@test isa(ψout.pos, Float32)
+@test isa(ψout.pos, Vector{Float32})
 @test ψout.pos = [0.2, 0.6, 0.8]
