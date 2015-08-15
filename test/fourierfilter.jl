@@ -200,7 +200,7 @@ x = collect(0.1:0.1:0.8)
 @test ψout.coan.neglast == ψin.coan.neglast
 @test_approx_eq ψout.an.pos Float32[0.03, 0.12]
 @test_approx_eq ψout.coan.neg Float32[0.06, 0.14]
-@test_approx_eq ψout.midpoint Float32(0.20)
+@test_approx_eq ψout.midpoint Float32(0.25)
 
 # realtype
 @test realtype(Float32) == Float32
