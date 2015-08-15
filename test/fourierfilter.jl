@@ -130,36 +130,36 @@ periodized_y[1 + end >> 1] = ψ.midpoint
 
 # element-wise product .*
 # Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Number)
-ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
+ψin = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
 x = 2.0
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test_approx_eq ψout.pos Float32[0.2, 0.6, 0.8]
 # Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Vector)
-ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
+ψin = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
 x = collect(0.1:0.1:1.6)
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test_approx_eq ψout.pos Float32[0.03, 0.12, 0.20]
 # Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number)
-ψin = Coanalytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], -2)
+ψin = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
 x = 2.0
 ψout = ψin .* x
 @test ψout.neglast == ψin.neglast
 @test isa(ψout.neg, Vector{Float32})
 @test ψout.neg == Float32[0.2, 0.6, 0.8]
 # Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
-ψin = Coanalytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], -2)
+ψin = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
 x = collect(0.1:0.1:1.6)
 ψout = ψin .* x
 @test ψout.neglast == ψin.neglast
 @test isa(ψout.neg, Vector{Float32})
 @test_approx_eq ψout.neg Float32[0.13, 0.42, 0.60]
 # Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Number)
-an = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
-coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2, 0.3], -2)
+an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.2, 0.3], -2)
 ψin = Vanishing1DFilter(an, coan)
 x = 2.0
 ψout = ψin .* x
@@ -167,8 +167,8 @@ x = 2.0
 @test_approx_eq ψout.an.pos Float32[0.2, 0.6, 0.8]
 @test_approx_eq ψout.coan.neg Float32[0.2, 0.4, 0.6]
 # Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Vector)
-an = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
-coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2, 0.3], -2)
+an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.2, 0.3], -2)
 ψin = Vanishing1DFilter(an, coan)
 x = collect(0.1:0.1:1.6)
 ψout = ψin .* x
@@ -176,8 +176,8 @@ x = collect(0.1:0.1:1.6)
 @test_approx_eq ψout.an.pos Float32[0.03, 0.12, 0.20]
 @test_approx_eq ψout.coan.neg Float32[0.13, 0.28, 0.45]
 # Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number)
-an = Analytic1DFilter{Float32}(Float32[0.1, 0.3], 2)
-coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2], -2)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.2], -2)
 midpoint = Float32(0.5)
 ψin = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 x = 2.0
@@ -189,8 +189,8 @@ x = 2.0
 @test_approx_eq ψout.coan.neg Float32[0.2, 0.4]
 @test_approx_eq ψout.midpoint Float32(1.0)
 # Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector)
-an = Analytic1DFilter{Float32}(Float32[0.1, 0.3], 2)
-coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2], -2)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.2], -2)
 midpoint = Float32(0.5)
 ψin = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 x = collect(0.1:0.1:0.8)
