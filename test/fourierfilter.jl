@@ -128,17 +128,27 @@ periodized_y[1 + end >> 1] = ψ.midpoint
 @test periodized_y == test_periodize(y, first, last, log2_length)
 
 # element-wise product .*
+# Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Number)
+ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
 x = 2.0
-ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 5)
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test ψout.pos == Float32[0.2, 0.6, 0.8]
+# Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Vector)
+ψin = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
 x = collect(0.1:0.1:1.6)
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
-@test_approx_eq ψout.pos Float32[0.06, 0.21, 0.32]
+@test_approx_eq ψout.pos Float32[0.03, 0.12, 0.20]
+# Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number)
+ψin = Coanalytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], -2)
+x = 2.0
+ψout = ψin .* x
+@test ψout.neglast == ψin.neglast
+@test isa(ψout.neg, Vector{Float32})
+@test ψout.neg == Float32[0.2, 0.6, 0.8]
 
 # realtype
 @test realtype(Float32) == Float32
