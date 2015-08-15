@@ -132,4 +132,4 @@ x = 2.0
 ψout = ψin .* x
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
-@test ψout.pos = [0.2, 0.6, 0.8]
+@test ψout.pos == Float32[0.2, 0.6, 0.8]
