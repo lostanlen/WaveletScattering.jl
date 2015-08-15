@@ -142,8 +142,8 @@ Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
 
 # littlewoodpaleyadd!
 function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
-    @inbounds for ω in eachindex(ψ.an)
-        @fastmath lp[ψ.posfirst+ω] += abs2(ψ.an[ω])
+    @inbounds for ω in eachindex(ψ.pos)
+        @fastmath lp[ψ.posfirst+ω] += abs2(ψ.pos[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
