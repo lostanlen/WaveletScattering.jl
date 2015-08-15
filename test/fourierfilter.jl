@@ -174,7 +174,7 @@ x = collect(0.1:0.1:1.6)
 ψout = ψin .* x
 @test isa(ψout, Vanishing1DFilter{Float32})
 @test_approx_eq ψout.an.pos Float32[0.03, 0.12, 0.20]
-@test_approx_eq ψout.coan.neg Float32[0.12, 0.39, 0.56]
+@test_approx_eq ψout.coan.neg Float32[0.12, 0.26, 0.42]
 # Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.2], -2)
@@ -209,6 +209,12 @@ lp = zeros(Float32, 8)
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
 @test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0, 0.0]
+# littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
+lp = zeros(Float32, 8)
+ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
+@test allocatedmemory == 0
+@test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
 
 # realtype
 @test realtype(Float32) == Float32
