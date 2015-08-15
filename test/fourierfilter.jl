@@ -2,7 +2,7 @@ using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    littlewoodpaleyadd!, realtype
+    littlewoodpaleyadd!, littlewoodpaleysum, realtype
 
 # constructors
 function test_periodize(y, first, last, log2_length)
