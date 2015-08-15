@@ -129,7 +129,7 @@ Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Vector) =
 Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
     Coanalytic1DFilter{T}(ψ.neg .* x, ψ.neglast)
 function Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
-    x_range = length(x) + ψ.neglast + 1 + ((-length(ψ.an)+1):0)
+    x_range =  ψ.neglast + length(x) + 1 + ((-length(ψ.an)+1):0)
     Coanalytic1DFilter{T}(ψ.neg .* x[x_range], ψ.neglast)
 end
 Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
@@ -139,6 +139,27 @@ Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x[end>>1])
 
+# littlewoodpaleyadd!
+function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
+    @inbounds for ω in eachindex(ψ.an)
+        @fastmath lp[ψ.posfirst+ω] += abs2(ψ.an[ω])
+    end
+end
+function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
+    offset = length(lp) + 1 - length(ψ)
+    @inbounds for ω in eachindex(ψ.coan)
+        @fastmath lp[offset+ω] += abs2(ψ.coan[ω])
+    end
+end
+function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
+    littlewoodpaleyadd!(lp, ψ.an)
+    littlewoodpaleyadd!(lp, ψ.coan)
+end
+function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
+    littlewoodpaleyadd!(lp, ψ.an)
+    littlewoodpaleyadd!(lp, ψ.coan)
+    @fastmath lp[end >> 1] += abs2(ψ.midpoint)
+end
 # renormalize!
 function renormalize!(ψs, lp, metas, spec::Abstract1DSpec)
     siglength = 1 .<< log2_size[1]
