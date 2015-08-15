@@ -202,6 +202,14 @@ x = collect(0.1:0.1:0.8)
 @test_approx_eq ψout.coan.neg Float32[0.06, 0.14]
 @test_approx_eq ψout.midpoint Float32(0.25)
 
+# littlewoodpaleyadd!
+# littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
+lp = zeros(Float32, 8)
+ψ = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
+@test allocatedmemory == 0
+@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0, 0.0]
+
 # realtype
 @test realtype(Float32) == Float32
 @test realtype(Float64) == Float64
