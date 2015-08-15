@@ -165,6 +165,15 @@ x = 2.0
 @test isa(ψout, Vanishing1DFilter{Float32})
 @test_approx_eq ψout.an.pos Float32[0.2, 0.6, 0.8]
 @test_approx_eq ψout.coan.neg Float32[0.2, 0.4, 0.6]
+# Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Vector)
+an = Analytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], 2)
+coan = Coanalytic1DFilter{Float32}(Float32[0.1, 0.2, 0.3], -2)
+ψin = Vanishing1DFilter(an, coan)
+x = collect(0.1:0.1:1.6)
+ψout = ψin .* x
+@test isa(ψout, Vanishing1DFilter{Float32})
+@test_approx_eq ψout.an.pos Float32[0.03, 0.12, 0.20]
+@test_approx_eq ψout.coan.neg Float32[0.13, 0.28, 0.45]
 
 
 # realtype
