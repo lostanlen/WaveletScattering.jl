@@ -236,6 +236,19 @@ littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 
+# littlewoodpaleysum
+type LittlewoodpaleysumSpec <: Abstract1DSpec
+    log2_size::Tuple{Int}
+end
+an = Analytic1DFilter(Float32[-0.3, 0.0], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+midpoint = Float32(0.5)
+ψ1 = VanishingWithMidpoint1DFilter(an, coan, midpoint)
+ψ2 = Analytic1DFilter(Float32[0.4, 0.3], 2)
+spec = LittlewoodpaleysumSpec((3,))
+lp = littlewoodpaleysum([ψ1, ψ2], spec)
+@test_approx_eq lp Float32[0.0, 0.0, 0.5, 0.3, 0.5, 0.1, 0.3, 0.4]
+
 # realtype
 @test realtype(Float32) == Float32
 @test realtype(Float64) == Float64
