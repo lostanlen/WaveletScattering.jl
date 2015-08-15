@@ -129,7 +129,7 @@ Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Vector) =
 Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
     Coanalytic1DFilter{T}(ψ.neg .* x, ψ.neglast)
 function Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
-    x_range =  ψ.neglast + length(x) + 1 + ((-length(ψ.an)+1):0)
+    x_range =  ψ.neglast + length(x) + 1 + ((-length(ψ.neg)+1):0)
     Coanalytic1DFilter{T}(ψ.neg .* x[x_range], ψ.neglast)
 end
 Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
