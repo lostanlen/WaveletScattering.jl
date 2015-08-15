@@ -134,6 +134,11 @@ x = 2.0
 @test ψout.posfirst == ψin.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test ψout.pos == Float32[0.2, 0.6, 0.8]
+x = collect(0.1:0.1:1.6)
+ψout = ψin .* x
+@test ψout.posfirst == ψin.posfirst
+@test isa(ψout.pos, Vector{Float32})
+@test_approx_eq ψout.pos Float32[0.06, 0.21, 0.32]
 
 # realtype
 @test realtype(Float32) == Float32
