@@ -2,7 +2,7 @@ using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    realtype
+    littlewoodpaleyadd!, realtype
 
 # constructors
 function test_periodize(y, first, last, log2_length)
@@ -205,10 +205,10 @@ x = collect(0.1:0.1:0.8)
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 lp = zeros(Float32, 8)
-ψ = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
-@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0, 0.0]
+@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.0, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
 lp = zeros(Float32, 8)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
