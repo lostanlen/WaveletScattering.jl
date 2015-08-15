@@ -1,7 +1,8 @@
 using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
-    Vanishing1DFilter, VanishingWithMidpoint1DFilter, realtype
+    Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
+    realtype
 
 # constructors
 function test_periodize(y, first, last, log2_length)
