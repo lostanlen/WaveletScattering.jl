@@ -136,11 +136,11 @@ Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
     VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
-Base.(:.*){T}(ψ::VanishingWithMipoint1DFilter{T}, x::Vector) =
+Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x[end>>1])
 
 # renormalize!
-function renormalize!(ψs, lp, spec::Abstract1DSpec)
+function renormalize!(ψs, lp, metas, spec::Abstract1DSpec)
     siglength = 1 .<< log2_size[1]
     multiplier = inv(lp)
     @inbounds for λ in eachindex(ψs)
