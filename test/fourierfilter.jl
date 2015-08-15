@@ -149,6 +149,12 @@ x = 2.0
 @test ψout.neglast == ψin.neglast
 @test isa(ψout.neg, Vector{Float32})
 @test ψout.neg == Float32[0.2, 0.6, 0.8]
+# Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Vector)
+ψin = Coanalytic1DFilter{Float32}(Float32[0.1, 0.3, 0.4], -2)
+x = collect(0.1:0.1:1.6)
+ψout = ψin .* x
+@test ψout.neglast == ψin.neglast
+@test isa(ψout.neg, Vector{Float32})
 
 # realtype
 @test realtype(Float32) == Float32
