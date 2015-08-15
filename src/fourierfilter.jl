@@ -160,11 +160,23 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     littlewoodpaleyadd!(lp, ψ.coan)
     @fastmath lp[end >> 1] += abs2(ψ.midpoint)
 end
+
+# littlewoodpaleysum
+function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}})
+    lp = zeros(realtype(T), 1 .<< log2_size[1])
+    for λ in eachindex(ψs)
+        littlewoodpaleyadd!(lp, ψs[λ])
+    end
+    for ω in eachindex(lp)
+        lp[ω] = sqrt(lp[ω])
+    end
+end
+
 # renormalize!
 function renormalize!(ψs, lp, metas, spec::Abstract1DSpec)
     siglength = 1 .<< log2_size[1]
     multiplier = inv(lp)
-    @inbounds for λ in eachindex(ψs)
+    for λ in eachindex(ψs)
         ψs[λ] = ψs[λ] .* multiplier
     end
 end
