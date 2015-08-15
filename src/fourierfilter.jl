@@ -147,9 +147,8 @@ function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
-    offset = length(lp) - length(ψ.neg)
     @inbounds for ω in eachindex(ψ.neg)
-        @fastmath lp[offset+ω] += abs2(ψ.neg[ω])
+        @fastmath lp[length(lp) - length(ψ.neg)+ω] += abs2(ψ.neg[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
@@ -162,13 +161,16 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     @fastmath lp[1 + (length(lp) >> 1)] += abs2(ψ.midpoint)
 end
 
-# littlewoodpaleysum
+"""Returns the Littlewood-Paley sum of a vector of Fourier-domain wavelets.
+The Littlewood-Paley sum lp is defined, for each frequency ω, as the square
+root of the sum of wavelet energies (squared magnitudes). It is necessary to
+renormalize the wavelets by the Littlewood-Paley sum for the wavelet transform
+operator to satisfy energy conversation."""
 function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}})
     lp = zeros(realtype(T), 1 .<< log2_size[1])
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     for ω in eachindex(lp); lp[ω] = sqrt(lp[ω]); end
 end
-
 
 """Returns the type parameter of a complex type.
 For example, `realtype(Complex{Float32})` returns `Float32`.
