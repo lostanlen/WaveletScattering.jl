@@ -60,25 +60,7 @@ function octaves(spec::AbstractSpec)
     vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
 end
 
-"""Returns the wavelet log-period integer indices `γs`. Center frequencies are
-proportional to 2^(-γ). γ ranges from 0 to nFilters_per_octave*nOctaves, where
-γ=0 corresponds to the mother frequency. The convention is that higher indices
-`γs` mean *lower* center frequencies. Log-periods γs`, chromas ``χs`, and
-octaves `js` are linked by
-    γ = j + nFilters_per_octave * χ"""
-gammas(spec::AbstractSpec) =
-    collect(0:(spec.nFilters_per_octave * spec.nOctaves-1))
-
-"""Returns the octave indices js of a wavelet spec.
-Octave indices range from `0` to `nOctaves-1`. The convention is that
-higher octave indices `js` mean *lower* center frequencies. Log-periods
-``γs`, chromas ``χs`, and octaves `js` are linked by
-    γ = j + nFilters_per_octave * χ"""
-function octaves(spec::AbstractSpec)
-    vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
-end
-
-"""Returns the quality factors
+"""Returns the quality factors (ratios of center frequencies over bandwidths).
 
 There is a classical tradeoff between spatial and frequential localizations
 in a filter bank. We address it by supporting two user specifications
