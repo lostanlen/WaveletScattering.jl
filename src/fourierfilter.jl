@@ -124,15 +124,15 @@ end
 # element-wise product .*
 Base.(:.*){T}(ψ::Analytic1DFilter{T}, x::Number) =
     Analytic1DFilter{T}(ψ.pos .* x, ψ.posfirst)
-Base.(:.*){T}(ψ::Coanalytic1DFilter, x::Number) =
+Base.(:.*){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
     Coanalytic1DFilter{T}(ψ.neg .* x, ψ.neglast)
-Base.(:.*){T}(ψ::Vanishing1DFilter, x::Number) =
+Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Number) =
     VanishingFilter{T}(ψ.an .* x, ψ.coan .* x)
-Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter, x::Number) =
+Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
 
 # renormalize!
-function renormalize!(ψs, lp, spec::AbstractSpec1D)
+function renormalize!(ψs, lp, spec::Abstract1DSpec)
     siglength = 1 .<< log2_size[1]
     multiplier = inv(lp)
     @inbounds for λ in eachindex(ψs)
