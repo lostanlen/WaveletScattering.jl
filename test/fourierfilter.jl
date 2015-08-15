@@ -206,12 +206,14 @@ x = collect(0.1:0.1:0.8)
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 lp = zeros(Float32, 8)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
+littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
 @test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.0, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
 lp = zeros(Float32, 8)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
 @test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
