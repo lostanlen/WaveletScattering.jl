@@ -135,7 +135,7 @@ end
 Base.(:.*){T}(ψ::Vanishing1DFilter{T}, x::Union{Number, Vector}) =
     Vanishing1DFilter{T}(ψ.an .* x, ψ.coan .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
-    VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
+    VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, ψ.midpoint .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x,
                                      ψ.midpoint .* x[1 + end>>1])
