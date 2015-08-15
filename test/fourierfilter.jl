@@ -225,7 +225,7 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory == 0
-@test_approx_eq lp [0.0, 0.0, 0.03, 0.27, 0.0, 0.04, 0.36, 0.64]
+@test_approx_eq lp [0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
 
 # realtype
 @test realtype(Float32) == Float32
