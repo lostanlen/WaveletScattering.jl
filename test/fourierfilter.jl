@@ -208,14 +208,14 @@ lp = zeros(Float32, 8)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
-@test allocatedmemory <= 128 # on some machines (e.g. Travis's Linux) it is >0
+@test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 @test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.0, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
 lp = zeros(Float32, 8)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
-@test allocatedmemory <= 128 # on some machines (e.g. Travis's Linux) it is >0
+@test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 @test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
 # littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
 lp = zeros(Float32, 8)
@@ -224,7 +224,7 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
-@test allocatedmemory <= 128 # on some machines (e.g. Travis's Linux) it is >0
+@test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 @test_approx_eq lp [0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
 # littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 lp = zeros(Float32, 8)
@@ -234,7 +234,7 @@ midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
-@test allocatedmemory <= 128 # on some machines (e.g. Travis's Linux) it is >0
+@test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 
 # realtype
 @test realtype(Float32) == Float32
