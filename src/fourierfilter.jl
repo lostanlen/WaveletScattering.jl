@@ -138,7 +138,7 @@ Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x, midpoint .* x)
 Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x,
-                                     ψ.midpoint .* x[end>>1])
+                                     ψ.midpoint .* x[1 + end>>1])
 
 # littlewoodpaleyadd!
 function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
