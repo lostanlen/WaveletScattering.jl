@@ -167,10 +167,12 @@ The Littlewood-Paley sum lp is defined, for each frequency ω, as the square
 root of the sum of wavelet energies (squared magnitudes). It is necessary to
 renormalize the wavelets by the Littlewood-Paley sum for the wavelet transform
 operator to satisfy energy conversation."""
-function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}})
-    lp = zeros(realtype(T), 1 .<< log2_size[1])
+function littlewoodpaleysum{T}(ψs::Vector{AbstractFourier1DFilter{T}},
+                               spec::Abstract1DSpec)
+    lp = zeros(realtype(T), 1 .<< spec.log2_size[1])
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     for ω in eachindex(lp); lp[ω] = sqrt(lp[ω]); end
+    return lp
 end
 
 """Returns the type parameter of a complex type.
