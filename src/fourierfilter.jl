@@ -182,9 +182,24 @@ realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
 # renormalize!
-function renormalize!(ψs, lp, metas, spec::Abstract1DSpec)
-    siglength = 1 .<< log2_size[1]
-    multiplier = inv(lp)
+function renormalize!{T}(ψs, lp, spec::Abstract1DSpec{T})
+    N = 1 .<< log2_size[1]
+    RealT = realtype(T)
+    is !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
+        ξleft = uncertainty(spec) / spec.max_scale
+        ξright = spec.max_qualityfactor * ξleft
+        ωleft = 1 + round(Int, (N-1) * ξleft)
+        ωright = 1 + round(Int, (N-1) * ξright)
+        linspaced_qs = linspace(max_qualityfactor, 1, ωright-ωleft+1)
+        lp(1:(ωleft-1)) /= spec.max_qualityfactor
+        lp(ωleft:ωright) ./= linspaced_qs
+        multiplier = fill(inv(maximum(lp)), N)
+        multiplier(1:(ωleft-1)) /= spec.max_qualityfactor
+        multiplier(ωleft:ωright) ./= linspaced_qs
+    else
+    end
+
+
     for λ in eachindex(ψs)
         ψs[λ] = ψs[λ] .* multiplier
     end

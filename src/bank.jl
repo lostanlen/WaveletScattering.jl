@@ -46,7 +46,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
             for i in eachindex(γs)]
         @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
         lp = littlewoodpaleysum(ψs, spec)
-        renormalize!(ψs, lp, metas, spec)
+        renormalize!(ψs, lp, spec)
         ϕ = scalingfunction(lp)
         behavior = Behavior(js)
         new{T}(ψs, ϕ, behavior, metas, spec)
