@@ -176,20 +176,52 @@ function renormalize!{T}(ψs, lp, spec::Abstract1DSpec{T})
     N = 1 .<< log2_size[1]
     RealT = realtype(T)
     is !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
+function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
+    N = 1 << log2_size[1]
+    lp = zeros(realtype(T), N)
+    for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
+    if isreal(T)
+        for ω in 1:(N>>1-1)
+            halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
+            lp[1+ω] = halfsum
+            lp[1 + N - ω] = halfsum
+        end
+    end
+    if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         ξleft = uncertainty(spec) / spec.max_scale
         ξright = spec.max_qualityfactor * ξleft
         ωleft = 1 + round(Int, (N-1) * ξleft)
         ωright = 1 + round(Int, (N-1) * ξright)
         linspaced_qs = linspace(max_qualityfactor, 1, ωright-ωleft+1)
-        lp(1:(ωleft-1)) /= spec.max_qualityfactor
-        lp(ωleft:ωright) ./= linspaced_qs
-        multiplier = fill(inv(maximum(lp)), N)
-        multiplier(1:(ωleft-1)) /= spec.max_qualityfactor
-        multiplier(ωleft:ωright) ./= linspaced_qs
+        for ω in 1:(ωleft-1)
+            sqrtden = spec.max_qualityfactor
+            lp[ω] = lp[ω] / (sqrtden*sqtrden)
+        end
+        for ω in (ωleft:ωright)
+            sqrtden = linspaced_qs[ω-ωleft+1]
+            lp[ω] = lp[ω] / (sqrtden*sqrtden)
+        end
+        invmax_lp = inv(maximum(lp))
+        sqrtinvmax_lp = sqrt(invmax_lp)
+        centers = round(Int, centerfrequencies(spec)*N)
+        for λ in eachindex(ψs)
+            ξ = metas[λ].centerfrequency
+            ω = 1 + round(Int, (N-1) * ξ)
+            if ω<ωleft
+                normalizer = sqrtinvmax_lp * spec.max_qualityfactor
+            elseif ω<ωright
+                normalizer = sqrtinvmax_lp * linspaced_qs[ω-ωleft+1]
+            else
+                normalizer = sqrtinvmax_lp
+            end
+            ψs[λ] = ψs[λ] / normalizer
+        end
     else
-        multiplier = inv(maximum(lp))
+        invmax_lp = inv(maximum(lp))
+        normalizer = sqrt(invmax_lp)
+        for λ in eachindex(ψs); ψs[λ] = ψs[λ] / normalizer; end
     end
-    for λ in eachindex(ψs)
-        ψs[λ] = ψs[λ] .* multiplier
-    end
+    for ω in eachindex(lp); lp[ω] = lp[ω] / invmax_lp; end
+    return lp
+end
 end
