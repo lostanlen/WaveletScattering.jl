@@ -75,10 +75,10 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     @fastmath @inbounds morlet = T[
         gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
         for ω in ωs]
-    ɛ_squared = T(spec.ɛ * spec.ɛ)
-    energy_squared = abs2(morlet)
-    sub_first = findfirst(energy_squared .> ɛ_squared)
-    sub_last = findlast(energy_squared .> ɛ_squared)
+    ɛ2 = T(spec.ɛ * spec.ɛ)
+    morlet2 = abs2(morlet)
+    sub_first = findfirst(morlet2 .> ɛ2)
+    sub_last = findlast(morlet2 .> ɛ2)
     morlet = morlet[sub_first:sub_last]
     first = gauss_first + (sub_first-1)
     last = gauss_last - (length(morlet)-sub_last)
