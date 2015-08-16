@@ -173,10 +173,6 @@ The multiplier m is such that:
 If maximum scale is infinite and/or maximum quality factor, the three cases
 above collapse into the simpler `m = 1/max(lp)`.
 """
-function renormalize!{T}(ψs, lp, spec::Abstract1DSpec{T})
-    N = 1 .<< log2_size[1]
-    RealT = realtype(T)
-    is !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
 function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
     N = 1 << log2_size[1]
     lp = zeros(realtype(T), N)
