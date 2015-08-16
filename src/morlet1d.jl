@@ -58,7 +58,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     log2_length = spec.log2_size[1]
     half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
-    ξ = N * T(meta.centerfrequency)
+    ω = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     corr0 = gauss(zero(spec.signaltype)-ξ, den)
