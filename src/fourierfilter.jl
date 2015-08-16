@@ -159,10 +159,11 @@ For numeric real types, e.g. `Float32`, it is a no-op."""
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
-"""Renormalizes an array of Fourier-domain wavelets `ψs` by the maximum value of
-its Littlewood-Paley sum `lp` (previously computed with `littlewoodpaleysum`).
-This ensures approximate an energy conservation property for the subsequent
-wavelet transform operator.
+"""Renormalizes an array of Fourier-domain wavelets `ψs` by the square root
+of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
+an energy conservation property for the subsequent wavelet transform operator.
+The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
+wavelet energies (squared magnitudes).
 If the quality factor varies across frequencies, the multiplier is no longer a
 scalar number, since it adapts to the quality factor q at every frequency ξ.
 The multiplier m is such that:
