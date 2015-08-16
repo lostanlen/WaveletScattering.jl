@@ -187,8 +187,8 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         ξleft = uncertainty(spec) / spec.max_scale
         ξright = spec.max_qualityfactor * ξleft
-        ωleft = 1 + round(Int, (N-1) * ξleft)
-        ωright = 1 + round(Int, (N-1) * ξright)
+        ωleft = 1 + round(Int, N * ξleft)
+        ωright = 1 + round(Int, N * ξright)
         linspaced_qs = linspace(max_qualityfactor, 1, ωright-ωleft+1)
         for ω in 1:(ωleft-1)
             sqrtden = spec.max_qualityfactor
@@ -203,7 +203,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         centers = round(Int, centerfrequencies(spec)*N)
         for λ in eachindex(ψs)
             ξ = metas[λ].centerfrequency
-            ω = 1 + round(Int, (N-1) * ξ)
+            ω = 1 + round(Int, N * ξ)
             if ω<ωleft
                 normalizer = sqrtinvmax_lp * spec.max_qualityfactor
             elseif ω<ωright
@@ -221,4 +221,11 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
     for ω in eachindex(lp); lp[ω] = lp[ω] / invmax_lp; end
     return lp
 end
+
+function scalingfunction!{T}(lp::Vector{T}, metas::Vector{AbstractMeta})
+    min_ω = round(Int, N * metas[end].centerfrequency)
+    phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
+    sub_last = findlast(phi .< spec.ɛ)
+    for ω in 0:sub_last; lp[1+ω] = 1; end
+    return Symmetric1DFilter(phi[1+(1:sub_last)], phi[1+0])
 end
