@@ -171,8 +171,7 @@ The multiplier m is such that:
 * `m = 1/(max_q*max_1)` for `q = 1`, that is `ξ < uncertainty/max_s` (ξright)
 * `m` is interpolated linearly in between, that is, for `s=max_s`
 If maximum scale is infinite and/or maximum quality factor, the three cases
-above collapse into the simpler `m = 1/max(lp)`.
-"""
+above collapse into the simpler `m = 1/max(lp)`."""
 function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
     N = 1 << log2_size[1]
     lp = zeros(realtype(T), N)
@@ -203,7 +202,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         centers = round(Int, centerfrequencies(spec)*N)
         for λ in eachindex(ψs)
             ξ = metas[λ].centerfrequency
-            ω = 1 + round(Int, N * ξ)
+            ω = 1 + round(Int, N*ξ)
             if ω<ωleft
                 normalizer = sqrtinvmax_lp * spec.max_qualityfactor
             elseif ω<ωright
