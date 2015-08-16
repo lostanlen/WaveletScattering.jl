@@ -181,7 +181,19 @@ For numeric real types, e.g. `Float32`, it is a no-op."""
 realtype{T<:Real}(::Type{T}) = T
 realtype{T<:Real}(::Type{Complex{T}}) = T
 
-# renormalize!
+"""Renormalizes an array of Fourier-domain wavelets `ψs` by the maximum value of
+its Littlewood-Paley sum `lp` (previously computed with `littlewoodpaleysum`).
+This ensures approximate an energy conservation property for the subsequent
+wavelet transform operator.
+If the quality factor varies across frequencies, the multiplier is no longer a
+scalar number, since it adapts to the quality factor q at every frequency ξ.
+The multiplier m is such that:
+* `m = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (ξleft)
+* `m = 1/(max_q*max_1)` for `q = 1`, that is `ξ < uncertainty/max_s` (ξright)
+* `m` is interpolated linearly in between, that is, for `s=max_s`
+If maximum scale is infinite and/or maximum quality factor, the three cases
+above collapse into the simpler `m = 1/max(lp)`.
+"""
 function renormalize!{T}(ψs, lp, spec::Abstract1DSpec{T})
     N = 1 .<< log2_size[1]
     RealT = realtype(T)
@@ -197,9 +209,8 @@ function renormalize!{T}(ψs, lp, spec::Abstract1DSpec{T})
         multiplier(1:(ωleft-1)) /= spec.max_qualityfactor
         multiplier(ωleft:ωright) ./= linspaced_qs
     else
+        multiplier = inv(maximum(lp))
     end
-
-
     for λ in eachindex(ψs)
         ψs[λ] = ψs[λ] .* multiplier
     end
