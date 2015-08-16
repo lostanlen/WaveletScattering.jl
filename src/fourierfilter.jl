@@ -140,8 +140,8 @@ Base.(:.*){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Vector) =
     VanishingWithMidpoint1DFilter{T}(ψ.an .* x, ψ.coan .* x,
                                      ψ.midpoint .* x[1 + end>>1])
 
-"""Adds the squared magnitude of a Fourier-domain wavelet ψ to an accumulator.
-These methods are called iteratively by littlewoodpaleysum"""
+"""Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
+`lp` (squared Littlewood-Paley sum)."""
 function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
     @inbounds for ω in eachindex(ψ.pos)
         @fastmath lp[ψ.posfirst+ω] += abs2(ψ.pos[ω])
@@ -163,7 +163,7 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 end
 
 """Returns the Littlewood-Paley sum of a vector of Fourier-domain wavelets.
-The Littlewood-Paley sum lp is defined, for each frequency ω, as the square
+The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the square
 root of the sum of wavelet energies (squared magnitudes). It is necessary to
 renormalize the wavelets by the Littlewood-Paley sum for the wavelet transform
 operator to satisfy energy conversation."""
