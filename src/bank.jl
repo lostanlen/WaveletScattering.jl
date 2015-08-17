@@ -17,7 +17,7 @@ type Behavior
     log2_oversampling::Int
     min_log2_resolution::Int
 end
-function Behavior(js::Vector{Int8})
+function Behavior(js::Vector)
     γ_range = 0:(length(js)-1)
     log2_oversampling = 0
     min_log2_resolution = -js[end] + 1
