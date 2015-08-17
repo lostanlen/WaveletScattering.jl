@@ -6,7 +6,7 @@ import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
 # meta.jl
 import WaveletScattering: NonOrientedMeta
 # morlet1d.jl
-import WaveletScattering: Morlet1DSpec
+import WaveletScattering: Morlet1DSpec, fourierwavelet
 
 # constructors
 function test_periodize(y, first, last, log2_length)
@@ -206,8 +206,35 @@ firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
 # case Q>1, max_s = Inf
-
+spec = Morlet1DSpec(nFilters_per_octave=8)
+γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+scs, bws = scales(spec), bandwidths(spec)
+@inbounds metas = [
+    NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+    for i in eachindex(γs)]
+@inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
+lp = renormalize!(ψs, metas, spec)
+@test all(lp.<1.0)
+N = 1 << log2_length[1]
+firstω = round(Int, N * ξs[end])
+lastω = round(Int, N * ξs[1])
+@test all(lp[1+(firstω:lastω)] .> 0.5)
 # case Q>1, max_s < Inf
+spec = Morlet1DSpec(nFilters_per_octave=8, max_scale=4410)
+γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+scs, bws = scales(spec), bandwidths(spec)
+@inbounds metas = [
+    NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+    for i in eachindex(γs)]
+@inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
+lp = renormalize!(ψs, metas, spec)
+@test all(lp.<1.0)
+N = 1 << log2_length[1]
+firstω = round(Int, N * ξs[end])
+lastω = round(Int, N * ξs[1])
+@test all(lp[1+(firstω:lastω)] .> 0.5)
 
 # realtype
 @test realtype(Float32) == Float32
