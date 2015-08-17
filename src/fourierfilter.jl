@@ -191,7 +191,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
         for ω in 1:(ωleft-1)
             sqrtden = spec.max_qualityfactor
-            lp[ω] = lp[ω] / (sqrtden*sqtrden)
+            lp[ω] = lp[ω] / (sqrtden*sqrtden)
         end
         for ω in (ωleft:ωright)
             sqrtden = linspaced_qs[ω-ωleft+1]
