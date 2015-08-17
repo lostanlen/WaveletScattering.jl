@@ -149,7 +149,7 @@ vanishing = Vanishing1DFilter(an, coan)
 ψout = vanishing / x
 @test isa(ψout, Vanishing1DFilter)
 # Base.(:/){T}(ψ::Vanishing1DFilter{T}, x::Number)
-vanishingwithmidpoint = VanishingWithMidpoint1DFilter(an, coan, Float32(0.5)
+vanishingwithmidpoint = VanishingWithMidpoint1DFilter(an, coan, Float32(0.5))
 ψout = vanishingwithmidpoint / x
 @test isa(ψout, VanishingWithMidpoint1DFilter)
 
@@ -198,6 +198,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
 @test all(lp.<1.0)
+
 
 # realtype
 @test realtype(Float32) == Float32
