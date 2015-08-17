@@ -58,22 +58,22 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     log2_length = spec.log2_size[1]
     half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
-    ω = N * T(meta.centerfrequency)
+    center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-    corr0 = gauss(zero(spec.signaltype)-ξ, den)
-    corrN = gauss(N-ξ, den)
+    corr0 = gauss(zero(spec.signaltype)-center, den)
+    corrN = gauss(N-center, den)
     if spec.ɛ == 0.0
         gauss_first = -half_length + 1
         gauss_last = 3 * half_length
     else
         bw_factor = @fastmath T(0.5 * sqrt(- log2(spec.ɛ)))
-        gauss_first = max(floor(Int, ξ-bw_factor*bw), -half_length+1)
-        gauss_last = min(ceil(Int, ξ+bw_factor*bw), 3*half_length)
+        gauss_first = max(floor(Int, center-bw_factor*bw), -half_length+1)
+        gauss_last = min(ceil(Int, center+bw_factor*bw), 3*half_length)
     end
     ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
     @fastmath @inbounds morlet = T[
-        gauss(ω-ξ, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
+        gauss(ω-center, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
         for ω in ωs]
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
