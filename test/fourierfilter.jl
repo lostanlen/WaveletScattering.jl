@@ -2,7 +2,7 @@ using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    littlewoodpaleyadd!, realtype
+    littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
 # meta.jl
 import WaveletScattering: NonOrientedMeta
 # morlet1d.jl
