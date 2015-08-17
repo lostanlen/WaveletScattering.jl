@@ -226,5 +226,5 @@ function scalingfunction!{T}(lp::Vector{T}, metas::Vector{AbstractMeta})
     min_ω = round(Int, N * firstpeak)
     phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
     for ω in 0:min_ω; lp[1+ω] = 1; end
-    return Symmetric1DFilter(phi[2:end])], phi[1+0])
+    return Symmetric1DFilter(phi[2:end]), phi[1+0])
 end
