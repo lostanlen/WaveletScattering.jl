@@ -176,7 +176,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
     N = 1 << spec.log2_size[1]
     lp = zeros(realtype(T), N)
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
-    if isreal(T)
+    if T <: Real
         for ω in 1:(N>>1-1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
             lp[1+ω] = halfsum
@@ -217,7 +217,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         normalizer = sqrt(invmax_lp)
         for λ in eachindex(ψs); ψs[λ] = ψs[λ] / normalizer; end
     end
-    for ω in eachindex(lp); lp[ω] = lp[ω] / invmax_lp; end
+    for ω in eachindex(lp); lp[ω] = lp[ω] * invmax_lp; end
     return lp
 end
 
