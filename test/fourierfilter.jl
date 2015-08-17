@@ -200,7 +200,7 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
-@test all(lp.<1.0)
+@test all(lp.< 1.001)
 N = 1 << log2_length[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
@@ -215,7 +215,7 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
-@test all(lp.<1.0)
+@test all(lp.< 1.001)
 N = 1 << log2_length[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
@@ -230,7 +230,7 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
-@test all(lp.<1.0)
+@test all(lp.< 1.001)
 N = 1 << log2_length[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
