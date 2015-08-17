@@ -128,7 +128,7 @@ Base.(:/){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
     Coanalytic1DFilter{T}(ψ.neg / x, ψ.neglast)
 Base.(:/){T}(ψ::Vanishing1DFilter{T}, x::Number) =
     Vanishing1DFilter{T}(ψ.an / x, ψ.coan / x)
-Base.(:/){T}(ψ::VanishingWithMidpoint1DFilter, x::Number) =
+Base.(:/){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
     VanishingWithMidpoint1DFilter{T}(ψ.an / x, ψ.coan / x, ψ.midpoint / x)
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
