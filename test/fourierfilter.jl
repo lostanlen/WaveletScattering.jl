@@ -3,6 +3,8 @@ using Base.Test
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     littlewoodpaleyadd!, realtype
+# morlet1d.jl
+import WaveletScattering: Morlet1DSpec
 
 # constructors
 function test_periodize(y, first, last, log2_length)
@@ -184,6 +186,18 @@ midpoint = Float32(0.5)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
+
+# renormalize!
+spec = Morlet1DSpec()
+γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+scs, bws = scales(spec), bandwidths(spec)
+@inbounds metas = [
+    NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+    for i in eachindex(γs)]
+@inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
+lp = renormalize!(ψs, metas, spec)
+@test all(lp.<1.0)
 
 # realtype
 @test realtype(Float32) == Float32
