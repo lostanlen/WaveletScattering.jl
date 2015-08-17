@@ -3,6 +3,8 @@ using Base.Test
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     littlewoodpaleyadd!, realtype
+# meta.jl
+import WaveletScatering: NonOrientedMeta
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec
 
