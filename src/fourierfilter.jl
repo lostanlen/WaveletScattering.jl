@@ -222,9 +222,9 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
 end
 
 function scalingfunction!{T}(lp::Vector{T}, metas::Vector{AbstractMeta})
-    min_ω = round(Int, N * metas[end].centerfrequency)
+    firstpeak = sqrt(metas[end].centerfrequency * metas[end-1].centerfrequency)
+    min_ω = round(Int, N * firstpeak)
     phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
-    sub_last = findlast(phi .< spec.ɛ)
-    for ω in 0:sub_last; lp[1+ω] = 1; end
-    return Symmetric1DFilter(phi[1+(1:sub_last)], phi[1+0])
+    for ω in 0:min_ω; lp[1+ω] = 1; end
+    return Symmetric1DFilter(phi[2:end])], phi[1+0])
 end
