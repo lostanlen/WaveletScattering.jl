@@ -4,7 +4,8 @@ import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
 # meta.jl
-import WaveletScattering: NonOrientedMeta
+import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
+    chromas, gammas, octaves, qualityfactors, scales
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
 
@@ -201,7 +202,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
 @test all(lp.< 1.001)
-N = 1 << log2_length[1]
+N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
@@ -216,7 +217,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
 @test all(lp.< 1.001)
-N = 1 << log2_length[1]
+N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
@@ -231,7 +232,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
 @test all(lp.< 1.001)
-N = 1 << log2_length[1]
+N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)

@@ -188,7 +188,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         ξright = spec.max_qualityfactor * ξleft
         ωleft = 1 + round(Int, N * ξleft)
         ωright = 1 + round(Int, N * ξright)
-        linspaced_qs = linspace(max_qualityfactor, 1, ωright-ωleft+1)
+        linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
         for ω in 1:(ωleft-1)
             sqrtden = spec.max_qualityfactor
             lp[ω] = lp[ω] / (sqrtden*sqtrden)
@@ -199,7 +199,7 @@ function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
         end
         invmax_lp = inv(maximum(lp))
         sqrtinvmax_lp = sqrt(invmax_lp)
-        centers = round(Int, centerfrequencies(spec)*N)
+        centers = [ round(Int, meta.centerfrequency*N) for meta in metas ]
         for λ in eachindex(ψs)
             ξ = metas[λ].centerfrequency
             ω = 1 + round(Int, N*ξ)
