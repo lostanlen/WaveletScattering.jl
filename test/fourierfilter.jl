@@ -129,13 +129,27 @@ periodized_y[1 + end >> 1] = ψ.midpoint
 @test periodized_y == test_periodize(y, first, last, log2_length)
 
 # right division /
-# Base.(:/){T}(ψ::Analytic1DFilter{T}, x::Number)
-ψin = Analytic1DFilter(Float32[1.2, 0.8, 1.4], 2)
 x = 2.0
-ψout = ψin / x
-@test ψout.posfirst == ψin.posfirst
+# Base.(:/){T}(ψ::Analytic1DFilter{T}, x::Number)
+an = Analytic1DFilter(Float32[1.2, 0.8, 1.4], 2)
+ψout = an / x
+@test ψout.posfirst == an.posfirst
 @test isa(ψout.pos, Vector{Float32})
 @test_approx_eq ψout.pos Float32[0.6, 0.4, 0.7]
+# Base.(:/){T}(ψ::Coanalytic1DFilter{T}, x::Number)
+coan = Coanalytic1DFilter(Float32[1.2, 0.8, 1.4], -2)
+ψout = coan / x
+@test ψout.neglast == coan.neglast
+@test isa(ψout.neg, Vector{Float32})
+@test_approx_eq ψout.neg Float32[0.6, 0.4, 0.7]
+# Base.(:/){T}(ψ::Vanishing1DFilter{T}, x::Number)
+vanishing = Vanishing1DFilter(an, coan)
+ψout = vanishing / x
+@test isa(ψout, Vanishing1DFilter)
+# Base.(:/){T}(ψ::Vanishing1DFilter{T}, x::Number)
+vanishingwithmidpoint = VanishingWithMidpoint1DFilter(an, coan, Float32[0.5])
+ψout = vanishingwithmidpoint / x
+@test isa(ψout, VanishingWithMidpoint1DFilter)
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
