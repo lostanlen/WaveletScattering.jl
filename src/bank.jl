@@ -24,7 +24,14 @@ function Behavior(js::Vector)
     Behavior(γ_range, log2_oversampling, min_log2_resolution)
 end
 
-# Bank
+"""An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
+* AbstractNonOrientedBank: no orientation variable θ, only a scale variable γ.
+One-dimensional filter banks with real inputs are non-oriented.
+* AbstractOrientedBank: wavelets have an orientation variable θ and a scale
+variable γ. Two-dimensional filter banks are oriented. One-dimensional filter
+banks with complex outputs are also oriented, in the sense that the sign
+of the center frequency is regarded as an orientation variable with two
+possible values."""
 abstract AbstractBank{T<:Number}
 abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
 abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
