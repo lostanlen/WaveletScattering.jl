@@ -77,9 +77,15 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
         ξs, qs = centerfrequencies(spec), qualityfactors(spec)
         scs, bws = scales(spec), bandwidths(spec)
-        θs = 1:2
-        @inbounds metas = [
-            NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-            for i in eachindex(γs)]
+        θs = 0:1
+        @inbounds metas = [ OrientedMeta(
+            γs[i], θs[j], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+            for i in eachindex(γs), j in 1:2]
+        @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas[:,1]]
+        ψs = [ψs spin(ψs)]
+        lp = renormalize!(ψs, metas, spec)
+        ϕ = scalingfunction!(lp, metas)
+        behavior = Behavior(js)
+        new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
