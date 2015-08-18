@@ -4,13 +4,13 @@ abstract AbstractMeta
 
 """A `NonOrientedMeta` object contains all the meta-information to identify a
 non-oriented wavelet within a filter bank. Fields:
-* γ log-scale. 2^(-γ) is proportional to center frequency
-* χ chroma. χ is mod(γ, nFilters_per_octave)
-* j octave. j is div(γ, nFilters_per_octave)
-* bandwidth ∈]0,1] is the width at -3dB, expressed in fraction of signal length
-* centerfrequency ∈]0,1] is expressed in fraction of signal length
-* qualityfactor ∈[1,max_qualityfactor] is equal to centerfrequency/bandwidth
-* scale is the FWTM (full width at tenth maximum) in spatial domain"""
+* `γ` log-scale. `2^(-γ)` is proportional to center frequency
+* `χ` chroma. `χ` is `mod(γ, nFilters_per_octave)`
+* `j` octave. `j` is `div(γ, nFilters_per_octave)`
+* `bandwidth` ∈]0,1] the width at -3dB, expressed in fraction of signal length
+* `centerfrequency` ∈]0,1] is expressed in fraction of signal length
+* `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
+* `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
 immutable NonOrientedMeta <: AbstractMeta
     γ::Int16
     χ::Int8
@@ -23,14 +23,14 @@ end
 
 """An `OrientedMeta` object contains all the meta-information to identify
 an oriented wavelet within a filter bank. Fields:
-* γ log-scale. 2^(-γ) is proportional to center frequency
-* θ orientation, i.e. angle (in 2d) or sign of center frequency (in 1d)
-* χ chroma. χ is mod(γ, nFilters_per_octave)
-* j octave. j is div(γ, nFilters_per_octave)
-* bandwidth ∈]0,1] is the width at -3dB, expressed in fraction of signal length
-* centerfrequency ∈]0,1] is expressed in fraction of signal length
-* qualityfactor ∈[1,max_qualityfactor] is equal to centerfrequency/bandwidth
-* scale is the FWTM (full width at tenth maximum) in spatial domain"""
+* `γ` log-scale. `2^(-γ)` is proportional to center frequency
+* `θ` orientation, i.e. angle (in 2d) or sign of center frequency (in 1d)
+* `χ` chroma. `χ` is `mod(γ, nFilters_per_octave)`
+* `j` octave. `j` is `div(γ, nFilters_per_octave)`
+* `bandwidth` ∈]0,1] the width at -3dB, expressed in fraction of signal length
+* `centerfrequency` ∈]0,1] expressed in fraction of signal length
+* `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
+* `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
 immutable OrientedMeta <: AbstractMeta
     γ::Int16
     θ::Int8
