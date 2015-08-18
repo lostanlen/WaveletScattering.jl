@@ -172,11 +172,11 @@ The multiplier m is such that:
 * `m` is interpolated linearly in between, that is, for `s=max_s`
 If maximum scale is infinite and/or maximum quality factor, the three cases
 above collapse into the simpler `m = 1/max(lp)`."""
-function renormalize!{T}(ψs, metas, spec::Abstract1DSpec{T})
+function renormalize!(ψs, metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     lp = zeros(realtype(T), N)
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
-    if T <: Real
+    if isa(metas, Vector{NonOrientedMeta})
         for ω in 1:(N>>1-1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
             lp[1+ω] = halfsum
