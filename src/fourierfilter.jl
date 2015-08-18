@@ -228,3 +228,9 @@ function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
     for ω in 0:min_ω; lp[1+ω] = 1; end
     return Symmetric1DFilter(phi[2:end], phi[1+0])
 end
+
+spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.posfirst), -ψ.posfirst)
+spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neglast), -ψ.neglast)
+spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(reverse(ψ.coan), reverse(ψ.an))
+spin(ψ::VanishingWithMidpoint1DFilter) =
+    VanishingWithMidpoint1DFilter(reverse(ψ.coan), reverse(ψ.an), midpoint)
