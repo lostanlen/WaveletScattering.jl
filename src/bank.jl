@@ -36,6 +36,8 @@ abstract AbstractBank{T<:Number}
 abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
 abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
+"""An `FourierNonOriented1DBank` is a one-dimensional, non-oriented filter bank
+defined in the Fourier domain."""
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
@@ -61,3 +63,23 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
 end
 FourierNonOriented1DBank(spec::Abstract1DSpec) =
     FourierNonOriented1DBank{spec.signaltype}(spec)
+
+immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
+    ψs::Matrix{AbstractFourier1DFilter{T}}
+    ϕ::Symmetric1DFilter{T}
+    behavior::Behavior
+    metas::Matrix{OrientedMeta}
+    spec::Abstract1DSpec{T}
+    function call{T<:Number}(::Type{FourierOriented1DBank{T}},
+      spec::Abstract1DSpec)
+        T == spec.signaltype || error("""Type parameter of
+        FourierNonOriented1DBankmust be equal to spec.signaltype""")
+        γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
+        ξs, qs = centerfrequencies(spec), qualityfactors(spec)
+        scs, bws = scales(spec), bandwidths(spec)
+        θs = 1:2
+        @inbounds metas = [
+            NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+            for i in eachindex(γs)]
+    end
+end
