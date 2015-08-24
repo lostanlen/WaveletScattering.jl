@@ -20,7 +20,7 @@ end
 function Behavior(js::Vector)
     γ_range = 0:(length(js)-1)
     log2_oversampling = 0
-    min_log2_resolution = -js[end] + 1
+    min_log2_resolution = Int(-js[end] + 1)
     Behavior(γ_range, log2_oversampling, min_log2_resolution)
 end
 
