@@ -92,22 +92,24 @@ in a filter bank. We address it by supporting two user specifications
 
 For each center frequency, the quality factor and the scale are governed by the
 following criteria, in decreasing priority order:
-1. quality factor is equal or greater than 1.0
-2. scale is equal or smaller than max_scale
-3. quality factor is equal to max_qualityfactor
+1. quality factor is equal or greater than `1.0`
+2. scale is equal or smaller than `max_scale`
+3. quality factor is equal to `max_qualityfactor`
 
 To localize Morlet wavelets according to user-defined max_qualityfactor and
 max_scale, we proceed with the following steps:
-1. compute ""unbounded scales""  h/max_qualityfactor.
-2. bound scales from above s = min(unbounded_scales, max_scale)
-3. compute ""unbounded quality factors"" 1/(h*s)
-4. bound quality factors from below q = max(unbounded_qualityfactors, 1.0)
-5. compute corresponding scales.
+1. compute center frequencies `ξs` and uncertainty `h`,
+2. compute unbounded scales `max_qualityfactor/(h*ξs)`,
+3. bound scales from above by `max_scale`,
+4. compute unbounded quality factors `scales/(h*s)``, and
+5. bound quality factors from below by `1.0`.
 """
 function qualityfactors(spec::AbstractSpec)
-    bandwidths = centerfrequencies(spec)/spec.max_qualityfactor
-    scales = min(uncertainty(spec) ./ bandwidths, spec.max_scale)
-    qualityfactors = scales .* centerfrequencies(spec) / uncertainty(spec)
+    h = uncertainty(spec)
+    ξs = centerfrequencies(spec)
+    unbounded_scales = spec.max_qualityfactor / (h*ξs)
+    scales = min(unbounded_scales, spec.max_scale)
+    unbounded_qualityfactors = scales .* ξs / h
     # we also bound qualityfactors from above for better numerical accuracy
     qualityfactors = clamp(qualityfactors, 1.0, spec.max_qualityfactor)
 end
