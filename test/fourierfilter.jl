@@ -199,7 +199,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
     for i in eachindex(γs)]
-@inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
+@inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[fourierwavelet(meta, spec) for meta in metas]
 lp = renormalize!(ψs, metas, spec)
 @test all(lp.< 1.001)
 N = 1 << spec.log2_size[1]
