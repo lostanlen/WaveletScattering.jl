@@ -111,7 +111,7 @@ function qualityfactors(spec::AbstractSpec)
     scales = min(unbounded_scales, spec.max_scale)
     unbounded_qualityfactors = scales .* ξs / h
     # we also bound qualityfactors from above for better numerical accuracy
-    qualityfactors = clamp(qualityfactors, 1.0, spec.max_qualityfactor)
+    return clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
 end
 
 """Returns the scales of a wavelet spec, defined as the full width at tenth
