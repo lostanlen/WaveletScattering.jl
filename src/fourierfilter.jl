@@ -172,7 +172,8 @@ The multiplier m is such that:
 * `m` is interpolated linearly in between, that is, for `s=max_s`
 If maximum scale is infinite and/or maximum quality factor, the three cases
 above collapse into the simpler `m = 1/max(lp)`."""
-function renormalize!(ψs, metas, spec::Abstract1DSpec)
+function renormalize!{T<:Number}(ψs::Vector{AbstractFourier1DFilter{T}},
+        metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     lp = zeros(realtype(T), N)
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
