@@ -72,9 +72,9 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         gauss_last = 3 * half_length
     else
         gauss_first = @fastmath -0.5 * sqrt(-log2(spec.ɛ * corr0)) * bw
-        gauss_first = max(floor(Int, -bw_factor*bw), -half_length+1)
+        gauss_first = max(floor(Int, gauss_first, -half_length+1)
         gauss_last = @fastmath -0.5 * sqrt(-log2(spec.ɛ)) * bw
-        gauss_last = min(ceil(Int, center+bw_factor*bw), 3*half_length)
+        gauss_last = min(ceil(Int, gauss_last, 3*half_length)
     end
     @inbounds ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
     @fastmath @inbounds morlet = T[
