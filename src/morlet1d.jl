@@ -60,21 +60,25 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     N = T(half_length << 1)
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
-    den = @fastmath bw * bw / T(2.0 * log(2.0))
-    corr0 = gauss(zero(spec.signaltype)-center, den)
-    corrN = gauss(N-center, den)
+    den = @fastmath bw * bw / T(4.0 * log(2.0))
+    gauss_N = gauss(N, den)
+    gauss_center = gauss(center, den)
+    gauss_N_minus_center = gauss(N-center, den)
+    corrN = (gauss_N_minus_center - gauss_N*gauss_center)/(1 - gauss_N*gauss_N)
+    corr0 = gauss_center - gauss_N * corrN
+    corr = gauss(center, den) / (gauss(N, den) + one(T))
     if spec.ɛ == 0.0
         gauss_first = -half_length + 1
         gauss_last = 3 * half_length
     else
-        bw_factor = @fastmath T(0.5 * sqrt(- log2(spec.ɛ)))
-        gauss_first = max(floor(Int, center-bw_factor*bw), -half_length+1)
+        gauss_first = @fastmath -0.5 * sqrt(-log2(spec.ɛ * corr0)) * bw
+        gauss_first = max(floor(Int, -bw_factor*bw), -half_length+1)
+        gauss_last = @fastmath -0.5 * sqrt(-log2(spec.ɛ)) * bw
         gauss_last = min(ceil(Int, center+bw_factor*bw), 3*half_length)
     end
-    ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
+    @inbounds ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
     @fastmath @inbounds morlet = T[
-        gauss(ω-center, den) - corr0*gauss(ω, den) - corrN*gauss(ω-N, den)
-        for ω in ωs]
+        gauss(ω-center, den) - corr0 * gauss(ω, den) - corrN * gauss(ω-N, den) for ω in ωs]
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
     sub_first = findfirst(morlet2 .> ɛ2)
