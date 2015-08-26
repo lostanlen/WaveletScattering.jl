@@ -7,16 +7,17 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
 
-* The truncation threshold `ɛ` must be in [0.0, 1.0[.
+* The truncation threshold `ɛ` must be `in [0.0, 1.0[``.
 
-* The signal length must be a finite power of two above 4.
+* The signal length must be a power of two above 4, i.e. `log2_size > 1`.
 
-* The maximum required quality factor must be between 1.0 and the number of
-filters per octaves.
+* The maximum required quality factor `max_qualityfactor` must be between `1.0`
+and the number of filters per octaves.
 
-* The maximum scale must be at least 5 times above the maximum quality factor.
+* The maximum scale must `max_scale` must be at least about 5 times above the
+maximum quality factor.
 
-* The mother frequency must be in ]0.0, 0.5].
+* The mother frequency `motherfrequency` must be in `]0.0, 0.5]`.
 
 * The lowest center frequency must be greater or equal than the number of
 per octaves, i.e. `(log2_size-nOctaves) >= 1 + log2(nFilters_per_octave)`."""
@@ -118,12 +119,12 @@ default_max_qualityfactor(max_q::Real, nfo) = Float64(max_q)
 default_max_qualityfactor(max_q::Void, nfo::Integer) = Float64(nfo)
 default_max_qualityfactor(max_q::Void, nfo::Void) = 1.0
 
-"""The dimensionless mother center frequency ξ (corresponding to a log-period
-γ=0) is computed as the midpoint between the center frequency of the second
-center frequency ξ*2^(-1/nFilters_per_octave) (corresponding to γ=1) and the
-negative mother center frequency (1-ξ). Hence the equation
-2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ), of which we
-derive ξ = 1 / (3 - 2^(1/nFilters_per_octave)). This formula is valid
+"""The dimensionless mother center frequency `ξ` (corresponding to a log-period
+`γ=0`) is computed as the midpoint between the center frequency of the second
+center frequency `ξ*2^(-1/nFilters_per_octave)` (corresponding to `γ=1`) and the
+negative mother center frequency `(1-ξ)`. Hence the equation
+`2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ)`, of which we
+derive `ξ = 1 / (3 - 2^(1/nFilters_per_octave))`. This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
 default_motherfrequency{S<:AbstractSpec}(::Type{S}, nFilters_per_octave) =
     inv(3.0 - exp2(-inv(nFilters_per_octave)))
@@ -136,7 +137,7 @@ default_nFilters_per_octave(nfo::Void, max_q::Real) = ceil(Int, max_q)
 default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 
 """Returns the maximal number octaves in a filter bank such that all scales are
-below 2^(log2_size)."""
+below `2^(log2_size)`."""
 default_nOctaves(nOctaves::Int, args...) = nOctaves
 function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
                              max_qualityfactor::Float64, max_scale::Real,
