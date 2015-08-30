@@ -3,7 +3,7 @@ immutable Literal
     symbol::Symbol
     level::Int
 end
-typealias SymbolInt @compat(Tuple{Symbol,Int})
+typealias SymbolInt Tuple{Symbol,Int}
 Literal(tup::SymbolInt) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
