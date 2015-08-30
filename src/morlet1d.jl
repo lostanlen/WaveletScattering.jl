@@ -114,16 +114,22 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         last = 3half_length
     else
         ρ = @fastmath 0.5 * bw * sqrt(-log2(spec.ɛ))
-        maingauss_first = center - ρ
-        maingauss_last = center + ρ
-        corr0_first = - ρ * (1 + sqrt(-log2(corr0)))
-        corr0_last = - corr0_first
-        corrN_first = N - ρ * (1 + sqrt(-log2(corrN)))
-        corrN_last = 2N - corrN_first
-        first = floor(Int, min(maingauss_first, corr0_first, corrN_first))
-        first = min(first, -half_length + 1)
-        last = ceil(Int, max(maingauss_last, corr0_last, corrN_last))
-        last = max(last, 3half_length)
+        first = center - ρ
+        last = center + ρ
+        if corr0 != 0
+            corr0_first = - ρ * (1 + sqrt(-log2(corr0)))
+            corr0_last = - corr0_first
+            first = min(first, corr0_first)
+            last = max(last, corr0_last)
+        end
+        if corrN != 0
+            corrN_first = N - ρ * (1 + sqrt(-log2(corrN)))
+            corrN_last = 2N - corrN_first
+            first = min(first, corrN_first)
+            last = max(last, corrN_last)
+        end
+        first = floor(Int, min(first, -half_length + 1))
+        last = ceil(Int, max(last, 3half_length))
     end
     "4. **Computational comprehension of the Morlet 1D wavelet**"
     @inbounds ωs = convert(Vector{T}, collect(first:last))
