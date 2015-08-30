@@ -128,7 +128,7 @@ Base.scale{T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(ψ.neg .* b, ψ.neglast)
 Base.scale{T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(scale(ψ.an, b), scale(ψ.coan, b))
-Base.scale{T<:Number}(ψ:VanishingWithMidpoint1DFilter{T}, b::Number) =
+Base.scale{T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(scale(ψ.an, b), scale(ψ.coan, b), ψ.midpoint*b)
 
 # right division operator /
