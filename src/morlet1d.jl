@@ -113,8 +113,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         first = -half_length + 1
         last = 3half_length
     else
-        ρ = @fastmath 0.5 * bw * sqrt(log2(spec.ɛ))
-        @show ρ, spec.ɛ, bw
+        ρ = @fastmath 0.5 * bw * sqrt(-log2(spec.ɛ))
         maingauss_first = center - ρ
         maingauss_last = center + ρ
         corr0_first = - ρ * (1 + sqrt(-log2(corr0)))
