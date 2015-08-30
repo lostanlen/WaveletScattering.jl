@@ -126,7 +126,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         last = max(last, 3half_length)
     end
     "4. **Computational comprehension of the Morlet 1D wavelet**"
-    @inbounds ωs = T[ ω_int for ω_int in gauss_first:gauss_las]
+    @inbounds ωs = T[ ω_int for ω_int in first:last]
     @fastmath @inbounds morlet = T[ morlet1d(ω) for ω in ωs ]
     """5. **Trimming to true support boundaries**
     We look for the true ɛ boundaries of the vector above by looking
