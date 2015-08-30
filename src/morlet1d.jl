@@ -12,6 +12,7 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
                              max_qualityfactor=nothing, max_scale=Inf,
                              nFilters_per_octave=nothing, nOctaves=nothing,
                              tuningfrequency=nothing)
+        "Integer log2_size is automatically converted to one-element tuple"
         isa(log2_size, Int) && (log2_size = tuple(log2_size))
         max_qualityfactor, nFilters_per_octave =
              default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
@@ -52,33 +53,84 @@ A Morlet wavelet of center frequency ξ and of variance σ looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
-frequency N.
-"""
+frequency N."""
 function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
+    """1. **Gaussian denominator `den = 2σ²`**
+    The FWHM (full width at half maximum) bw of a Gaussian bell curve of
+    variance `σ` is defined by the equation
+        `g(±bw/2) = exp(- (bw/2)²/(2σ²)) = 1/2`
+    which leads to
+        `bw² = 4 * log(2) * 2σ²`.
+    The denominator `den = 2σ²` of the Gaussian is thus equal to
+        `den = 2σ² = bw² / (4 log(2))."""
     log2_length = spec.log2_size[1]
     half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(4.0 * log(2.0))
+    """2. **Morlet low-frequency corrective terms**
+    The one-dimensional Morlet wavelet of center frequency c is defined in the
+    Fourier domain under the form
+        `ψ(ω) = g(ω-c) - corr0 * g(ω) - corrN * g(ω-N)`
+    where `corr0` and `corrN` are corrective terms to the Gaussian bell curve
+    g(ω) of variance σ to ensure one vanishing moment.
+    These terms satisfy the equations `ψ(0) = 0` and `ψ(N) = 0`, which leads to
+    the system
+        `ψ(0) = g(c)   + corr0 * g(0) - corrN * g(N) = 0`
+        `ψ(N) = g(N-c) + corr0 * g(N) - corrN * g(0) = 0`
+    which, recalling that `g(0) = 1` and that `g` is symmetric, is inverted as
+        `corr0 = (g(N-c) - g(N)*g(c)) / (1 - g(N)²)`
+        `corrN = g(c) - g(N) * (g(N-c) - g(N)*g(c)) / (1 - g(N)²)`."""
     gauss_N = gauss(N, den)
     gauss_center = gauss(center, den)
     gauss_N_minus_center = gauss(N-center, den)
     corrN = (gauss_N_minus_center - gauss_N*gauss_center)/(1 - gauss_N*gauss_N)
     corr0 = gauss_center - gauss_N * corrN
-    corr = gauss(center, den) / (gauss(N, den) + one(T))
+    """3. **Conservative support boundaries**
+    Since the Morlet wavelet has a fast (Gaussian-like) decay in the frequency
+    domain, we may spare unnecessary computations by specifying analytically
+    the support over which it will be non-negligible.
+    Given a floating-point number `ɛ` (defaulting to machine precision
+    `eps(T)`), the support above `ɛ` of the Gaussian `g(ω) of variance `σ` is
+    defined by
+        `g(ω) = exp(- ω² / (2σ²)) = 1/ɛ`,
+    which leads to
+        `ω² = log(ɛ) * 2σ²`.
+    Recalling that `bw² = 4 * log(2) * 2σ²` (see paragraph 1. above), we have
+        `ω² = log(ɛ) * bw² / (4 * log(2))`, and then
+        `ω  = ± bw/2 * sqrt(log(ɛ)/log(2)) = ± bw/2 * sqrt(log2(ɛ))
+    Let ρ be the constant bw/2 * sqrt(log2(ɛ)).
+    The ɛ bounds of each of the three terms are:
+        1. main Gaussian: c ± ρ
+        2. corr0 Gaussian: ± ρ*(1+sqrt(-log2(corr0)))
+        3. corrN Gaussian: N ± ρ*(1+sqrt(-log2(corrN)))
+    By the triangular inequality, we take the union of those three intervals
+    to get a conservative superset of the ɛ support of the Morlet wavelet.
+    Finally, we bound the obtained set by -N/2 and 3N/2, in order to compute
+    at most 2N Fourier-domain Morlet coefficients."""
     if spec.ɛ == 0.0
-        gauss_first = -half_length + 1
-        gauss_last = 3 * half_length
+        first = -half_length + 1
+        last = 3half_length
     else
-        gauss_first = @fastmath -0.5 * sqrt(-log2(spec.ɛ * corr0)) * bw
-        gauss_first = max(floor(Int, gauss_first, -half_length+1)
-        gauss_last = @fastmath -0.5 * sqrt(-log2(spec.ɛ)) * bw
-        gauss_last = min(ceil(Int, gauss_last, 3*half_length)
+        ρ = @fastmath 0.5 * bw * sqrt(log2(spec.ɛ))
+        maingauss_first = center - ρ
+        maingauss_last = center + ρ
+        corr0_first = - ρ * (1 + sqrt(-log2(corr0)))
+        corr0_last = - corr0_first
+        corrN_first = N - ρ * (1 + sqrt(-log2(corrN)))
+        corrN_last = 2N - corrN_first
+        first = floor(Int, min(maingauss_first, corr0_first, corrN_first))
+        first = min(first, -half_length + 1)
+        last = ceil(Int, max(maingauss_last, corr0_last, corrN_last))
+        last = max(last, 3half_length)
     end
-    @inbounds ωs = [T(ω_int) for ω_int in gauss_first:gauss_last]
-    @fastmath @inbounds morlet = T[
-        gauss(ω-center, den) - corr0 * gauss(ω, den) - corrN * gauss(ω-N, den) for ω in ωs]
+    "4. **Computational comprehension of the Morlet 1D wavelet**"
+    @inbounds ωs = T[ ω_int for ω_int in gauss_first:gauss_las]
+    @fastmath @inbounds morlet = T[ morlet1d(ω) for ω in ωs ]
+    """5. **Trimming to true support boundaries**
+    We look for the true ɛ boundaries of the vector above by looking
+    at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
     sub_first = findfirst(morlet2 .> ɛ2)
@@ -86,8 +138,16 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     morlet = morlet[sub_first:sub_last]
     first = gauss_first + (sub_first-1)
     last = gauss_last - (length(morlet)-sub_last)
+    "6. **Construction of AbstractFourier1DFilter object**"
     AbstractFourier1DFilter(morlet, first, last, log2_length)
 end
+
+"""Computes one coefficient of the Morlet wavelet of center frequency `center`
+and denominator `den = 2σ²` in the frequency domain, at the frequency ω.
+`N` is the signal length. `corr0` and `corrN` are the Morlet low-frequency
+corrective terms (computed by the `fourierwavelet` function above)."""
+morletfourier1d(ω, center, den, N, corr0, corrN) =
+    gauss(ω-center, den) - corr0 * gauss(ω, den) - corrN * gauss(ω-N, den)
 
 """
 By neglecting the low-frequency corective term, we write the Morlet wavelet as a
