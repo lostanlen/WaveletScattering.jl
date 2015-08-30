@@ -74,7 +74,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     Fourier domain under the form
         `ψ(ω) = g(ω-c) - corr0 * g(ω) - corrN * g(ω-N)`
     where `corr0` and `corrN` are corrective terms to the Gaussian bell curve
-    g(ω) of variance σ to ensure one vanishing moment.
+    `g(ω)` of variance `σ` to ensure one vanishing moment.
     These terms satisfy the equations `ψ(0) = 0` and `ψ(N) = 0`, which leads to
     the system
         `ψ(0) = g(c)   + corr0 * g(0) - corrN * g(N) = 0`
@@ -103,8 +103,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     Let ρ be the constant bw/2 * sqrt(log2(ɛ)).
     The ɛ bounds of each of the three terms are:
         1. main Gaussian: c ± ρ
-        2. corr0 Gaussian: ± ρ*(1+sqrt(-log2(corr0)))
-        3. corrN Gaussian: N ± ρ*(1+sqrt(-log2(corrN)))
+        2. corr0 Gaussian: ± bw/2 * sqrt(-log2(corr0*ɛ))
+        3. corrN Gaussian: N ± bw/2 * sqrt(-log2(corrN*ɛ))
     By the triangular inequality, we take the union of those three intervals
     to get a conservative superset of the ɛ support of the Morlet wavelet.
     Finally, we bound the obtained set by -N/2 and 3N/2, in order to compute
@@ -117,19 +117,19 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         first = center - ρ
         last = center + ρ
         if corr0 != 0
-            corr0_first = - ρ * (1 + sqrt(-log2(corr0)))
+            corr0_first = - 0.5 * bw * sqrt(-log2(corr0*spec.ɛ))
             corr0_last = - corr0_first
             first = min(first, corr0_first)
             last = max(last, corr0_last)
         end
         if corrN != 0
-            corrN_first = N - ρ * (1 + sqrt(-log2(corrN)))
+            corrN_first = N - 0.5 * bw * sqrt(-log2(corrN*spec.ɛ))
             corrN_last = 2N - corrN_first
             first = min(first, corrN_first)
             last = max(last, corrN_last)
         end
-        first = floor(Int, min(first, -half_length + 1))
-        last = ceil(Int, max(last, 3half_length))
+        first = floor(Int, max(first, -half_length + 1))
+        last = ceil(Int, min(last, 3half_length))
     end
     "4. **Computational comprehension of the Morlet 1D wavelet**"
     @inbounds ωs = convert(Vector{T}, collect(first:last))
