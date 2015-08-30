@@ -176,10 +176,10 @@ The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes).
 If the quality factor varies across frequencies, the multiplier is no longer a
 scalar number, since it adapts to the quality factor q at every frequency ξ.
-The multiplier m is such that:
-* `m = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (ξleft)
-* `m = 1/(max_q*max_1)` for `q = 1`, that is `ξ < uncertainty/max_s` (ξright)
-* `m` is interpolated linearly in between, that is, for `s=max_s`
+The multiplier b is such that:
+* `b = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (ξleft)
+* `b = 1/(max_q*max_1p)` for `q = 1`, that is `ξ < uncertainty/max_s` (ξright)
+* `b` is interpolated linearly in between, that is, for `s=max_s`
 If maximum scale is infinite and/or maximum quality factor, the three cases
 above collapse into the simpler `m = 1/max(lp)`."""
 function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
@@ -200,39 +200,36 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξright = spec.max_qualityfactor * ξleft
         ωleft = 1 + round(Int, N * ξleft)
         ωright = 1 + round(Int, N * ξright)
+        inv_max_Q = inv(spec.max_qualtyfactor)
+        scale!(lp[1:(ωleft-1)], inv_max_Q)
         linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
-        for ω in 1:(ωleft-1)
-            sqrtden = spec.max_qualityfactor
-            lp[ω] = lp[ω] / (sqrtden*sqrtden)
-        end
+        inv_linspaced_qs = 1.0 ./ linspaced_qs
         for ω in (ωleft:ωright)
-            sqrtden = linspaced_qs[ω-ωleft+1]
-            lp[ω] = lp[ω] / (sqrtden*sqrtden)
+            lp[ω] *= inv_linspaced_qs[ω-ωleft+1] * inv_linspaced_qs[ω-ωleft+1]
         end
-        invmax_lp = inv(maximum(lp))
-        sqrtinvmax_lp = sqrt(invmax_lp)
-        centers = [ round(Int, meta.centerfrequency*N) for meta in metas ]
+        inv_max_lp = inv(maximum(lp))
+        sqrtinv_max_lp = sqrt(inv_max_lp)
+        sqrtinv_max_Q = sqrt(inv_max_Q)
+        sqrtinv_linspaced_qs = sqrt(inv_linspaced_qs)
+        centers = [ 1 + round(Int, meta.centerfrequency*N) for meta in metas ]
         for λ in eachindex(ψs)
             ξ = metas[λ].centerfrequency
-            ω = 1 + round(Int, N*ξ)
-            sqrt_maxQ = sqrt(spec.max_qualityfactor)
-            sqrt_linspaced_qs = sqrt(linspaced_qs)
+            ω = 1 + round(Int, N * ξ)
             if ω<ωleft
-                normalizer = sqrtinvmax_lp * sqrt(spec.max_qualityfactor)
+                b = sqrtinv_max_lp * sqrtinv_max_Q
             elseif ω<ωright
-                normalizer = sqrtinvmax_lp * sqrt_linspaced_qs[ω-ωleft+1]
+                b = sqrtinv_max_lp * sqrtinv_linspaced_qs[ω-ωleft+1]
             else
-                normalizer = sqrtinvmax_lp
+                b = sqrtinv_max_lp
             end
-            ψs[λ] = ψs[λ] / normalizer
+            ψs[λ] = scale(ψs[λ], b)
         end
     else
         invmax_lp = inv(maximum(lp))
-        normalizer = sqrt(invmax_lp)
-        for λ in eachindex(ψs); ψs[λ] = ψs[λ] / normalizer; end
+        b = sqrt(invmax_lp)
+        for λ in eachindex(ψs); ψs[λ] = scale(ψs[λ], b); end
     end
-    for ω in eachindex(lp); lp[ω] = lp[ω] * invmax_lp; end
-    return lp
+    return scale!(lp, invmax_lp)
 end
 
 function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
