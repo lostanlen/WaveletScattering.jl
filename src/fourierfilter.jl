@@ -65,8 +65,8 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
             neglast = -1
             coan = Coanalytic1DFilter(neg, neglast)
             pos = vcat(
-                y[(2-first):(1+last-first-N)] + y[(2+N-first):(1+last-first)],
-                y[(2+last-first-N):(-first+halfN)])
+                y[(2-first):(last-first-N)] + y[(2+N-first):(last-first)],
+                y[(2+last-first-N):(-first+halfN-1)])
             posfirst = 1
             an = Analytic1DFilter(pos, posfirst)
             if last == 3halfN
