@@ -53,22 +53,22 @@ A Morlet wavelet of center frequency ξ and of variance σ looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
-frequency N."""
+frequencies -N, +N, and +2N."""
 function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of
     variance `σ` is defined by the equation
-        `g(±bw/2) = exp(- (bw/2)²/(2σ²)) = 1/2`
+        `g(±bw/2) = exp(- (bw/2)²/(2σ²)) = 1/sqrt(2)`
     which leads to
-        `bw² = 4 * log(2) * 2σ²`.
+        `bw² = 2 log(2) * 2σ²`.
     The denominator `den = 2σ²` of the Gaussian is thus equal to
-        `den = 2σ² = bw² / (4 log(2))."""
+        `den = 2σ² = bw² / (2 log(2))."""
     log2_length = spec.log2_size[1]
     half_length = 1 << (log2_length - 1)
     N = T(half_length << 1)
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
-    den = @fastmath bw * bw / T(4.0 * log(2.0))
+    den = @fastmath bw * bw / T(2.0 * log(2.0))
     """2. **Morlet low-frequency corrective terms**
     The one-dimensional Morlet wavelet of center frequency c is defined in the
     Fourier domain under the form
@@ -82,6 +82,15 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     which, recalling that `g(0) = 1` and that `g` is symmetric, is inverted as
         `corr0 = (g(N-c) - g(N)*g(c)) / (1 - g(N)²)`
         `corrN = g(c) - g(N) * (g(N-c) - g(N)*g(c)) / (1 - g(N)²)`."""
+    gauss_center = gauss((1-3N/2):(5N/2) - center, den)
+    gauss_7periods = gauss((1-7N/2):(7N/2), den)
+
+    gaussmN = gauss_7periods(1+(1-3N/2))
+    gauss0 = gauss(xs, den)
+    gaussN = gauss(xs - N, den)
+    gauss2N = gauss(xs - 2N, den)
+
+
     gauss_N = gauss(N, den)
     gauss_center = gauss(center, den)
     gauss_N_minus_center = gauss(N-center, den)
@@ -89,7 +98,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     corr0 = gauss_center - gauss_N * corrN
     """3. **Conservative support boundaries**
     Since the Morlet wavelet has a fast (Gaussian-like) decay in the frequency
-    domain, we may spare unnecessary computations by specifying analytically
+    domain, we can spare unnecessary computations by specifying mathematically
     the support over which it will be non-negligible.
     Given a floating-point number `ɛ` (defaulting to machine precision
     `eps(T)`), the support above `ɛ` of the Gaussian `g(ω) of variance `σ` is
