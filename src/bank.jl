@@ -6,12 +6,12 @@ bank, without having to recompute the underlying architecture. Fields:
 Default is all of them (see outer constructor).
 
 * log2_oversampling: base-2 logarithm of the oversampling factor with respect
-to the critical sampling rate 2^(-j-1). Must be positive.
+to the critical sampling rate. Must be positive.
 Default is 0, i.e. no oversampling.
 
 * min_log2_resolution : base-2 logarithm of the minimal undersampling factor.
-Default is (-J+1), i.e. it has no effect. Set min_log2_resolution to 0 to avoid
-any undersampling."""
+Default is (-J+1), i.e. it has no effect. Set min_log2_resolution to 0
+to avoid any undersampling."""
 type Behavior
     γ_range::UnitRange
     log2_oversampling::Int
@@ -52,8 +52,8 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         ξs, qs = centerfrequencies(spec), qualityfactors(spec)
         scs, bws = scales(spec), bandwidths(spec)
         @inbounds metas = [
-            NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-            for i in eachindex(γs)]
+            NonOrientedMeta(γs[γ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
+            for γ in eachindex(γs)]
         @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
         lp = renormalize!(ψs, metas, spec)
         ϕ = scalingfunction!(lp, metas)
@@ -79,8 +79,8 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         scs, bws = scales(spec), bandwidths(spec)
         θs = 0:1
         @inbounds metas = [ OrientedMeta(
-            γs[i], θs[j], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-            for i in eachindex(γs), j in 1:2]
+            γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
+            for γ in eachindex(γs), θ in 1:2]
         @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas[:,1]]
         ψs = [ψs spin(ψs)]
         lp = renormalize!(ψs, metas, spec)
