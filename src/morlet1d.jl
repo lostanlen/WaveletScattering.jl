@@ -40,13 +40,13 @@ term is no longer negligible."""
 default_motherfrequency(::Type{Morlet1DSpec}, nFilters_per_octave) =
     nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
-"""Computes gauss{T<:Real}(ω::T, den::T) = exp(- ω*ω/den).
+"""Computes gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den).
 The Gaussian bell curve is defined as gauss(ω) = exp(- ω² / 2σ²).
 For performance reasons, we memoize the denominator 2σ², which is computed only
 once in the caller morlet1d.
 Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω.
 """
-gauss(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))
+gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))
 
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
 A Morlet wavelet of center frequency ξ and of variance σ looks almost like
