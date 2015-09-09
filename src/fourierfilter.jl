@@ -63,7 +63,7 @@ Base.(:.*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(scale(ψ.an, b), scale(ψ.coan, b))
 Base.(:.*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(scale(ψ.an, b), scale(ψ.coan, b), ψ.midpoint*b)
-Base.(:.*)(b::Number, ψ::AbstractFourierFilter}) = ψ .* b
+Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 
 # right division operator /
 Base.(:/){T}(ψ::Analytic1DFilter{T}, x::Number) =
