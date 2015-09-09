@@ -69,12 +69,10 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-    """2. **Main Gabor bell curve**
-    We compute a Gabor bell curve centered in meta.centerfrequency between
-    frequencies -3π and 5π."""
-    gauss_center = gauss((1-3N/2):(5N/2) - center, den)
-    """3. **Low-frequency corrective terms**"""
-    gauss_7periods = gauss((1-7N/2):(7N/2), den)
+    "2. **Main Gabor bell curve**"
+    gauss_center = [gauss(ω-center, den) for ω in (1-3N/2):(5N/2)]
+    "3. **Low-frequency corrective terms**"
+    gauss_7periods = [gauss(ω, den) for ω in (1-7N/2):(7N/2)]
     gauss_mN = gauss_7periods((1:4N))
     gauss_0 =  gauss_7periods((1:4N) + N)
     gauss_N =  gauss_7periods((1:4N) + 2N)
