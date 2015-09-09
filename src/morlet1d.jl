@@ -100,10 +100,10 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
-    first = findfirst(morlet2 .> ɛ2)
-    last = findlast(morlet2 .> ɛ2)
+    first = findfirst(morlet2 .> ɛ2) - halfN
+    last = findlast(morlet2 .> ɛ2) - halfN
     "7. **Construction of AbstractFourier1DFilter object**"
-    AbstractFourier1DFilter(morlet[first:last], first, last, log2_length)
+    AbstractFourier1DFilter(morlet[halfN+(first:last)], first, last, log2_length)
 end
 
 """
