@@ -11,6 +11,10 @@ immutable Coanalytic1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     neglast::Int
 end
 
+immutable FullResolution1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
+    coeff::Vector{T}
+end
+
 immutable Vanishing1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     an::Analytic1DFilter
     coan::Coanalytic1DFilter{T}
@@ -25,103 +29,32 @@ end
 function AbstractFourier1DFilter(y, first, last, log2_length)
     N = 1 << log2_length
     halfN = N >> 1
-    if first>(-halfN) && first<0
-        if last>0 && last<(halfN)
-            # support is in ]-N/2;N/2[
-            # we split y between analytic and coanalytic parts
-            neg = y[1:(-first)]
-            neglast = first
-            coan = Coanalytic1DFilter(neg, neglast)
-            pos = y[(2-first):end]
-            posfirst = 1
-            an = Analytic1DFilter(pos, posfirst)
-            return Vanishing1DFilter(an, coan)
-        elseif last>(halfN-1) && last<N
-            # support is in ]-N/2;N[
-            # we sum ]-N/2;0[ (or a subset) with ]N/2;N[ (or a subset)
-            # if the subsets are not overlapping, we zero-pad in between
-            # we define ]0;N/2[ as the analytic part
-            # the midpoint N/2 is handled separately
-            neg = vcat(
-                y[(2-first+halfN):min(N,length(y))],
-                zeros(eltype(y), N-min(N,length(y))),
-                y[1+min(N,length(y)):end] + y[1:(1+last-first-N)],
-                y[max(1,2+last-first-N):(-first)])
-            neglast = -1
-            coan = Coanalytic1DFilter(neg, neglast)
-            pos = y[(2-first):(-first+halfN)]
-            posfirst = 1
-            an = Analytic1DFilter(pos, posfirst)
-            midpoint = y[1-first+halfN]
-            return VanishingWithMidpoint1DFilter(an, coan, midpoint)
-        elseif last>N && last<(3halfN+1)
-            # support is in ]-N/2;3N/2]
-            # we sum ]-N/2;0[ (or a subset) with ]N/2;N[
-            # we sum ]N/2;N[ with ]N;3N/2[ (or a subset)
-            # we sum midpoints N/2 and 3N/2 (if present)
-            neg = vcat(
-                y[(2-first+halfN):N],
-                y[(1+N):(N-first)] + y[1:(-first)])
-            neglast = -1
-            coan = Coanalytic1DFilter(neg, neglast)
-            pos = vcat(
-                y[(2-first):(last-first-N)] + y[(2+N-first):(last-first)],
-                y[(2+last-first-N):(-first+halfN-1)])
-            posfirst = 1
-            an = Analytic1DFilter(pos, posfirst)
-            if last == 3halfN
-                midpoint = y[1-first+halfN] + y[1-first+3halfN]
-            else
-                midpoint = y[1-first+halfN]
-            end
-            return VanishingWithMidpoint1DFilter(an, coan, midpoint)
+    last<0 && return Coanalytic1DFilter(y, first)
+    first==(-halfN+1) && last==halfN && return FullResolution1DFilter(y)
+    if first<0
+        an = Analytic1DFilter(y[(1-first):end], length(y)-first)
+    else
+        an = Analytic1DFilter(y[1:(halfN-first)], first)
+    end
+    if last==halfN
+        midpoint = y[1+halfN-first]
+        if first<0
+            coan = Coanalytic1DFilter(y[1:(-first)], first)
+        else
+            coan = Coanalytic1DFilter([zero(y)], -1)
         end
-    elseif first>0 && first<(halfN)
-        if last>0 && last<(halfN)
-            # support is in ]0;N/2[
-            # we just define y as the analytic part
-            pos = y
-            posfirst = first
-            return Analytic1DFilter(pos, posfirst)
-        elseif last>(halfN+1) && last<N
-            # support is in ]0;N[
-            # we split y between analytic and coanalytic parts
-            # the midpoint halfN is handled separately
-            pos = y[1:(halfN-first)]
-            posfirst = first
-            an = Analytic1DFilter(pos, posfirst)
-            neg = y[(2+halfN-first):end]
-            neglast = last - N
-            coan = Coanalytic1DFilter(neg, neglast)
-            midpoint = y[1+halfN-first]
-            return VanishingWithMidpoint1DFilter(an, coan, midpoint)
-        elseif last>N && last<(3halfN+1)
-            # support is in ]0;3N/2]
-            # we sum ]0;N/2[ (or a subset) with ]N;N/2[ (or a subset)
-            # we define ]N/2;N[ as the coanalytic part
-            # the midpoint N/2 is handled separately
-            m = min(N, length(y))
-            pos = vcat(
-                y[(2+N-first):m],
-                y[(1+m-N):(1-first+last-N)] + y[(1+m):(1-first+last)],
-                zeros(Int, max(first+N-last-1,0)),
-                y[max(1,2-first+last-N):(halfN-first)])
-            posfirst = 1
-            an = Analytic1DFilter(pos, posfirst)
-            neg = y[(2+halfN-first):(N-first)]
-            neglast = -1
-            coan = Coanalytic1DFilter(neg, neglast)
-            if last == 3halfN
-                midpoint = y[1+halfN-first] + y[1+3halfN-first]
-            else
-                midpoint = y[1+halfN-first]
-            end
-            return VanishingWithMidpoint1DFilter(an, coan, midpoint)
-        end
+        return VanishingWithMidpoint1DFilter(an, coan, midpoint)
+    elseif first<0
+        coan = Coanalytic1DFilter(y[1:(-first)], first)
+        return Vanishing1DFilter(an, coan)
+    else
+        return an
     end
 end
 
 # element-wise multiplication operator .*
+Base.(:.*){T<:Number}(ψ::FullResolution1DFilter, b) =
+    FullResolution1DFilter{T}(ψ.coeff .* b)
 Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(ψ.pos .* b, ψ.posfirst)
 Base.(:.*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
@@ -152,6 +85,11 @@ end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
     @inbounds for ω in eachindex(ψ.neg)
         @fastmath lp[length(lp) - length(ψ.neg)+ω] += abs2(ψ.neg[ω])
+    end
+end
+function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
+    @inbounds for ω in eachindex(ψ.coeff)
+        @fastmath lp[ω] += abs2(ψ.coeff[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
@@ -223,12 +161,12 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
             else
                 b = sqrtinv_max_lp
             end
-            ψs[λ] = scale(ψs[λ], b)
+            ψs[λ] = ψs[λ] .* b
         end
     else
         invmax_lp = inv(maximum(lp))
         b = sqrt(invmax_lp)
-        for λ in eachindex(ψs); ψs[λ] = scale(ψs[λ], b); end
+        for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* b; end
     end
     return scale!(lp, invmax_lp)
 end
@@ -243,6 +181,7 @@ end
 
 spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.posfirst), -ψ.posfirst)
 spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neglast), -ψ.neglast)
+spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
 spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(reverse(ψ.coan), reverse(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
     VanishingWithMidpoint1DFilter(reverse(ψ.coan), reverse(ψ.an), midpoint)
