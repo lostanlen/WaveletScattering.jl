@@ -99,9 +99,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     morlet2 = abs2(morlet)
     first = findfirst(morlet2 .> ɛ2)
     last = findlast(morlet2 .> ɛ2)
-    morlet = morlet[sub_first:sub_last]
     "6. **Construction of AbstractFourier1DFilter object**"
-    AbstractFourier1DFilter(morlet, first, last, log2_length)
+    AbstractFourier1DFilter(morlet[first:last], first, last, log2_length)
 end
 
 """
