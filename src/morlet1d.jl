@@ -64,8 +64,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     The denominator `den = 2σ²` of the Gaussian is thus equal to
         `den = 2σ² = bw² / (2 log(2))."""
     log2_length = spec.log2_size[1]
-    half_length = 1 << (log2_length - 1)
-    N = half_length << 1
+    halfN = 1 << (log2_length - 1)
+    N = halfN << 1
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
