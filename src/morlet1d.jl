@@ -94,7 +94,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         corr_2N * gauss_2N
     """5. **Periodization**"""
     morlet = reshape(morlet, (div(length(morlet),4),4))
-    morlet = sum(morlet, 2)
+    morlet = squeeze(sum(morlet, 2), (2,))
     """6. **Trimming to true support boundaries**
     We look for the true ɛ boundaries of the vector above by looking
     at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
