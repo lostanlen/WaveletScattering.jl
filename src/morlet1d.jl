@@ -73,10 +73,10 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     gauss_center = [gauss(ω-center, den) for ω in (1-3N/2):(5N/2)]
     "3. **Low-frequency corrective terms**"
     gauss_7periods = [gauss(ω, den) for ω in (1-7N/2):(7N/2)]
-    gauss_mN = gauss_7periods((1:4N))
-    gauss_0 =  gauss_7periods((1:4N) + N)
-    gauss_N =  gauss_7periods((1:4N) + 2N)
-    gauss_2N = gauss_7periods((1:4N) + 3N)
+    gauss_mN = gauss_7periods[(1:4N)]
+    gauss_0 =  gauss_7periods[(1:4N) + N]
+    gauss_N =  gauss_7periods[(1:4N) + 2N]
+    gauss_2N = gauss_7periods[(1:4N) + 3N]
     b = [gauss(-N - center, den) ;
          gauss( 0 - center, den) ;
          gauss( N - center, den) ;
