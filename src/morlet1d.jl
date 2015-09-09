@@ -46,7 +46,7 @@ For performance reasons, we memoize the denominator 2σ², which is computed onl
 once in the caller morlet1d.
 Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω.
 """
-gauss(ω, den) = @fastmath exp(- ω*ω/den)
+gauss(ω, den::T) = @fastmath T(exp(- ω*ω/den))
 
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
 A Morlet wavelet of center frequency ξ and of variance σ looks almost like
@@ -70,9 +70,9 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     "2. **Main Gabor bell curve**"
-    gauss_center = [gauss(ω-center, den) for ω in (1-3N/2):(5N/2)]
+    gauss_center = T[gauss(ω-center, den) for ω in (1-3N/2):(5N/2)]
     "3. **Low-frequency corrective terms**"
-    gauss_7periods = [gauss(ω, den) for ω in (1-7N/2):(7N/2)]
+    gauss_7periods = T[gauss(ω, den) for ω in (1-7N/2):(7N/2)]
     gauss_mN = gauss_7periods[(1:4N)]
     gauss_0 =  gauss_7periods[(1:4N) + N]
     gauss_N =  gauss_7periods[(1:4N) + 2N]
