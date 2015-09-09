@@ -97,8 +97,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
-    sub_first = findfirst(morlet2 .> ɛ2)
-    sub_last = findlast(morlet2 .> ɛ2)
+    first = findfirst(morlet2 .> ɛ2)
+    last = findlast(morlet2 .> ɛ2)
     first = first + (sub_first-1)
     last = last - (length(morlet)-sub_last)
     morlet = morlet[sub_first:sub_last]
