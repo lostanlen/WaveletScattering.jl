@@ -53,7 +53,7 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
 end
 
 # element-wise multiplication operator .*
-Base.(:.*){T<:Number}(ψ::FullResolution1DFilter, b) =
+Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b) =
     FullResolution1DFilter{T}(ψ.coeff .* b)
 Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(ψ.pos .* b, ψ.posfirst)
