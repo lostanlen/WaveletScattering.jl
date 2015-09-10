@@ -30,14 +30,24 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
     N = 1 << log2_length
     halfN = N >> 1
     last<0 && return Coanalytic1DFilter(y, first)
-    first==(-halfN+1) && last==halfN && return FullResolution1DFilter(y)
+    if first==(-halfN)
+        if last==(halfN-1)
+            return FullResolution1DFilter(fftshift(y))
+        else
+            midpoint = y[1]
+            coan = Coanalytic1DFilter(y[])
+            an = Analytic1DFilter(y[(1+halfN):end], 1+halfN)
+            an = VanishingWithMidpoint1DFilter(an, )
+        end
+    end
+
     if first<0
         an = Analytic1DFilter(y[(1-first):end], length(y)-first)
     else
         an = Analytic1DFilter(y[1:(halfN-first)], first)
     end
-    if last==halfN
-        midpoint = y[1+halfN-first]
+    if first==(-halfN)
+        midpoint = y[1]
         if first<0
             coan = Coanalytic1DFilter(y[1:(-first)], first)
         else
