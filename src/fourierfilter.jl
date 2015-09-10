@@ -29,37 +29,23 @@ end
 function AbstractFourier1DFilter(y, first, last, log2_length)
     N = 1 << log2_length
     halfN = N >> 1
-    last<0 && return Coanalytic1DFilter(y, first)
     if first==(-halfN)
-        if last==(halfN-1)
-            return FullResolution1DFilter(fftshift(y))
-        else
-            midpoint = y[1]
-            coan = Coanalytic1DFilter(y[])
-            an = Analytic1DFilter(y[(1+halfN):end], 1+halfN)
-            an = VanishingWithMidpoint1DFilter(an, )
-        end
-    end
-
-    if first<0
-        an = Analytic1DFilter(y[(1-first):end], length(y)-first)
-    else
-        an = Analytic1DFilter(y[1:(halfN-first)], first)
-    end
-    if first==(-halfN)
+        last==(halfN-1) && return FullResolution1DFilter(fftshift(y))
         midpoint = y[1]
-        if first<0
-            coan = Coanalytic1DFilter(y[1:(-first)], first)
+        if last>0
+            coan = Coanalytic1DFilter(y[1+(1:(halfN-1))], -1)
+            an = Analytic1DFilter(y[(1+halfN+1):end], 1)
         else
-            coan = Coanalytic1DFilter([zero(y)], -1)
+            an = Analytic1DFilter(zero(typeof(T)), halfN-1)
+            coan = Coanalytic1DFilter(y[(1+1):end], last)
         end
-        return VanishingWithMidpoint1DFilter(an, coan, midpoint)
-    elseif first<0
-        coan = Coanalytic1DFilter(y[1:(-first)], first)
-        return Vanishing1DFilter(an, coan)
-    else
-        return an
+        return VanishingWithMidpoint1DFilter(coan, an, midpoint)
     end
+    first>0 && return Analytic1DFilter(y, first)
+    last<0 && return Coanalytic1DFilter(y, first)
+    an = Analytic1DFilter(y[(1-first):end], length(y)-first)
+    coan = Coanalytic1DFilter(y[1:(-first)])
+    return Vanishing1DFilter(an, coan)
 end
 
 # element-wise multiplication operator .*
@@ -140,8 +126,8 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     if isa(metas, Vector{NonOrientedMeta})
         for ω in 1:(N>>1-1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
-            lp[1+ω] = halfsum
-            lp[1 + N - ω] = halfsum
+            lp[1+ ω] = halfsum
+            lp[1+ N - ω] = halfsum
         end
     end
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
