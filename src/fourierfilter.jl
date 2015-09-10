@@ -43,8 +43,8 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
     end
     first>0 && return Analytic1DFilter(y, first)
     last<0 && return Coanalytic1DFilter(y, first)
-    an = Analytic1DFilter(y[(1-first):end], length(y)-first)
-    coan = Coanalytic1DFilter(y[1:(-first)])
+    an = Analytic1DFilter(y[(1-first):end], 1)
+    coan = Coanalytic1DFilter(y[1:(-first)], -1)
     return Vanishing1DFilter(an, coan)
 end
 
