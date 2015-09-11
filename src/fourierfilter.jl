@@ -95,7 +95,7 @@ end
 function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     littlewoodpaleyadd!(lp, ψ.an)
     littlewoodpaleyadd!(lp, ψ.coan)
-    @fastmath lp[1 + (length(lp) >> 1)] += abs2(ψ.midpoint)
+    @fastmath lp[1 + (length(lp)>>1)] += abs2(ψ.midpoint)
 end
 
 """Returns the type parameter of a complex type.
@@ -124,7 +124,6 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     lp = zeros(realtype(T), N)
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     if isa(metas, Vector{NonOrientedMeta})
-        for ω in 1:(N>>1-1)
         for ω in 1:(N>>1 - 1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
             lp[1 + ω] = halfsum
@@ -171,7 +170,8 @@ end
 function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
     firstpeak = sqrt(metas[end].centerfrequency * metas[end-1].centerfrequency)
     min_ω = round(Int, length(lp) * firstpeak)
-    for ω in 0:min_ω; lp[1+ω] = 1; end
+    @inbounds phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
+    for ω in 0:min_ω; @inbounds lp[1+ω] = 1; end
     return Symmetric1DFilter(phi[2:end], phi[1+0])
 end
 
