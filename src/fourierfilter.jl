@@ -50,15 +50,15 @@ end
 
 # element-wise multiplication operator .*
 Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b) =
-    FullResolution1DFilter{T}(ψ.coeff .* b)
+    FullResolution1DFilter{T}(b.*ψ.coeff)
 Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
-    Analytic1DFilter{T}(ψ.pos .* b, ψ.posfirst)
+    Analytic1DFilter{T}(b.*ψ.pos, ψ.posfirst)
 Base.(:.*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
-    Coanalytic1DFilter{T}(ψ.neg .* b, ψ.neglast)
+    Coanalytic1DFilter{T}(b.*ψ.neg, ψ.neglast)
 Base.(:.*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
-    Vanishing1DFilter(scale(ψ.an, b), scale(ψ.coan, b))
+    Vanishing1DFilter(b.*ψ.an, b.*ψ.coan)
 Base.(:.*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
-    VanishingWithMidpoint1DFilter(scale(ψ.an, b), scale(ψ.coan, b), ψ.midpoint*b)
+    VanishingWithMidpoint1DFilter(b.*ψ.an, b.*ψ.coan, b*ψ.midpoint)
 Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 
 # right division operator /
