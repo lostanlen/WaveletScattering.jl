@@ -63,20 +63,20 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
         `bw² = 2 log(2) * 2σ²`.
     The denominator `den = 2σ²` of the Gaussian is thus equal to
         `den = 2σ² = bw² / (2 log(2))."""
-    log2_length = spec.log2_size[1]
+    @inbounds log2_length = spec.log2_size[1]
     halfN = 1 << (log2_length - 1)
     N = halfN << 1
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     "2. **Main Gabor bell curve**"
-    gauss_center = T[gauss(ω-center, den) for ω in (-3N/2):(5N/2-1)]
+    @inbounds gauss_center = T[gauss(ω-center, den) for ω in (-3N/2):(5N/2-1)]
     "3. **Low-frequency corrective terms**"
-    gauss_7periods = T[gauss(ω, den) for ω in (-7N/2):(7N/2-1)]
-    gauss_mN = gauss_7periods[1 + (0:(4N-1))]
-    gauss_0 =  gauss_7periods[1 + (0:(4N-1)) +  N]
-    gauss_N =  gauss_7periods[1 + (0:(4N-1)) + 2N]
-    gauss_2N = gauss_7periods[1 + (0:(4N-1)) + 3N]
+    @inbounds gauss_7periods = T[gauss(ω, den) for ω in (-7N/2):(7N/2-1)]
+    @inbounds gauss_mN = gauss_7periods[1 + (0:(4N-1))]
+    @inbounds gauss_0 =  gauss_7periods[1 + (0:(4N-1)) +  N]
+    @inbounds gauss_N =  gauss_7periods[1 + (0:(4N-1)) + 2N]
+    @inbounds gauss_2N = gauss_7periods[1 + (0:(4N-1)) + 3N]
     b = [gauss(-N - center, den) ;
          gauss( 0 - center, den) ;
          gauss( N - center, den) ;
@@ -103,7 +103,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     first = findfirst(morlet2 .> ɛ2) - 1 - halfN
     last = findlast(morlet2 .> ɛ2) - 1 - halfN
     "7. **Construction of AbstractFourier1DFilter object**"
-    sub_morlet = @inbounds morlet[1 + (first:last) + halfN]
+    @inbounds sub_morlet = morlet[1 + (first:last) + halfN]
     AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
 end
 
