@@ -6,7 +6,7 @@ import WaveletScattering: Morlet1DSpec, default_motherfrequency,
 import WaveletScattering: bandwidths, centerfrequencies,
     default_ɛ, gauss, qualityfactors, scales, uncertainty
 # meta.jl
-import WaveletScattering: NonOrientedMeta
+import WaveletScattering: NonOrientedMeta, gammas, chromas, octaves
 
 numerictypes = [Float16, Float32, Float64,
                 Complex{Float16}, Complex{Float32}, Complex{Float64}]
