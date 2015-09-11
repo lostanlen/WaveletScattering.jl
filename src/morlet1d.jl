@@ -70,13 +70,13 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     "2. **Main Gabor bell curve**"
-    gauss_center = T[gauss(ω-center, den) for ω in (3N/2):(5N/2-1)]
+    gauss_center = T[gauss(ω-center, den) for ω in (-3N/2):(5N/2-1)]
     "3. **Low-frequency corrective terms**"
     gauss_7periods = T[gauss(ω, den) for ω in (-7N/2):(7N/2-1)]
-    gauss_mN = gauss_7periods[(0:(4N-1))]
-    gauss_0 =  gauss_7periods[(0:(4N-1)) +  N]
-    gauss_N =  gauss_7periods[(0:(4N-1)) + 2N]
-    gauss_2N = gauss_7periods[(0:(4N-1)) + 3N]
+    gauss_mN = gauss_7periods[1 + (0:(4N-1))]
+    gauss_0 =  gauss_7periods[1 + (0:(4N-1)) +  N]
+    gauss_N =  gauss_7periods[1 + (0:(4N-1)) + 2N]
+    gauss_2N = gauss_7periods[1 + (0:(4N-1)) + 3N]
     b = [gauss(-N - center, den) ;
          gauss( 0 - center, den) ;
          gauss( N - center, den) ;
@@ -100,10 +100,11 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
     ɛ2 = T(spec.ɛ * spec.ɛ)
     morlet2 = abs2(morlet)
-    first = findfirst(morlet2 .> ɛ2) - halfN
-    last = findlast(morlet2 .> ɛ2) - halfN
+    first = findfirst(morlet2 .> ɛ2) - 1 - halfN
+    last = findlast(morlet2 .> ɛ2) - 1 - halfN
     "7. **Construction of AbstractFourier1DFilter object**"
-    AbstractFourier1DFilter(morlet[halfN+(first:last)], first, last, log2_length)
+    sub_morlet = @inbounds morlet[1 + (first:last) + halfN]
+    AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
 end
 
 """
