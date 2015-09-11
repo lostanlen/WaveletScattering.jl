@@ -125,9 +125,10 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     if isa(metas, Vector{NonOrientedMeta})
         for ω in 1:(N>>1-1)
+        for ω in 1:(N>>1 - 1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
-            lp[1+ ω] = halfsum
-            lp[1+ N - ω] = halfsum
+            lp[1 + ω] = halfsum
+            lp[1 + N - ω] = halfsum
         end
     end
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
@@ -170,7 +171,6 @@ end
 function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
     firstpeak = sqrt(metas[end].centerfrequency * metas[end-1].centerfrequency)
     min_ω = round(Int, length(lp) * firstpeak)
-    phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
     for ω in 0:min_ω; lp[1+ω] = 1; end
     return Symmetric1DFilter(phi[2:end], phi[1+0])
 end
