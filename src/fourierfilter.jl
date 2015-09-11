@@ -135,7 +135,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξright = spec.max_qualityfactor * ξleft
         ωleft = 1 + round(Int, N * ξleft)
         ωright = 1 + round(Int, N * ξright)
-        inv_max_Q = inv(spec.max_qualtyfactor)
+        inv_max_Q = inv(spec.max_qualityfactor)
         scale!(lp[1:(ωleft-1)], inv_max_Q)
         linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
         inv_linspaced_qs = 1.0 ./ linspaced_qs
