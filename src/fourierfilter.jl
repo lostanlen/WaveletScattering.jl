@@ -142,27 +142,26 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         for ω in (ωleft:ωright)
             lp[ω] *= inv_linspaced_qs[ω-ωleft+1] * inv_linspaced_qs[ω-ωleft+1]
         end
-        inv_max_lp = inv(maximum(lp))
-        sqrtinv_max_lp = sqrt(inv_max_lp)
-        sqrtinv_max_Q = sqrt(inv_max_Q)
+        invmax_lp = inv(maximum(lp))
+        sqrtinvmax_lp = sqrt(invmax_lp)
+        sqrtinvmax_Q = sqrt(invmax_Q)
         sqrtinv_linspaced_qs = sqrt(inv_linspaced_qs)
         centers = [ 1 + round(Int, meta.centerfrequency*N) for meta in metas ]
         for λ in eachindex(ψs)
             ξ = metas[λ].centerfrequency
             ω = 1 + round(Int, N * ξ)
             if ω<ωleft
-                b = sqrtinv_max_lp * sqrtinv_max_Q
+                b = sqrtinvmax_lp * sqrtinvmax_Q
             elseif ω<ωright
-                b = sqrtinv_max_lp * sqrtinv_linspaced_qs[ω-ωleft+1]
+                b = sqrtinvmax_lp * sqrtinv_linspaced_qs[ω-ωleft+1]
             else
-                b = sqrtinv_max_lp
+                b = sqrtinvmax_lp
             end
             ψs[λ] = ψs[λ] .* b
         end
     else
-        invmax_lp = inv(maximum(lp))
-        b = sqrt(invmax_lp)
-        for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* b; end
+        sqrtinvmax_lp = sqrt(inv(maximum(lp)))
+        for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* sqrtinvmax_lp; end
     end
     return scale!(lp, invmax_lp)
 end
