@@ -1,25 +1,41 @@
 abstract AbstractFourierFilter{T<:Number} <: AbstractFilter{T}
 abstract AbstractFourier1DFilter{T<:Number} <: AbstractFourierFilter{T}
 
+"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
+is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
 immutable Analytic1DFilter{T<:Number}  <: AbstractFourier1DFilter{T}
     pos::Vector{T}
     posfirst::Int
 end
 
+"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain
+support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
 immutable Coanalytic1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     neg::Vector{T}
     neglast::Int
 end
 
+"""A FullResolution1DFilter spans the entire spectrum. Its is defined in the
+Fourier domain as a vector of size N."""
 immutable FullResolution1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     coeff::Vector{T}
 end
 
+"""A Vanishing1DFilter has a limited Fourier-domain support, yet spanning both
+in positive and negative frequencies. Moreover, it is null for ω=0 and
+at the midpoint ω=N/2. Thus, it is defined as the combination of an
+Analytic1DFilter (positive frequencies) and a Coanalytic1DFilter (negative
+frequencies)."""
 immutable Vanishing1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     an::Analytic1DFilter
     coan::Coanalytic1DFilter{T}
 end
 
+"""A VanishingWithMidpoint1DFilter has a limited Fourier-domain support, yet
+spanning both in positive and negative frequencies. It is null for ω=0 but
+nonzero at the midpoint ω=N/2. Thus, it is defined as the combination of
+an Analytic1DFilter (positive frequencies), a Coanalytic1DFilter (negative
+frequencies), and a midpoint (frequency ω=N/2)."""
 immutable VanishingWithMidpoint1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     an::Analytic1DFilter{T}
     coan::Coanalytic1DFilter{T}
@@ -166,14 +182,21 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     return scale!(lp, invmax_lp)
 end
 
+"""Given a Littlewood-Paley sum `lp`, constructs a real symmetric low-pass
+filter in the Fourier domain. This low-pass filter is called the ""scaling
+function"" of the wavelet filterbank, as it ensures energy conservation
+and invertibility."""
 function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
     firstpeak = sqrt(metas[end].centerfrequency * metas[end-1].centerfrequency)
     min_ω = round(Int, length(lp) * firstpeak)
-    @inbounds phi = [ sqrt(one(T) - lp[1+ω]) for ω in 0:min_ω ]
+    @inbounds leg = [ sqrt(one(T) - lp[1+ω]) for ω in 1:min_ω ]
     for ω in 0:min_ω; @inbounds lp[1+ω] = 1; end
-    return Symmetric1DFilter(phi[2:end], phi[1+0])
+    return Symmetric1DFilter(leg, one(T))
 end
 
+"""Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
+""mirror filter"" whose center frequency is of opposite sign. This corresponds
+to a conjugation in the time domain."""
 spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.posfirst), -ψ.posfirst)
 spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neglast), -ψ.neglast)
 spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
