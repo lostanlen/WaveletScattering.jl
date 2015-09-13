@@ -11,3 +11,7 @@ Literal(sym::Symbol) = Literal(sym, 1)
 typealias PathKey LinkedList{Literal}
 PathKey() = nil(Literal)
 PathKey(head, tail...) = cons(Literal(head), PathKey(tail...))
+
+"""A `Path` is a dictionary whose keys `PathKeys` and whose values are
+integer indices"""
+typealias Path Dict{PathKey, Int}
