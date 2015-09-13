@@ -151,10 +151,10 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξright = spec.max_qualityfactor * ξleft
         ωleft = 1 + round(Int, N * ξleft)
         ωright = 1 + round(Int, N * ξright)
-        inv_max_Q = inv(spec.max_qualityfactor)
-        scale!(lp[1:(ωleft-1)], inv_max_Q)
+        invmax_Q = inv(spec.max_qualityfactor)
+        scale!(lp[1:(ωleft-1)], invmax_Q)
         linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
-        inv_linspaced_qs = 1.0 ./ linspaced_qs
+        inv_linspaced_qs = @fastmath map(inv, linspaced_qs)
         for ω in (ωleft:ωright)
             lp[ω] *= inv_linspaced_qs[ω-ωleft+1] * inv_linspaced_qs[ω-ωleft+1]
         end
@@ -176,7 +176,8 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
             ψs[λ] = ψs[λ] .* b
         end
     else
-        sqrtinvmax_lp = sqrt(inv(maximum(lp)))
+        invmax_lp = inv(maximum(lp))
+        sqrtinvmax_lp = sqrt(invmax_lp)
         for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* sqrtinvmax_lp; end
     end
     return scale!(lp, invmax_lp)
