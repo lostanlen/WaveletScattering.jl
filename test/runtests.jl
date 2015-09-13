@@ -9,7 +9,7 @@ tests = [
     "fourierfilter",
     "bank",
     "morlet1d",
-    "paths"
+    "path"
 ]
 
 println("Running tests:")

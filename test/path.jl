@@ -14,3 +14,5 @@ pathkey = PathKey(:time, (:γ, 2))
 @test pathkey.head == time_literal
 @test pathkey.tail.head == gamma2_literal
 @test pathkey.tail.tail == PathKey()
+
+# Path

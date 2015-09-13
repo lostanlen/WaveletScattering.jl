@@ -9,6 +9,6 @@ include("filter.jl")
 include("fourierfilter.jl")
 include("bank.jl")
 include("morlet1d.jl")
-include("paths.jl")
+include("path.jl")
 
 end
