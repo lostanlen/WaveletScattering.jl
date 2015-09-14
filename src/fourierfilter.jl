@@ -151,28 +151,32 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         for ω in 1:(N>>1 - 1)
             halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
             lp[1 + ω] = halfsum
-            lp[1 + N - ω] = halfsum
+            lp[1 + N-ω] = halfsum
         end
     end
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         ξleft = uncertainty(spec) / spec.max_scale
         ξright = spec.max_qualityfactor * ξleft
-        ωleft = 1 + round(Int, N * ξleft)
-        ωright = 1 + round(Int, N * ξright)
+        ωleft = round(Int, N * ξleft)
+        ωright = round(Int, N * ξright)
         invmax_Q = inv(spec.max_qualityfactor)
-        scale!(lp[1:(ωleft-1)], invmax_Q)
+        for ω in 1:(ωleft-1)
+            lp[1 + ω] *= invmax_Q
+            lp[1 + N-ω] *= invmax_Q
+        end
         linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
         inv_linspaced_qs = @fastmath map(inv, linspaced_qs)
         for ω in (ωleft:ωright)
-            lp[ω] *= inv_linspaced_qs[ω-ωleft+1] * inv_linspaced_qs[ω-ωleft+1]
+            lp[1 + ω] *= inv_linspaced_qs[ω-ωleft+1]
+            lp[1 + N-ω] *= inv_linspaced_qs[ω-ωleft+1]
         end
         invmax_lp = inv(maximum(lp))
         sqrtinvmax_lp = sqrt(invmax_lp)
         sqrtinvmax_Q = sqrt(invmax_Q)
         sqrtinv_linspaced_qs = sqrt(inv_linspaced_qs)
         centers = [ 1 + round(Int, meta.centerfrequency*N) for meta in metas ]
+        firstmax = maximum(ψs[1])
         for λ in eachindex(ψs)
-            firstmax = maximum(ψs[1])
             ξ = metas[λ].centerfrequency
             ω = 1 + round(Int, N * ξ)
             if ω<ωleft
