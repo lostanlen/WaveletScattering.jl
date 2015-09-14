@@ -147,48 +147,17 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     T = spec.signaltype
     lp = zeros(realtype(T), N)
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
-    if isa(metas, Vector{NonOrientedMeta})
-        for ω in 1:(N>>1 - 1)
-            halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
-            lp[1 + ω] = halfsum
-            lp[1 + N-ω] = halfsum
-        end
-    end
+    isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
-        ξleft = uncertainty(spec) / spec.max_scale
-        ξright = spec.max_qualityfactor * ξleft
-        ωleft = round(Int, N * ξleft)
-        ωright = round(Int, N * ξright)
-        invmax_Q = inv(spec.max_qualityfactor)
-        for ω in 1:(ωleft-1)
-            lp[1 + ω] *= invmax_Q
-            lp[1 + N-ω] *= invmax_Q
-        end
-        linspaced_qs = linspace(spec.max_qualityfactor, 1, ωright-ωleft+1)
-        inv_linspaced_qs = @fastmath map(inv, linspaced_qs)
-        for ω in (ωleft:ωright)
-            lp[1 + ω] *= inv_linspaced_qs[ω-ωleft+1]
-            lp[1 + N-ω] *= inv_linspaced_qs[ω-ωleft+1]
-        end
-        invmax_lp = inv(maximum(lp))
-        sqrtinvmax_lp = sqrt(invmax_lp)
-        sqrtinvmax_Q = sqrt(invmax_Q)
-        sqrtinv_linspaced_qs = sqrt(inv_linspaced_qs)
-        centers = [ 1 + round(Int, meta.centerfrequency*N) for meta in metas ]
-        firstmax = maximum(ψs[1])
+        ξelbow = spec.max_qualityfactor * uncertainty(spec) / spec.max_scale
+        ωelbow = round(Int, N * ξelbow)
+        centers = [ round(Int, meta.centerfrequency*N) for meta in metas ]
+        max_lp = maximum(lp)
         for λ in eachindex(ψs)
-            ξ = metas[λ].centerfrequency
-            ω = 1 + round(Int, N * ξ)
-            if ω<ωleft
-                b = sqrtinvmax_lp * sqrtinvmax_Q * firstmax / maximum(ψs[λ])
-            elseif ω<ωright
-                b = sqrtinvmax_lp * sqrtinv_linspaced_qs[ω-ωleft+1] *
-                    firstmax / maximum(ψs[λ])
-            else
-                b = sqrtinvmax_lp
-            end
-            ψs[λ] = ψs[λ] .* b
+            ω = 1 + round(Int, N * metas[λ].centerfrequency)
+            ω<ωelbow && ψs[λ] = ψs[λ] .* max_lp / maximum(ψs[λ])
         end
+        invmax_lp = inv(max_lp)
     else
         invmax_lp = inv(maximum(lp))
         sqrtinvmax_lp = sqrt(invmax_lp)
@@ -218,3 +187,11 @@ spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
 spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(reverse(ψ.coan), reverse(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
     VanishingWithMidpoint1DFilter(reverse(ψ.coan), reverse(ψ.an), midpoint)
+
+function symmetrize!(lp::Vector)
+    for ω in 1:(length(lp)>>1 - 1)
+        halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
+        lp[1 + ω] = halfsum
+        lp[1 + N-ω] = halfsum
+    end
+end
