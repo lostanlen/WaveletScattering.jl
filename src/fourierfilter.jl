@@ -152,11 +152,17 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξelbow = spec.max_qualityfactor * uncertainty(spec) / spec.max_scale
         ωelbow = round(Int, N * ξelbow)
         centers = [ round(Int, meta.centerfrequency*N) for meta in metas ]
-        max_lp = maximum(lp)
+        max_lp = maximum(lp[(1+ωelbow+20):(1+N>>2)])
         for λ in eachindex(ψs)
             ω = 1 + round(Int, N * metas[λ].centerfrequency)
-            ω<ωelbow && ψs[λ] = ψs[λ] .* max_lp / maximum(ψs[λ])
+            if ω<ωelbow
+                corr = 0.8 + 0.1 * metas[λ].centerfrequency / ξelbow
+                ψs[λ] = ψs[λ] .* sqrt(corr * max_lp / lp[1+ω])
+            end
         end
+        lp = zeros(realtype(T), N)
+        for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
+        isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
         invmax_lp = inv(max_lp)
     else
         invmax_lp = inv(maximum(lp))
