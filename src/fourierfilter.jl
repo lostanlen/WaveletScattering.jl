@@ -114,6 +114,14 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     @fastmath lp[1 + (length(lp)>>1)] += abs2(ψ.midpoint)
 end
 
+"""Returns the maximum Fourier-domain absolute value of a filter."""
+maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2(ψ.pos)))
+maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2(ψ.neg)))
+maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2(ψ.coeff)))
+maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
+maximum(ψ::VanishingWithMidpoint1DFilter) =
+    max(maximum(ψ.an), maximum(ψ.coan), abs(ψ.midpoint))
+
 """Returns the type parameter of a complex type.
 For example, `realtype(Complex{Float32})` returns `Float32`.
 For numeric real types, e.g. `Float32`, it is a no-op."""
