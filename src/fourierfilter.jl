@@ -69,7 +69,7 @@ Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(b.*ψ.pos, ψ.posfirst)
 Base.(:.*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b.*ψ.neg, ψ.neglast)
-Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b) =
+Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b.*ψ.coeff)
 Base.(:.*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(b.*ψ.an, b.*ψ.coan)
