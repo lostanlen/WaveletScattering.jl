@@ -1,5 +1,5 @@
-abstract AbstractFourierFilter{T<:Number} <: AbstractFilter{T}
-abstract AbstractFourier1DFilter{T<:Number} <: AbstractFourierFilter{T}
+abstract AbstractFourierFilter{T<:Number,N} <: AbstractFilter{T,N}
+abstract AbstractFourier1DFilter{T<:Number} <: AbstractFourierFilter{T,1}
 
 """An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
 is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
@@ -65,27 +65,38 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
 end
 
 # element-wise multiplication operator .*
-Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b) =
-    FullResolution1DFilter{T}(b.*ψ.coeff)
 Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(b.*ψ.pos, ψ.posfirst)
 Base.(:.*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b.*ψ.neg, ψ.neglast)
+Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b) =
+    FullResolution1DFilter{T}(b.*ψ.coeff)
 Base.(:.*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(b.*ψ.an, b.*ψ.coan)
 Base.(:.*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(b.*ψ.an, b.*ψ.coan, b*ψ.midpoint)
 Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 
-# right division operator /
-Base.(:/){T}(ψ::Analytic1DFilter{T}, x::Number) =
-    Analytic1DFilter{T}(ψ.pos / x, ψ.posfirst)
-Base.(:/){T}(ψ::Coanalytic1DFilter{T}, x::Number) =
-    Coanalytic1DFilter{T}(ψ.neg / x, ψ.neglast)
-Base.(:/){T}(ψ::Vanishing1DFilter{T}, x::Number) =
-    Vanishing1DFilter{T}(ψ.an / x, ψ.coan / x)
-Base.(:/){T}(ψ::VanishingWithMidpoint1DFilter{T}, x::Number) =
-    VanishingWithMidpoint1DFilter{T}(ψ.an / x, ψ.coan / x, ψ.midpoint / x)
+function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
+    i<ψ.posfirst && return zero(T)
+    i>(ψ.posfirst + length(ψ.pos)) && return zero(T)
+    return ψ.pos[1 - ψ.posfirst + i]
+end
+function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
+    i<(ψ.neglast - length(ψ.neg) + 1) && return zero(T)
+    i>ψ.neglast && return zero(T)
+    return ψ.neg[1 - (ψ.neglast - length(ψ.neg)) + i]
+end
+function Base.getindex(ψ::FullResolution1DFilter, i::Integer)
+    return ψ.coeff[1+i]
+end
+function Base.getindex(ψ::Vanishing1DFilter, i::Integer)
+    return (i>0 ? ψ.an[i] : ψ.coan[i])
+end
+function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
+    i==(ψ.an.posfirst + length(ψ.pos)) && return ψ.midpoint
+    return (i>0 ? ψ.an[i] : ψ.coan[i])
+end
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
 `lp` (squared Littlewood-Paley sum)."""
@@ -149,17 +160,12 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
-        ξelbow = spec.max_qualityfactor * uncertainty(spec) / spec.max_scale
-        ωelbow = round(Int, N * ξelbow)
-        centers = [ round(Int, meta.centerfrequency*N) for meta in metas ]
-        max_lp = maximum(lp[(1+ωelbow+20):(1+N>>2)])
-        for λ in eachindex(ψs)
-            ω = 1 + round(Int, N * metas[λ].centerfrequency)
-            if ω<ωelbow
-                corr = 0.8 + 0.1 * metas[λ].centerfrequency / ξelbow
-                ψs[λ] = ψs[λ] .* sqrt(corr * max_lp / lp[1+ω])
-            end
-        end
+        ξleft = uncertainty(spec) / spec.max_scale
+        ξright = spec.max_qualityfactor * ξleft
+        λs = find([metas[λ].centerfrequency < ξelbow for λ in eachindex(ψs)])
+        ωs = round(Int, N * ξleft):round(Int, N * ξright)
+        ψmat = []
+
         lp = zeros(realtype(T), N)
         for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
