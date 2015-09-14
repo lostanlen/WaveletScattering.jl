@@ -128,9 +128,9 @@ wavelet energies (squared magnitudes).
 If the quality factor varies across frequencies, the multiplier is no longer a
 scalar number, since it adapts to the quality factor q at every frequency ξ.
 The multiplier b is such that:
-* `b = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (ξleft)
-* `b = 1/(max_q*max_1p)` for `q = 1`, that is `ξ < uncertainty/max_s` (ξright)
-* `b` is interpolated linearly in between, that is, for `s=max_s`
+* `b = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (`ξleft`)
+* `b = 1/(max_q*max_1p)` for `q = 1`, that is `ξ < uncertainty/max_s` (`ξright`)
+* `b` is interpolated linearly in between, that is, for `s = max_s`
 If maximum scale is infinite and/or maximum quality factor, the three cases
 above collapse into the simpler `m = 1/max(lp)`."""
 function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
