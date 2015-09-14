@@ -107,7 +107,7 @@ max_scale, we proceed with the following steps:
 function qualityfactors(spec::AbstractSpec)
     h = uncertainty(spec)
     ξs = centerfrequencies(spec)
-    unbounded_scales = spec.max_qualityfactor ./ (h*ξs)
+    unbounded_scales = spec.max_qualityfactor ./ ξs
     scales = min(unbounded_scales, spec.max_scale)
     unbounded_qualityfactors = scales .* ξs / h
     # we also bound qualityfactors from above for better numerical accuracy
