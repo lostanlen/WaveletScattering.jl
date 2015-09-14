@@ -172,12 +172,14 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         sqrtinv_linspaced_qs = sqrt(inv_linspaced_qs)
         centers = [ 1 + round(Int, meta.centerfrequency*N) for meta in metas ]
         for λ in eachindex(ψs)
+            firstmax = maximum(ψs[1])
             ξ = metas[λ].centerfrequency
             ω = 1 + round(Int, N * ξ)
             if ω<ωleft
-                b = sqrtinvmax_lp * sqrtinvmax_Q
+                b = sqrtinvmax_lp * sqrtinvmax_Q * firstmax / maximum(ψs[λ])
             elseif ω<ωright
-                b = sqrtinvmax_lp * sqrtinv_linspaced_qs[ω-ωleft+1]
+                b = sqrtinvmax_lp * sqrtinv_linspaced_qs[ω-ωleft+1] *
+                    firstmax / maximum(ψs[λ])
             else
                 b = sqrtinvmax_lp
             end
