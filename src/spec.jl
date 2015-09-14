@@ -23,65 +23,66 @@ maximum quality factor.
 per octaves, i.e. `(log2_size-nOctaves) >= 1 + log2(nFilters_per_octave)`."""
 function checkspec(spec::AbstractSpec)
     if spec.ɛ>=1.0 || spec.ɛ<0.0
-        error("ɛ must be in [0.0, 1.0[. A typical value is 1e-4.")
+        error("`ɛ` must be in `[0.0, 1.0[`. A typical value is `1e-4`.")
     end
     if any(collect(spec.log2_size) .< 2)
         error("Too short signal length.\n",
-        "log2_size = ", spec.log2_size, "\n",
-        "All elements in log2_size must be ≧2")
+        "`log2_size =` ", spec.log2_size, "\n",
+        "All elements in `log2_size` must be `≧2`")
     end
     if spec.max_qualityfactor < 1.0
         error("Too small maximum quality factor.\n",
-        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
-        "max_qualityfactor must be ≧1.0.")
+        "`max_qualityfactor =` ", spec.max_qualityfactor, "\n",
+        "`max_qualityfactor` must be `≧1.0`.")
     end
     if spec.motherfrequency<=0.0 || spec.motherfrequency>0.5
-        error("motherfrequency must be in ]0.0, 0.5].")
+        error("`motherfrequency` must be in `]0.0, 0.5]`.")
     end
     if spec.nFilters_per_octave < 1
         error("Too few filters per octave.\n",
-        "nFilters_per_octave = ", spec.nFilters_per_octave, "\n",
-        "nFilters_per_octave must be ≧1.")
+        "`nFilters_per_octave = `", spec.nFilters_per_octave, "\n",
+        "`nFilters_per_octave` must be `≧1`.")
     end
     if spec.nOctaves < 1
         error("Too few octaves.\n",
-        "nOctaves = ", spec.nOctaves, "\n",
-        "nOctaves must be ≧1")
+        "`nOctaves = `", spec.nOctaves, "\n",
+        "`nOctaves` must be `≧1`")
     end
     if spec.max_qualityfactor > spec.nFilters_per_octave
         error("Too few filters per octave for the given quality factor.\n",
-        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
-        "nFilters_per_octave = ", spec.nFilters_per_octave, "\n",
-        """The inequality nFilters_per_octave ≧ max_qualityfactor must be
+        "`max_qualityfactor = `", spec.max_qualityfactor, "\n",
+        "`nFilters_per_octave = `", spec.nFilters_per_octave, "\n",
+        """The inequality `nFilters_per_octave ≧ max_qualityfactor` must be
         satisfied.""")
     end
     log2_sizes = collect(spec.log2_size)
     if any(spec.nOctaves .>= log2_sizes)
         error("Too many octaves.\n",
-        "log2_size = ", spec.log2_size, "\n",
-        "nOctaves = ", spec.nOctaves, "\n",
-        """The inequality minimum(log2_size) > nOctaves must be satisfied.
-        Either increase log2_size or decrease nOctaves.""")
+        "`log2_size = `", spec.log2_size, "\n",
+        "`nOctaves = `", spec.nOctaves, "\n",
+        """The inequality `minimum(log2_size) > nOctaves` must be satisfied.
+        Either increase `log2_size` or decrease `nOctaves`.""")
     end
     if any(log2_sizes-spec.nOctaves .< 1+log2(spec.nFilters_per_octave))
         error("Too many filters per octave for the given length.\n",
-        "log2_size = ", spec.log2_size, "\n",
-        "log2(nFilters_per_octave) = ", log2(spec.nFilters_per_octave), "\n",
-        "nOctaves = ", spec.nOctaves, "\n",
-        """The inequality minimum(log2_size)-nOctaves ≧ 1 + log2(nFilters_per_octave)
-        must be satisfied. Either increase log2_size, decrease nOctaves,
-        or decrease nFilters_per_octave.""")
+        "`log2_size = `", spec.log2_size, "\n",
+        "`log2(nFilters_per_octave) = `", log2(spec.nFilters_per_octave), "\n",
+        "`nOctaves = `", spec.nOctaves, "\n",
+        """The inequality
+        `minimum(log2_size)-nOctaves ≧ 1 + log2(nFilters_per_octave)`
+        must be satisfied. Either increase `log2_size`, decrease `nOctaves`,
+        or decrease `nFilters_per_octave`.""")
     end
     maximumscale = maximum(scales(spec))
     if maximumscale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
-        "max_qualityfactor = ", spec.max_qualityfactor, "\n",
-        "max_scale = ", spec.max_scale, "\n",
-        "motherfrequency = ", spec.motherfrequency, "\n",
-        "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
+        "`max_qualityfactor = `", spec.max_qualityfactor, "\n",
+        "`max_scale = `", spec.max_scale, "\n",
+        "`motherfrequency = `", spec.motherfrequency, "\n",
+        "The wavelet ", typeof(spec), "cannot have both a bandwidth `< ``",
         spec.motherfrequency / spec.max_qualityfactor,
-        "and a scale < ", spec.max_scale, ".\n",
-        "Either decrease max_qualityfactor or decrease max_scale.")
+        "and a scale `<` ", spec.max_scale, ".\n",
+        "Either decrease `max_qualityfactor` or decrease `max_scale`.")
     end
     if maximumscale > (2.0^minimum(spec.log2_size) + 1e-3)
         min_resolution = 2.0^(-spec.nOctaves/spec.nFilters_per_octave)
@@ -89,16 +90,16 @@ function checkspec(spec::AbstractSpec)
         max_bandwidth = min_centerfrequency / spec.max_qualityfactor
         size = tuple(1 .<< collect(spec.log2_size)...)
         error("Spatial localization is coarser than signal length.\n",
-        "log2_size = ", spec.log2_size,
-        "max_qualityfactor = ", spec.max_qualityfactor,
-        "max_scale = ", spec.max_scale,
-        "motherfrequency = ", spec.motherfrequency, "\n",
-        "nOctaves = ", spec.nOctaves, "\n",
-        "The wavelet ", typeof(spec), "cannot have both a bandwidth < ",
-        "motherfrequency*2^(-nOctaves)/qualityfactor = ", max_bandwidth,
-        "and a scale < 2^(log2_size) = ", size, ".\n",
+        "`log2_size = ``", spec.log2_size,
+        "`max_qualityfactor = ``", spec.max_qualityfactor,
+        "`max_scale = ``", spec.max_scale,
+        "`motherfrequency = ``", spec.motherfrequency, "\n",
+        "`nOctaves = ``", spec.nOctaves, "\n",
+        "The wavelet ", typeof(spec), "cannot have both a bandwidth ``< ",
+        "motherfrequency*2^(-nOctaves)/qualityfactor = ``", max_bandwidth,
+        "and a scale `< 2^(log2_size) = `", size, ".\n",
         """Either increase log2_size, decrease max_qualityfactor,
-        set max_scale<=log2_size, or decrease nOctaves.""")
+        set `max_scale<=log2_size`, or decrease `nOctaves`.""")
     end
     return true
 end
