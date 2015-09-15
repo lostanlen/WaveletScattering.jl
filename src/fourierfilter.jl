@@ -81,7 +81,7 @@ Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i<ψ.posfirst && return zero(T)
     i>(ψ.posfirst + length(ψ.pos) - 1) && return zero(T)
-    return ψ.pos[1 - ψ.posfirst + i]
+    @inbounds return ψ.pos[1 - ψ.posfirst + i]
 end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.posfirst)
