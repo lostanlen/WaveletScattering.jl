@@ -45,7 +45,13 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[-3] == 0.0f0
 @test ψ[-2] == 0.2f0
 @test ψ[-1] == 0.3f0
-
+# getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
+@test ψ[-8:-6] == [0.0f0, 0.0f0]
+@test ψ[-3:0] == [0.0f0, 0.01f0, 0.1f0, 0.2f0]
+@test ψ[-1:1] == [0.1f0, 0.2f0, 0.3f0]
+@test ψ[0:3] == [0.2f0, 0.3f0, 0.0f0, 0.0f0]
+@test ψ[-3:2] == [0.0f0, 0.01f0, 0.1f0, 0.2f0, 0.3f0, 0.0f0]
+@test ψ[7:7] == [0.0f0]
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
