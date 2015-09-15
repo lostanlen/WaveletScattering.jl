@@ -203,8 +203,6 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
-    lp = zeros(realtype(T), N)
-    for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         ξleft = uncertainty(spec) / spec.max_scale
@@ -213,16 +211,16 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ωs = round(Int, N * ξleft):round(Int, N * ξright)
         ψmat = T[ψs[λ][ω] for ω in ωs, λ in λs]
         b = ones(T, length(ωs))
-
-        lp = zeros(realtype(T), N)
-        for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
-        isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        invmax_lp = inv(max_lp)
-    else
-        invmax_lp = inv(maximum(lp))
-        sqrtinvmax_lp = sqrt(invmax_lp)
-        for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* sqrtinvmax_lp; end
+        # TODO solve this as a constrained (nonnegative) optimization problem
+        a = b \ ψmat
+        for idλ in eachindex(λs); ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(a[idλ]) end
     end
+    lp = zeros(realtype(T), N)
+    for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
+    isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
+    invmax_lp = inv(maximum(lp))
+    sqrtinvmax_lp = sqrt(invmax_lp)
+    for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
 end
 
