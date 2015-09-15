@@ -2,12 +2,15 @@ using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
+    getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
 # meta.jl
 import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
     chromas, gammas, octaves, qualityfactors, scales
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
+
+# getindex
+
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
