@@ -80,7 +80,7 @@ Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i<ψ.posfirst && return zero(T)
-    i>(ψ.posfirst + length(ψ.pos)) && return zero(T)
+    i>(ψ.posfirst + length(ψ.pos) - 1) && return zero(T)
     return ψ.pos[1 - ψ.posfirst + i]
 end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
