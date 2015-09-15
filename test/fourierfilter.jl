@@ -13,9 +13,7 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 # getindex
 # getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
-@test ψ[0] == 0.0f0
-@test ψ[3] == 0.3f0
-@test ψ[4] == 0.0f0
+@test Float32[ψ[ω] for ω in 1:4] == Float32[0.0, 0.1, 0.3, 0.0]
 # getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-1:1] == [0.0f0 ; 0.0f0 ; 0.0f0]
 @test ψ[1:4] == [0.0f0 ; 0.1f0 ; 0.3f0; 0.0f0]
@@ -25,10 +23,7 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[5:7] == [0.0f0 ; 0.0f0 ; 0.0f0]
 # getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
-@test ψ[-2] == 0.0f0
-@test ψ[-3] == 0.4f0
-@test ψ[-5] == 0.1f0
-@test ψ[-6] == 0.0f0
+@test Float32[ψ[ω] for ω in -6:-2] == Float32[0.0, 0.1, 0.3, 0.4, 0.0]
 # getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-3:-1] == [0.4f0 ; 0.0f0; 0.0f0]
 @test ψ[-4:-3] == [0.3f0 ; 0.4f0]
@@ -39,12 +34,7 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[-6:-2] == [0.0f0 ; 0.1f0 ; 0.3f0 ; 0.4f0 ; 0.0f0]
 # getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
-@test ψ[0] == 0.01f0
-@test ψ[1] == 0.1f0
-@test ψ[2] == 0.0f0
-@test ψ[-3] == 0.0f0
-@test ψ[-2] == 0.2f0
-@test ψ[-1] == 0.3f0
+@test Float32[ψ[ω] for ω in -3:2] == Float32[0.0, 0.2, 0.3, 0.01, 0.1, 0.0]
 # getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-8:-6] == [0.0f0, 0.0f0, 0.0f0]
 @test ψ[-3:0] == [0.0f0, 0.2f0, 0.3f0, 0.01f0]
@@ -52,6 +42,12 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[0:3] == [0.01f0, 0.1f0, 0.0f0, 0.0f0]
 @test ψ[-3:2] == [0.0f0, 0.2f0, 0.3f0, 0.01f0, 0.1f0, 0.0f0]
 @test ψ[7:7] == [0.0f0]
+# getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+ψ = Vanishing1DFilter(an, coan)
+@test [ψ[ω] for ω in -6:4] ==
+    Float32[0.0, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.0]
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
