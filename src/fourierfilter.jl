@@ -85,11 +85,11 @@ function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
 end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.posfirst)
-    stop = min(I.stop, ψ.posfirst + length(ψ.pos) - 1)
+    stop = min(I.stop, ψ.posfirst + length(ψ.pos))
     return [
         zeros(T, max(start-I.start, 0));
         ψ.pos[1 - ψ.posfirst + (start:stop)];
-        zeros(T, max(I.stop-stop-1, 0)) ]
+        zeros(T, max(I.stop-stop, 0)) ]
 end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
     i<(ψ.neglast - length(ψ.neg) + 1) && return zero(T)
