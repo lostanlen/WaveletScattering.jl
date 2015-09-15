@@ -112,13 +112,14 @@ function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
     return ψ.coeff[mod1(1 + i, N)]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
-    halfN = length(ψ.coeff) >> 1
+    N = length(ψ.coeff)
+    halfN = N >> 1
     start = max(I.start, -halfN)
     stop = min(I.stop, halfN-1)
-    return [
-        zeros(T, max(start-I.start, 0));
-        ψ.coeff[1 + (start:stop) + halfN];
-        zeros(T, max(I.stop-stop, 0)) ]
+    [
+        zeros(T, max(min(start, I.stop + 1) - I.start, 0)) ;
+        ψ.coeff[[ mod1(1+ω, N) for ω in start:stop ]] ;
+        zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
     return (i>0 ? ψ.an[i] : ψ.coan[i])
