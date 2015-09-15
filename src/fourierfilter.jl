@@ -140,7 +140,7 @@ function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
         ψ.coan[min(-1, I.start, -halfN+1):min(-1, I.stop)] ;
         ψ.an[max(0, I.start):max(0, I.stop)] ]
     if I.start<=-halfN
-        output[I.start-halfN+1] = ψ.midpoint
+        output[-halfN-I.start+1] = ψ.midpoint
     end
     return output
 end
