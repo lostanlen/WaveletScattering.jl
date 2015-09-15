@@ -10,10 +10,12 @@ import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
 import WaveletScattering: Morlet1DSpec, fourierwavelet
 
 # getindex
+# getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 @test ψ[0] == 0.0f0
 @test ψ[3] == 0.3f0
 @test ψ[4] == 0.0f0
+# getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
 
 
 # littlewoodpaleyadd!
