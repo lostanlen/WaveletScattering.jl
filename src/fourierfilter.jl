@@ -86,7 +86,7 @@ end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.posfirst)
     stop = min(I.stop, ψ.posfirst + length(ψ.pos) - 1)
-    return [
+    return T[
         zeros(T, max(start - I.start, 0));
         ψ.pos[1 - ψ.posfirst + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
@@ -99,7 +99,7 @@ end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.neglast - length(ψ.neg) + 1)
     stop = min(I.stop, ψ.neglast)
-    return [
+    return T[
         zeros(T, max(min(start, I.stop + 1) - I.start, 0));
         ψ.neg[end - ψ.neglast + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
@@ -116,7 +116,7 @@ function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
     halfN = N >> 1
     start = max(I.start, -halfN)
     stop = min(I.stop, halfN-1)
-    [
+    T[
         zeros(T, max(min(start, I.stop + 1) - I.start, 0)) ;
         ψ.coeff[[ mod1(1+ω, N) for ω in start:stop ]] ;
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
@@ -125,7 +125,7 @@ function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
     return (i>0 ? ψ.an[i] : ψ.coan[i])
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
-    return [
+    return T[
         ψ.coan[min(-1, I.start):min(max(-1, I.start), I.stop)];
         ψ.an[max(min(0, I.stop), I.start):max(0, I.stop)] ]
 end
@@ -136,7 +136,7 @@ function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
     halfN = ψ.an.posfirst + length(ψ.an.pos)
-    output = [
+    output = T[
         ψ.coan[min(-1, I.start, -halfN+1):min(-1, I.stop)] ;
         ψ.an[max(0, I.start):max(0, I.stop)] ]
     if I.start<=-halfN
@@ -211,7 +211,8 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξright = spec.max_qualityfactor * ξleft
         λs = find([metas[λ].centerfrequency < ξright for λ in eachindex(ψs)])
         ωs = round(Int, N * ξleft):round(Int, N * ξright)
-        ψmat = []
+        ψmat = T[ψs[λ][ω] for ω in ωs, λ in λs]
+        b = ones(T, length(ωs))
 
         lp = zeros(realtype(T), N)
         for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
