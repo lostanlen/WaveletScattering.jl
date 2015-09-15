@@ -52,14 +52,14 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 @test ψ[-6:4] == Float32[0.0, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.0]
 # getindex{T}(ψ::VanishingWithMidpoint1DFilter{T}, I::Integer)
 an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
-coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 @test Float32[ψ[ω] for ω in -6:5] ==
-    Float32[0.0, 0.5, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.4, 0.0]
+    Float32[0.0, 0.5, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.1, 0.3, 0.4, 0.0]
 # getindex{T}(ψ::VanishingWithMidpoint1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-6:5] ==
-    Float32[0.0, 0.5, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.4, 0.0]
+    Float32[0.0, 0.5, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.1, 0.3, 0.4, 0.0]
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
