@@ -135,7 +135,7 @@ function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
     return (i>0 ? ψ.an[i] : ψ.coan[i])
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
-    halfN = ψ.an.posfirst + length(ψ.pos)
+    halfN = ψ.an.posfirst + length(ψ.an.pos)
     output = [
         ψ.coan[min(-1, I.start, -halfN+1):min(-1, I.stop)] ;
         ψ.an[max(0, I.start):max(0, I.stop)] ]
