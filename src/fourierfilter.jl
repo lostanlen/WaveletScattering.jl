@@ -77,6 +77,7 @@ Base.(:.*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(b.*ψ.an, b.*ψ.coan, b*ψ.midpoint)
 Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
 
+# indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i<ψ.posfirst && return zero(T)
     i>(ψ.posfirst + length(ψ.pos)) && return zero(T)
@@ -119,15 +120,16 @@ function Base.getindex(ψ::Vanishing1DFilter, I::UnitRange{Int64})
         ψ.coan[max(0, I.start):max(0, I.start)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
-    i==(ψ.an.posfirst + length(ψ.pos)) && return ψ.midpoint
-    return (i>0 ? ψ.an[i] : ψ.coan[i])
+    halfN = ψ.an.posfirst + length(ψ.an.pos)
+    i==halfN && return ψ.midpoint
+    return (i>0 ? ψ.an[i] : ψ.coan[length(ψ.coan.neg) - ψ.neglast + i])
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
     halfN = ψ.an.posfirst + length(ψ.pos)
     output = [
-        ψ.coan[min(0, I.start):min(0, I.stop)];
-        ψ.coan[max(0, I.start):max(0, min(I.stop, halfN-1)]
-    return (I.stop==halfN ? [output; ψ.midpoint] : output)
+        ψ.coan[halfN + (min(0, I.start):min(0, I.stop))];
+        ψ.coan[halfN + (max(0, I.start):max(0, min(I.stop, halfN-1))]
+    return (I.stop==halfN ? [ψ.midpoint; output] : output)
 end
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
