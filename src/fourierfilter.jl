@@ -82,20 +82,52 @@ function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i>(ψ.posfirst + length(ψ.pos)) && return zero(T)
     return ψ.pos[1 - ψ.posfirst + i]
 end
+function Base.getindex{T}(ψ::Analytic1DFilter{T}, I:UnitRange{Int64})
+    start = max(I.start, posfirst)
+    stop = min(I.stop, posfirst + length(ψ.pos) - 1)
+    return [
+        zeros(T, max(start-I.start, 0));
+        ψ.pos[1 - ψ.posfirst + start:stop];
+        zeros(T, max(I.stop-stop, 0)) ]
+end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
     i<(ψ.neglast - length(ψ.neg) + 1) && return zero(T)
     i>ψ.neglast && return zero(T)
     return ψ.neg[1 - (ψ.neglast - length(ψ.neg)) + i]
 end
 function Base.getindex(ψ::FullResolution1DFilter, i::Integer)
-    return ψ.coeff[1+i]
+    halfN = length(ψ.coeff) >> 1
+    i<(-halfN) && return zero(T)
+    i>(halfN-1) && return zero(T)
+    return ψ.coeff[1 + halfN + i]
+end
+function Base.getindex{T}(ψ::FullResolution1DFilter, I::UnitRange{Int64})
+    halfN = length(ψ.coeff) >> 1
+    start = max(I.start, -halfN)
+    stop = min(I.stop, halfN-1)
+    return [
+        zeros(T, max(start-I.start, 0));
+        ψ.coeff[1 + (start:stop) + halfN];
+        zeros(T, max(I.stop-stop, 0)) ]
 end
 function Base.getindex(ψ::Vanishing1DFilter, i::Integer)
     return (i>0 ? ψ.an[i] : ψ.coan[i])
 end
+function Base.getindex(ψ::Vanishing1DFilter, I::UnitRange{Int64})
+    return [
+        ψ.coan[min(0, I.start):min(0, I.stop)];
+        ψ.coan[max(0, I.start):max(0, I.start)] ]
+end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
     i==(ψ.an.posfirst + length(ψ.pos)) && return ψ.midpoint
     return (i>0 ? ψ.an[i] : ψ.coan[i])
+end
+function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
+    halfN = ψ.an.posfirst + length(ψ.pos)
+    output = [
+        ψ.coan[min(0, I.start):min(0, I.stop)];
+        ψ.coan[max(0, I.start):max(0, min(I.stop, halfN-1)]
+    return (I.stop==halfN ? [output; ψ.midpoint] : output)
 end
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
