@@ -28,6 +28,14 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[-3] == 0.4f0
 @test ψ[-5] == 0.1f0
 @test ψ[-6] == 0.0f0
+# getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
+@test ψ[-3:-1] == [0.4f0 ; 0.0f0; 0.0f0]
+@test ψ[-4:-3] == [0.3f0 ; 0.4f0]
+@test ψ[-5:-4] == [0.1f0 ; 0.3f0]
+@test ψ[-7:-5] == [0.0f0 ; 0.0f0 ; 0.1f0]
+@test ψ[-10:-8] == [0.0f0 ; 0.0f0 ; 0.0f0]
+@test ψ[2:3] == [0.0f0 ; 0.0f0]
+@test ψ[-6:-2] == [0.0f0 ; 0.1f0 ; 0.3f0 ; 0.4f0 ; 0.0f0]
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
