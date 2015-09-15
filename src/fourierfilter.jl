@@ -94,7 +94,7 @@ end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
     i<(ψ.neglast - length(ψ.neg) + 1) && return zero(T)
     i>ψ.neglast && return zero(T)
-    return ψ.neg[1 - (ψ.neglast - length(ψ.neg)) + i]
+    return ψ.neg[i - ψ.neglast + length(ψ.neg)]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
     halfN = length(ψ.coeff) >> 1
