@@ -100,15 +100,16 @@ function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.neglast - length(ψ.neg) + 1)
     stop = min(I.stop, ψ.neglast)
     return [
-        zeros(T, max(min(start, I.stop+1) - I.start, 0));
+        zeros(T, max(min(start, I.stop + 1) - I.start, 0));
         ψ.neg[end - ψ.neglast + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
-    halfN = length(ψ.coeff) >> 1
+    N = length(ψ.coeff)
+    halfN = N >> 1
     i<(-halfN) && return zero(T)
     i>(halfN-1) && return zero(T)
-    return ψ.coeff[1 + halfN + i]
+    mod1(1 + i, N)
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
     halfN = length(ψ.coeff) >> 1
