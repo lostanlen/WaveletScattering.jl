@@ -84,8 +84,8 @@ function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     return ψ.pos[1 - ψ.posfirst + i]
 end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
-    start = max(I.start, posfirst)
-    stop = min(I.stop, posfirst + length(ψ.pos) - 1)
+    start = max(I.start, ψ.posfirst)
+    stop = min(I.stop, ψ.posfirst + length(ψ.pos) - 1)
     return [
         zeros(T, max(start-I.start, 0));
         ψ.pos[1 - ψ.posfirst + start:stop];
