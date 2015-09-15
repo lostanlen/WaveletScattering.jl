@@ -48,6 +48,8 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
 @test [ψ[ω] for ω in -6:4] ==
     Float32[0.0, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.0]
+# getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
+
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
