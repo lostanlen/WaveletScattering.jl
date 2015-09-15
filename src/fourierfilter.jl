@@ -130,8 +130,8 @@ function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
         ψ.an[max(0, I.start):max(0, I.stop)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
-    -halfN = ψ.an.posfirst + length(ψ.an.pos)
-    i==halfN && return ψ.midpoint
+    halfN = ψ.an.posfirst + length(ψ.an.pos)
+    i==(-halfN) && return ψ.midpoint
     return (i>0 ? ψ.an[i] : ψ.coan[i])
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
@@ -139,7 +139,7 @@ function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
     output = [
         ψ.coan[min(-1, I.start, -halfN+1):min(-1, I.stop)] ;
         ψ.an[max(0, I.start):max(0, I.stop)] ]
-    return (I.start==-halfN ? [ψ.midpoint; output] : output)
+    return (I.start==-halfN ? [output ; ψ.midpoint] : output)
 end
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
