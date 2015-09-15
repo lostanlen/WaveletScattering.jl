@@ -1,7 +1,8 @@
 using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
-    Coanalytic1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
+    Coanalytic1DFilter, FullResolution1DFilter, Vanishing1DFilter,
+    VanishingWithMidpoint1DFilter,
     getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
 # meta.jl
 import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
@@ -36,6 +37,15 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[-10:-8] == [0.0f0 ; 0.0f0 ; 0.0f0]
 @test ψ[2:3] == [0.0f0 ; 0.0f0]
 @test ψ[-6:-2] == [0.0f0 ; 0.1f0 ; 0.3f0 ; 0.4f0 ; 0.0f0]
+# getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
+ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
+@test ψ[0] == 0.01f0
+@test ψ[1] == 0.1f0
+@test ψ[2] == 0.0f0
+@test ψ[-3] == 0.0f0
+@test ψ[-2] == 0.2f0
+@test ψ[-1] == 0.3f0
+
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
