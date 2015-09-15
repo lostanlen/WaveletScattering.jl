@@ -203,7 +203,6 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
-    isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         ξleft = uncertainty(spec) / spec.max_scale
         ξright = spec.max_qualityfactor * ξleft
@@ -212,7 +211,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ψmat = T[ψs[λ][ω] for ω in ωs, λ in λs]
         b = ones(T, length(ωs))
         # TODO solve this as a constrained (nonnegative) optimization problem
-        a = b \ ψmat
+        a = ψmat \ b
         for idλ in eachindex(λs); ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(a[idλ]) end
     end
     lp = zeros(realtype(T), N)
