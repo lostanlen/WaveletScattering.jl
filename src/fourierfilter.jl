@@ -248,8 +248,9 @@ spin(ψ::VanishingWithMidpoint1DFilter) =
     VanishingWithMidpoint1DFilter(reverse(ψ.coan), reverse(ψ.an), midpoint)
 
 function symmetrize!(lp::Vector)
-    for ω in 1:(length(lp)>>1 - 1)
-        halfsum = 0.5 * (lp[1 + ω] + lp[1 + length(lp)-ω])
+    N = length(lp)
+    for ω in 1:(N>>1 - 1)
+        halfsum = 0.5 * (lp[1 + ω] + lp[1 + N-ω])
         lp[1 + ω] = halfsum
         lp[1 + N-ω] = halfsum
     end
