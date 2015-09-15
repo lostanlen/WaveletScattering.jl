@@ -208,18 +208,19 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         ξright = spec.max_qualityfactor * ξleft
         λs = find([metas[λ].centerfrequency < ξright for λ in eachindex(ψs)])
         ωs = round(Int, N * ξleft):round(Int, N * ξright)
-        ψmat = T[ψs[λ][ω] for ω in ωs, λ in λs]
+        ψmat = zeros(T, (length(ωs), length(λs)))
+        for idλ in eachindex(λs); ψmat[:, idλ] = ψs[λs[idλ]][ωs]; end
         b = ones(T, length(ωs))
         # TODO solve this as a constrained (nonnegative) optimization problem
         a = ψmat \ b
         for idλ in eachindex(λs); ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(a[idλ]) end
     end
     lp = zeros(realtype(T), N)
-    for λ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[λ]); end
+    for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     invmax_lp = inv(maximum(lp))
     sqrtinvmax_lp = sqrt(invmax_lp)
-    for λ in eachindex(ψs); ψs[λ] = ψs[λ] .* sqrtinvmax_lp; end
+    for idψ in eachindex(ψs); ψs[idψ] = ψs[idψ] .* sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
 end
 
