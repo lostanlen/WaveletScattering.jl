@@ -100,7 +100,7 @@ function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
     start = max(I.start, ψ.neglast - length(ψ.neg) + 1)
     stop = min(I.stop, ψ.neglast)
     return [
-        zeros(T, max(start - I.start, 0));
+        zeros(T, max(min(start, I.stop) - I.start, 0));
         ψ.neg[end - ψ.neglast + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
