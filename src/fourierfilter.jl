@@ -109,7 +109,7 @@ function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
     halfN = N >> 1
     i<(-halfN) && return zero(T)
     i>(halfN-1) && return zero(T)
-    return ψ[mod1(1 + i, N)]
+    return ψ.coeff[mod1(1 + i, N)]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
     halfN = length(ψ.coeff) >> 1
