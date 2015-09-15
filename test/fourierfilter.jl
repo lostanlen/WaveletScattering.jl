@@ -22,6 +22,12 @@ import WaveletScattering: Morlet1DSpec, fourierwavelet
 @test ψ[1:3] == [0.0f0 ; 0.1f0 ; 0.3f0]
 @test ψ[2:4] == [0.1f0 ; 0.3f0 ; 0.0f0]
 @test ψ[5:7] == [0.0f0 ; 0.0f0 ; 0.0f0]
+# getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
+ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+@test ψ[-2] == 0.0f0
+@test ψ[-3] == 0.4f0
+@test ψ[-5] == 0.1f0
+@test ψ[-6] == 0.0f0
 
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
