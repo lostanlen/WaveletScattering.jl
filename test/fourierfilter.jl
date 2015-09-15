@@ -3,7 +3,8 @@ using Base.Test
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, FullResolution1DFilter, Vanishing1DFilter,
     VanishingWithMidpoint1DFilter,
-    getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!
+    getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction!,
+    spin
 # meta.jl
 import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
     chromas, gammas, octaves, qualityfactors, scales
