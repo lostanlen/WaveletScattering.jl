@@ -124,8 +124,8 @@ function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
     return T[
-        ψ.coan[min(-1, I.start):min(max(-1, I.start), I.stop)] ;
-        ψ.an[max(min(0, I.stop), I.start):max(0, I.stop)] ]
+        ψ.coan[min(0, I.start):min(-1, I.stop)] ;
+        ψ.an[max(1, I.start):max(0, I.stop)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
     halfN = ψ.an.posfirst + length(ψ.an.pos)
