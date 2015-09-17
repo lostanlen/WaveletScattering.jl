@@ -22,7 +22,7 @@ maximum quality factor.
 * The lowest center frequency must be greater or equal than the number of
 per octaves, i.e. `(log2_size-nOctaves) >= 1 + log2(nFilters_per_octave)`."""
 function checkspec(spec::AbstractSpec)
-    if spec.ɛ>=1.0 || spec.ɛ<0.0
+    if (spec.ɛ >= 1.0) || (spec.ɛ < 0.0)
         error("`ɛ` must be in `[0.0, 1.0[`. A typical value is `1e-4`.")
     end
     if any(collect(spec.log2_size) .< 2)
@@ -35,7 +35,7 @@ function checkspec(spec::AbstractSpec)
         "`max_qualityfactor =` ", spec.max_qualityfactor, "\n",
         "`max_qualityfactor` must be `≧1.0`.")
     end
-    if spec.motherfrequency<=0.0 || spec.motherfrequency>0.5
+    if spec.motherfrequency <= 0.0 || spec.motherfrequency > 0.5
         error("`motherfrequency` must be in `]0.0, 0.5]`.")
     end
     if spec.nFilters_per_octave < 1
@@ -116,7 +116,7 @@ default_ɛ{RealT}(T::Type{Complex{RealT}}) = default_ɛ(RealT)
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the maximum quality factor in a wavelet filter
 bank."""
-default_max_qualityfactor(max_q::Real, nfo) = Float64(max_q)
+default_max_qualityfactor(max_q::Real, nfo::Any) = Float64(max_q)
 default_max_qualityfactor(max_q::Void, nfo::Integer) = Float64(nfo)
 default_max_qualityfactor(max_q::Void, nfo::Void) = 1.0
 
@@ -133,7 +133,7 @@ default_motherfrequency{S<:AbstractSpec}(::Type{S}, nFilters_per_octave) =
 """Given a maximum quality factor and a number of filter per octaves (both of
 which may be `Void`), returns the default number of filters per octave in a
 wavelet filter bank."""
-default_nFilters_per_octave(nfo::Integer, max_q) = Int(nfo)
+default_nFilters_per_octave(nfo::Integer, max_q::Any) = Int(nfo)
 default_nFilters_per_octave(nfo::Void, max_q::Real) = ceil(Int, max_q)
 default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 
@@ -161,7 +161,7 @@ tuning frequency.
 
 For example, to tune a 12-chroma Morlet filter bank to a concert pitch of
 440 Hz at a sample rate of 44,1 kHz:
-    Morlet1DSpec(nFilters_per_octave=12, tuning_frequency=440.0/44100.0)"""
+    Morlet1DSpec(nFilters_per_octave = 12, tuning_frequency = 440.0/44100.0)"""
 function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
     max_centerfrequency = default_motherfrequency(spectype, nFilters_per_octave)
     tuning_ratio = max_centerfrequency / tuningfrequency
