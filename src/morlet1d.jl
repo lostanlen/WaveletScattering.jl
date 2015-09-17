@@ -8,10 +8,10 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nOctaves::Int
     signaltype::Type{T}
     function call{T<:Number}(::Type{Morlet1DSpec{T}}, ::Type{T};
-                             ɛ=default_ɛ(T), log2_size=15,
-                             max_qualityfactor=nothing, max_scale=Inf,
-                             nFilters_per_octave=nothing, nOctaves=nothing,
-                             tuningfrequency=nothing)
+                             ɛ = default_ɛ(T), log2_size = 15,
+                             max_qualityfactor = nothing, max_scale = Inf,
+                             nFilters_per_octave = nothing, nOctaves = nothing,
+                             tuningfrequency = nothing)
         "Integer log2_size is automatically converted to one-element tuple"
         isa(log2_size, Int) && (log2_size = tuple(log2_size))
         max_qualityfactor, nFilters_per_octave =
