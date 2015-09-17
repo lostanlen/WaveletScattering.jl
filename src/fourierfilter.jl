@@ -1,15 +1,13 @@
 abstract AbstractFourierFilter{T<:Number,N} <: AbstractFilter{T,N}
 abstract AbstractFourier1DFilter{T<:Number} <: AbstractFourierFilter{T,1}
 
-"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
-is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
+"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
 immutable Analytic1DFilter{T<:Number}  <: AbstractFourier1DFilter{T}
     pos::Vector{T}
     posfirst::Int
 end
 
-"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain
-support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
+"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
 immutable Coanalytic1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     neg::Vector{T}
     neglast::Int
@@ -126,7 +124,7 @@ function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
     return T[
-        ψ.coan[min(-1, I.start):min(max(-1, I.start), I.stop)];
+        ψ.coan[min(-1, I.start):min(max(-1, I.start), I.stop)] ;
         ψ.an[max(min(0, I.stop), I.start):max(0, I.stop)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
@@ -134,11 +132,12 @@ function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
     i==(-halfN) && return ψ.midpoint
     return (i>0 ? ψ.an[i] : ψ.coan[i])
 end
-function Base.getindex(ψ::VanishingWithMidpoint1DFilter, I::UnitRange{Int64})
+function Base.getindex{T}(ψ::VanishingWithMidpoint1DFilter{T},
+                          I::UnitRange{Int64})
     halfN = ψ.an.posfirst + length(ψ.an.pos)
     output = T[
-        ψ.coan[min(-1, I.start, -halfN+1):min(-1, I.stop)] ;
-        ψ.an[max(0, I.start):max(0, I.stop)] ]
+        ψ.coan[min(0, I.start):min(-1, I.stop)] ;
+        ψ.an[max(1, I.start):max(0, I.stop)] ]
     if I.start<=-halfN
         output[-halfN-I.start+1] = ψ.midpoint
     end
@@ -204,12 +203,18 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
-        ξleft = uncertainty(spec) / spec.max_scale
-        ξright = spec.max_qualityfactor * ξleft
-        λs = find([metas[λ].centerfrequency < ξright for λ in eachindex(ψs)])
-        ωs = round(Int, N * ξleft):round(Int, N * ξright)
+        elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1; end
+        elbowω = round(Int, N * metas[elbowλ].centerfrequency)
+        λs = elbowλ:length(metas)
+        ωs = round(Int, N * metas[end].centerfrequency):elbowω
         ψmat = zeros(T, (length(ωs), length(λs)))
-        for idλ in eachindex(λs); ψmat[:, idλ] = ψs[λs[idλ]][ωs]; end
+        for idλ in eachindex(λs);
+            @show idλ;
+            ψmat[:, idλ] = ψs[λs[idλ]][ωs];
+        end
+        lp = zeros(realtype(T), N)
+        for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
+        isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
         b = ones(T, length(ωs))
         # TODO solve this as a constrained (nonnegative) optimization problem
         a = ψmat \ b
