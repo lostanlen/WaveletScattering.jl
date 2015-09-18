@@ -107,7 +107,8 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
-lp = renormalize!(ψs, metas, spec)
+ϕ = scalingfunction(spec)
+lp = renormalize!(ψs, ϕ, metas, spec)
 @test all(lp.< 1.0001)
 N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
@@ -123,7 +124,8 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
-lp = renormalize!(ψs, metas, spec)
+ϕ = scalingfunction(spec)
+lp = renormalize!(ψs, ϕ, metas, spec)
 @test all(lp.< 1.001)
 N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
@@ -139,7 +141,8 @@ scs, bws = scales(spec), bandwidths(spec)
     for i in eachindex(γs)]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
-lp = renormalize!(ψs, metas, spec)
+ϕ = scalingfunction(spec)
+lp = renormalize!(ψs, ϕ, metas, spec)
 @test all(lp.< 1.001)
 N = 1 << spec.log2_size[1]
 firstω = round(Int, N * ξs[end])
