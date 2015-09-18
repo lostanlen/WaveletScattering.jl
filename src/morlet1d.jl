@@ -104,7 +104,15 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     last = findlast(morlet2 .> ɛ2) - 1 - halfN
     "7. **Construction of AbstractFourier1DFilter object**"
     @inbounds sub_morlet = morlet[1 + (first:last) + halfN]
-    AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
+    return AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
+end
+
+function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
+    bw = N * T(uncertainty(spec) * spec.motherfrequency / (1<<spec.nOctaves))
+    den = @fastmath bw * bw / T(2.0 * log(2.0))
+    lastω = bw * sqrt(2.0 / spec.ɛ)
+    leg = T[ gauss(ω, den) for ω in 1:lastω ]
+    return Symmetric1DFilter(leg, one(T))
 end
 
 """
