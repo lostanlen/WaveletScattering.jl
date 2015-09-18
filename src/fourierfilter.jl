@@ -114,7 +114,7 @@ function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
     halfN = N >> 1
     start = max(I.start, -halfN)
     stop = min(I.stop, halfN-1)
-    T[
+    return T[
         zeros(T, max(min(start, I.stop + 1) - I.start, 0)) ;
         ψ.coeff[[ mod1(1+ω, N) for ω in start:stop ]] ;
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
