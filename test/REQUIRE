@@ -1,2 +1,4 @@
 julia 0.4-
 DataStructures 0.3.11
+JuMP 0.10.1
+Regression 0.3.0
