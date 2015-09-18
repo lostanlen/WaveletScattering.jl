@@ -108,7 +108,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
 end
 
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
-    bw = N * T(uncertainty(spec) * spec.motherfrequency / (1<<spec.nOctaves))
+    bw = (1<<(spec.log2_size[1]-nOctaves)) *
+         T(uncertainty(spec) spec.motherfrequency
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     lastω = bw * sqrt(2.0 / spec.ɛ)
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
