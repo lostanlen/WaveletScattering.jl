@@ -229,8 +229,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         regressionmodel = Regression.linearreg(x, sqrt(ystar.'); bias=1.0)
         β = Regression.solve(regressionmodel)
         slope, offset = tuple(β.sol[:]...)
-        multipliers = (offset .+ slope.*collect(1:length(λs)))
-        plot(ψmat * multipliers)
+        multipliers = (offset .+ slope.*(1:length(λs))).^2
         for idλ in eachindex(λs)
             ψs[λs[idλ]] = ψs[λs[idλ]] .* sqrt(2.0 * multipliers[idλ])
         end
@@ -238,7 +237,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     lp = zeros(realtype(T), N)
     for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-    invmax_lp = inv(maximum(lp))
+    invmax_lp = inv(maximum(lp[elbowω:end]))
     sqrtinvmax_lp = sqrt(invmax_lp)
     for idψ in eachindex(ψs); ψs[idψ] = ψs[idψ] .* sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
