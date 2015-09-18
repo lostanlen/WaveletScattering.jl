@@ -125,6 +125,7 @@ end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
     return T[
         ψ.coan[min(0, I.start):min(-1, I.stop)] ;
+        zeros(T, Int((I.start < 0) && (I.stop >0))) ;
         ψ.an[max(1, I.start):max(0, I.stop)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
