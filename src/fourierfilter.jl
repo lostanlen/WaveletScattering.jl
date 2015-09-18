@@ -138,6 +138,7 @@ function Base.getindex{T}(ψ::VanishingWithMidpoint1DFilter{T},
     halfN = ψ.an.posfirst + length(ψ.an.pos)
     output = T[
         ψ.coan[min(0, I.start):min(-1, I.stop)] ;
+        zeros(T, Int((I.start < 0) && (I.stop >0))) ;
         ψ.an[max(1, I.start):max(0, I.stop)] ]
     if I.start<=-halfN
         output[-halfN-I.start+1] = ψ.midpoint
