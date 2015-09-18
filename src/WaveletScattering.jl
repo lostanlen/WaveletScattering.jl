@@ -2,6 +2,8 @@ module WaveletScattering
 
 using Compat
 using DataStructures
+using JuMP
+using Regression
 
 include("spec.jl")
 include("meta.jl")
