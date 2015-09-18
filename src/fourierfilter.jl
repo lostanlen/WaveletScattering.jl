@@ -226,10 +226,10 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         xrange = 1:spec.nFilters_per_octave
         ystar = getValue(y)[xrange]
         x = float(collect(xrange)).'
-        regressionmodel = Regression.linearreg(x, ystar.'; bias=1.0)
+        regressionmodel = Regression.linearreg(x, sqrt(ystar.'); bias=1.0)
         β = Regression.solve(regressionmodel)
         slope, offset = tuple(β.sol[:]...)
-        multipliers = max(0, offset .+ slope.*(1:length(λs)))
+        multipliers = (offset .+ slope.*collect(1:length(λs)))
         plot(ψmat * multipliers)
         for idλ in eachindex(λs)
             ψs[λs[idλ]] = ψs[λs[idλ]] .* sqrt(2.0 * multipliers[idλ])
