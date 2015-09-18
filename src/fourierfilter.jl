@@ -167,7 +167,7 @@ function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
     @inbounds for ω in eachindex(ψ.leg)
         @fastmath temp = abs2(ψ.leg[ω])
         lp[1 + ω] += temp
-        lp[N + 1 - ω] += temp
+        lp[end + 1 - ω] += temp
     end
     @fastmath lp[1 + 0] += abs2(ψ.zero)
 end
