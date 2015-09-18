@@ -46,7 +46,7 @@ For performance reasons, we memoize the denominator 2σ², which is computed onl
 once in the caller morlet1d.
 Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω.
 """
-gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))
+gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))::T
 
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
 A Morlet wavelet of center frequency ξ and of variance σ looks almost like
