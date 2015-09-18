@@ -208,17 +208,32 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         λs = elbowλ:length(metas)
         ωs = round(Int, N * metas[end].centerfrequency):elbowω
         ψmat = zeros(T, (length(ωs), length(λs)))
-        for idλ in eachindex(λs);
-            @show idλ;
-            ψmat[:, idλ] = ψs[λs[idλ]][ωs];
+        for idλ in eachindex(λs)
+            ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(maximum(ψs[λs[idλ]]))
+            ψmat[:, idλ] = abs2(ψs[λs[idλ]][ωs])
         end
         lp = zeros(realtype(T), N)
-        for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
+        for idλ in 1:(elbowλ-1); littlewoodpaleyadd!(lp, ψs[idλ]); end
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        b = ones(T, length(ωs))
-        # TODO solve this as a constrained (nonnegative) optimization problem
-        a = ψmat \ b
-        for idλ in eachindex(λs); ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(a[idλ]) end
+        remainder = maximum(lp) - lp[ωs]
+        optimizationmodel = JuMP.Model()
+        JuMP.@defVar(optimizationmodel, y[1:length(λs)] >= 0)
+        weights = logspace(0.0, 1.0, length(remainder))
+        JuMP.@setObjective(optimizationmodel, Min,
+                           sum(weights .* (remainder - ψmat * y)))
+        JuMP.@addConstraint(optimizationmodel, remainder .>= ψmat * y)
+        JuMP.solve(optimizationmodel)
+        xrange = 1:spec.nFilters_per_octave
+        ystar = getValue(y)[xrange]
+        x = float(collect(xrange)).'
+        regressionmodel = Regression.linearreg(x, ystar.'; bias=1.0)
+        β = Regression.solve(regressionmodel)
+        slope, offset = tuple(β.sol[:]...)
+        multipliers = max(0, offset .+ slope.*(1:length(λs)))
+        plot(ψmat * multipliers)
+        for idλ in eachindex(λs)
+            ψs[λs[idλ]] = ψs[λs[idλ]] .* sqrt(2.0 * multipliers[idλ])
+        end
     end
     lp = zeros(realtype(T), N)
     for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
