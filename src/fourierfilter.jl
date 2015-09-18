@@ -148,27 +148,15 @@ end
 
 """Adds the squared magnitude of a Fourier-domain wavelet `ψ` to an accumulator
 `lp` (squared Littlewood-Paley sum)."""
-function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
-    @inbounds for ω in eachindex(ψ.pos)
-        @fastmath lp[ψ.posfirst+ω] += abs2(ψ.pos[ω])
-    end
-end
-function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
-    @inbounds for ω in eachindex(ψ.neg)
-        @fastmath lp[length(lp) - length(ψ.neg)+ω] += abs2(ψ.neg[ω])
-    end
-end
-function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
-    @inbounds for ω in eachindex(ψ.coeff)
-        @fastmath lp[ω] += abs2(ψ.coeff[ω])
-    end
-end
+littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter) =
+    @inbounds @fastmath lp[ψ.posfirst + eachindex(ψ.pos)] .+= abs2(ψ.pos)
+littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter) =
+    @inbounds @fastmath lp[end - eachindex(ψ.neg)] .+= abs2(ψ.neg[ω])
+littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter) =
+    @inbounds @fastmath lp .+= abs2(ψ.coeff)
 function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
-    @inbounds for ω in eachindex(ψ.leg)
-        @fastmath temp = abs2(ψ.leg[ω])
-        lp[1 + ω] += temp
-        lp[end + 1 - ω] += temp
-    end
+    @inbounds @fastmath lp[1 + eachindex(ψ.leg)] .+= abs2(ψ.leg)
+    @inbounds @fastmath lp[end + 1 - eachindex(ψ.leg)] .+= abs2(ψ.leg)
     @fastmath lp[1 + 0] += abs2(ψ.zero)
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
@@ -178,7 +166,7 @@ end
 function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     littlewoodpaleyadd!(lp, ψ.an)
     littlewoodpaleyadd!(lp, ψ.coan)
-    @fastmath lp[1 + (length(lp)>>1)] += abs2(ψ.midpoint)
+    @inbounds @fastmath lp[1 + (length(lp)>>1)] += abs2(ψ.midpoint)
 end
 
 """Returns the maximum Fourier-domain absolute value of a filter."""
