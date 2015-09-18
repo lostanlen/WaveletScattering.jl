@@ -62,18 +62,18 @@ function AbstractFourier1DFilter(y, first, last, log2_length)
     return Vanishing1DFilter(an, coan)
 end
 
-# element-wise multiplication operator .*
-Base.(:.*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
-    Analytic1DFilter{T}(b.*ψ.pos, ψ.posfirst)
-Base.(:.*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
-    Coanalytic1DFilter{T}(b.*ψ.neg, ψ.neglast)
-Base.(:.*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
-    FullResolution1DFilter{T}(b.*ψ.coeff)
-Base.(:.*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
-    Vanishing1DFilter(b.*ψ.an, b.*ψ.coan)
-Base.(:.*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
-    VanishingWithMidpoint1DFilter(b.*ψ.an, b.*ψ.coan, b*ψ.midpoint)
-Base.(:.*)(b::Number, ψ::AbstractFourierFilter) = ψ .* b
+# multiplication operator with scalar *
+Base.(:*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
+    Analytic1DFilter{T}(b * ψ.pos, ψ.posfirst)
+Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
+    Coanalytic1DFilter{T}(b * ψ.neg, ψ.neglast)
+Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
+    FullResolution1DFilter{T}(b * ψ.coeff)
+Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
+    Vanishing1DFilter(b * ψ.an, b * ψ.coan)
+Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
+    VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, b * ψ.midpoint)
+Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
 
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
@@ -161,6 +161,14 @@ function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
         @fastmath lp[ω] += abs2(ψ.coeff[ω])
     end
 end
+function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
+    @inbounds for ω in eachindex(ψ.leg)
+        @fastmath temp = abs2(ψ.leg[ω])
+        lp[1 + ω] += temp
+        lp[N + 1 - ω] += temp
+    end
+    @fastmath lp[1 + 0] += abs2(ψ.zero)
+end
 function littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
     littlewoodpaleyadd!(lp, ψ.an)
     littlewoodpaleyadd!(lp, ψ.coan)
@@ -189,70 +197,36 @@ realtype{T<:Real}(::Type{Complex{T}}) = T
 of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
 The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
-wavelet energies (squared magnitudes).
-If the quality factor varies across frequencies, the multiplier is no longer a
-scalar number, since it adapts to the quality factor q at every frequency ξ.
-The multiplier b is such that:
-* `b = 1/max(lp)` for `q = max_q`, i.e. `ξ > max_q*uncertainty/max_s` (`ξleft`)
-* `b = 1/(max_q*max_1p)` for `q = 1`, that is `ξ < uncertainty/max_s` (`ξright`)
-* `b` is interpolated linearly in between, that is, for `s = max_s`
-If maximum scale is infinite and/or maximum quality factor, the three cases
-above collapse into the simpler `m = 1/max(lp)`."""
+wavelet energies (squared magnitudes)."""
 function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
-        metas, spec::Abstract1DSpec)
+        ϕ::Symmetric1DFilter, metas::Any, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
         elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1; end
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
         λs = elbowλ:length(metas)
-        ωs = round(Int, N * metas[end].centerfrequency):elbowω
         ψmat = zeros(T, (length(ωs), length(λs)))
-        for idλ in eachindex(λs)
-            ψs[λs[idλ]] = ψs[λs[idλ]] .* inv(maximum(ψs[λs[idλ]]))
-            ψmat[:, idλ] = abs2(ψs[λs[idλ]][ωs])
-        end
+        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][0:elbowω]); end
         lp = zeros(realtype(T), N)
-        for idλ in 1:(elbowλ-1); littlewoodpaleyadd!(lp, ψs[idλ]); end
+        for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
+        littlewoodpaleyadd!(lp, ϕ)
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        remainder = maximum(lp) - lp[ωs]
+        remainder = maximum(lp) - lp[1 + (0:elbowω)]
         optimizationmodel = JuMP.Model()
         JuMP.@defVar(optimizationmodel, y[1:length(λs)] >= 0)
-        weights = logspace(0.0, 1.0, length(remainder))
-        JuMP.@setObjective(optimizationmodel, Min,
-                           sum(weights .* (remainder - ψmat * y)))
+        JuMP.@setObjective(optimizationmodel, Min, sum((remainder - ψmat * y)))
         JuMP.@addConstraint(optimizationmodel, remainder .>= ψmat * y)
         JuMP.solve(optimizationmodel)
-        xrange = 1:spec.nFilters_per_octave
-        ystar = getValue(y)[xrange]
-        x = float(collect(xrange)).'
-        regressionmodel = Regression.linearreg(x, sqrt(ystar.'); bias=1.0)
-        β = Regression.solve(regressionmodel)
-        slope, offset = tuple(β.sol[:]...)
-        multipliers = (offset .+ slope.*(1:length(λs))).^2
-        for idλ in eachindex(λs)
-            ψs[λs[idλ]] = ψs[λs[idλ]] .* sqrt(2.0 * multipliers[idλ])
-        end
+        ψs[λs] .*= sqrt(2) * JuMP.getValue(y)
     end
     lp = zeros(realtype(T), N)
-    for idψ in eachindex(ψs); littlewoodpaleyadd!(lp, ψs[idψ]); end
+    for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-    invmax_lp = inv(maximum(lp[elbowω:end]))
+    invmax_lp = inv(maximum(lp))
     sqrtinvmax_lp = sqrt(invmax_lp)
-    for idψ in eachindex(ψs); ψs[idψ] = ψs[idψ] .* sqrtinvmax_lp; end
+    for idψ in eachindex(ψs) ψs[idψ] = ψs[idψ] .* sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
-end
-
-"""Given a Littlewood-Paley sum `lp`, constructs a real symmetric low-pass
-filter in the Fourier domain. This low-pass filter is called the ""scaling
-function"" of the wavelet filterbank, as it ensures energy conservation
-and invertibility."""
-function scalingfunction!{T, M<:AbstractMeta}(lp::Vector{T}, metas::Vector{M})
-    firstpeak = sqrt(metas[end].centerfrequency * metas[end-1].centerfrequency)
-    min_ω = round(Int, length(lp) * firstpeak)
-    @inbounds leg = [ sqrt(one(T) - lp[1+ω]) for ω in 1:min_ω ]
-    for ω in 0:min_ω; @inbounds lp[1+ω] = 1; end
-    return Symmetric1DFilter(leg, one(T))
 end
 
 """Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
@@ -268,8 +242,8 @@ spin(ψ::VanishingWithMidpoint1DFilter) =
 function symmetrize!(lp::Vector)
     N = length(lp)
     for ω in 1:(N>>1 - 1)
-        halfsum = 0.5 * (lp[1 + ω] + lp[1 + N-ω])
+        halfsum = 0.5 * (lp[1 + ω] + lp[1 + N - ω])
         lp[1 + ω] = halfsum
-        lp[1 + N-ω] = halfsum
+        lp[1 + N - ω] = halfsum
     end
 end
