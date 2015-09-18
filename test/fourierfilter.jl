@@ -1,8 +1,7 @@
 using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
-    Coanalytic1DFilter, FullResolution1DFilter, Vanishing1DFilter,
-    VanishingWithMidpoint1DFilter,
+    Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction,
     spin
 # meta.jl
@@ -77,6 +76,12 @@ littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 @test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
+# littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
+lp = zeros(Float32, 8)
+ψ = Symmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
+allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
+@test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
+@test_approx_eq lp Float32[1.0, 0.64, 0.09, 0.01, 0.0, 0.01, 0.09, 0.64]
 # littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
 lp = zeros(Float32, 8)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
