@@ -155,7 +155,7 @@ function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
     @inbounds for ω in eachindex(ψ.neg)
-        @fastmath lp[length(lp) - length(ψ.neg)+ω] += abs2(ψ.neg[ω])
+        @fastmath lp[length(lp) - length(ψ.neg) + ω] += abs2(ψ.neg[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
@@ -164,14 +164,9 @@ function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
-    @inbounds @fastmath lp[1 + eachindex(ψ.leg)] .+= abs2(ψ.leg)
-    @inbounds @fastmath lp[length(lp) + 1 - eachindex(ψ.leg)] .+= abs2(ψ.leg)
     @inbounds for ω in eachindex(ψ.leg)
         @fastmath lp[1 + ω] += abs2(ψ.leg[ω])
-        @fastmath lp[end + 1 - ω] += abs2(ψ.leg[ω])
-    end
-    @inbounds for ω in eachindex(ψ.leg)
-
+        @fastmath lp[length(lp) + 1 - ω] += abs2(ψ.leg[ω])
     end
     @fastmath lp[1 + 0] += abs2(ψ.zero)
 end
