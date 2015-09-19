@@ -227,7 +227,9 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     lp = zeros(realtype(T), N)
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-    ψs[idψ] .*= inv(sqrt(maximum(lp))
+    max_lp = maximum(lp)
+    ψs[idψ] .*= inv(sqrt(max_lp))
+    return scale!(lp, inv(max_lp))
 end
 
 """Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
