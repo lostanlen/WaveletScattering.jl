@@ -226,7 +226,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     invmax_lp = inv(maximum(lp))
     sqrtinvmax_lp = sqrt(invmax_lp)
-    for idψ in eachindex(ψs) ψs[idψ] = ψs[idψ] .* sqrtinvmax_lp; end
+    for idψ in eachindex(ψs) ψs[idψ] = ψs[idψ] * sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
 end
 
