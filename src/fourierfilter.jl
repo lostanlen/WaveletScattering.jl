@@ -214,9 +214,8 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         lp = zeros(realtype(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        max_lp = maximum(lp[(1+elbowω):(N>>1)])
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
-        remainder = max_lp - lp[1 + (1:elbowω)]
+        remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
         JuMP.@defVar(model, y[1:length(λs)] >= 0)
         JuMP.@setObjective(model, Min, sum(remainder - ψmat * y))
