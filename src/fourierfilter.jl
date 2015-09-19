@@ -240,8 +240,8 @@ end
 """Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
 ""mirror filter"" whose center frequency is of opposite sign. This corresponds
 to a conjugation in the time domain."""
-spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.posfirst), -ψ.posfirst)
-spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neglast), -ψ.neglast)
+spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.pos), -ψ.posfirst)
+spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neg), -ψ.neglast)
 spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
 spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(reverse(ψ.coan), reverse(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
