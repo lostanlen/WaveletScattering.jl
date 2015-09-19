@@ -69,6 +69,8 @@ Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b * ψ.neg, ψ.neglast)
 Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b * ψ.coeff)
+Base.(:*){T<:Number}(ψ::Symmetric1DFilter{T}, b::Number) =
+    Symmetric1DFilter{T}(b * ψ.leg, b * ψ.zero)
 Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(b * ψ.an, b * ψ.coan)
 Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
@@ -208,27 +210,29 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
         λs = elbowλ:length(metas)
         ψmat = zeros(T, (elbowω, length(λs)))
-        for idλ in eachindex(λs)
-            ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω])
-        end
+        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(realtype(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
-        littlewoodpaleyadd!(lp, ϕ)
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        remainder = maximum(lp) - lp[1 + (1:elbowω)]
-        optimizationmodel = JuMP.Model()
-        JuMP.@defVar(optimizationmodel, y[1:length(λs)] >= 0)
-        JuMP.@setObjective(optimizationmodel, Min, norm(remainder - ψmat * y))
-        JuMP.@addConstraint(optimizationmodel, remainder .>= ψmat * y)
-        JuMP.@addConstraint(optimizationmodel, diff(y) .<= 0)
-        JuMP.solve(optimizationmodel)
-        ψs[λs] .*= sqrt(2) * JuMP.getValue(y)
+        max_lp = maximum(lp[(1+elbowω):(N>>1)])
+        littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
+        remainder = max_lp - lp[1 + (1:elbowω)]
+        model = JuMP.Model()
+        JuMP.@defVar(model, y[1:length(λs)] >= 0)
+        JuMP.@setObjective(model, Min, sum(remainder - ψmat * y))
+        JuMP.@addConstraint(model, remainder .>= ψmat * y)
+        JuMP.@addConstraint(model, diff(y) .<= 0)
+        JuMP.solve(model)
+        ψs[λs] .*= sqrt(2 * JuMP.getValue(y))
     end
     lp = zeros(realtype(T), N)
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
+    max_lp = maximum(lp)
     invmax_lp = inv(maximum(lp))
-    sqrtinvmax_lp = sqrt(invmax_lp)
+    sqrtmax_lp = sqrt(max_lp)
+    sqrtinvmax_lp = inv(sqrtmax_lp)
+    littlewoodpaleyadd!(lp, ϕ * sqrtmax_lp)
     for idψ in eachindex(ψs) ψs[idψ] = ψs[idψ] * sqrtinvmax_lp; end
     return scale!(lp, invmax_lp)
 end
