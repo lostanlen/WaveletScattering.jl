@@ -207,8 +207,8 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1; end
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
         λs = elbowλ:length(metas)
-        ψmat = zeros(T, (1 + elbowω, length(λs)))
-        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][0:elbowω]); end
+        ψmat = zeros(T, (elbowω, length(λs)))
+        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(realtype(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
         littlewoodpaleyadd!(lp, ϕ)
