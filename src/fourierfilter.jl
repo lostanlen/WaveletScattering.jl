@@ -77,6 +77,9 @@ Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, b * ψ.midpoint)
 Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
 
+# element-wise multiplication operator ".*" with scalar falls back to "*"
+Base.(:.*)(ψ::AbstractFourierFilter, b::Number) = ψ * b
+
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i<ψ.posfirst && return zero(T)
