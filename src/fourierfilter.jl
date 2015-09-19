@@ -208,16 +208,19 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
         λs = elbowλ:length(metas)
         ψmat = zeros(T, (elbowω, length(λs)))
-        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
+        for idλ in eachindex(λs)
+            ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω])
+        end
         lp = zeros(realtype(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
         littlewoodpaleyadd!(lp, ϕ)
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        remainder = maximum(lp) - lp[1 + (0:elbowω)]
+        remainder = maximum(lp) - lp[1 + (1:elbowω)]
         optimizationmodel = JuMP.Model()
         JuMP.@defVar(optimizationmodel, y[1:length(λs)] >= 0)
-        JuMP.@setObjective(optimizationmodel, Min, sum((remainder - ψmat * y)))
+        JuMP.@setObjective(optimizationmodel, Min, norm(remainder - ψmat * y))
         JuMP.@addConstraint(optimizationmodel, remainder .>= ψmat * y)
+        JuMP.@addConstraint(optimizationmodel, diff(y) .<= 0)
         JuMP.solve(optimizationmodel)
         ψs[λs] .*= sqrt(2) * JuMP.getValue(y)
     end
