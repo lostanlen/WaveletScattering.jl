@@ -110,7 +110,7 @@ spec = Morlet1DSpec()
 scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-    for i in eachindex(γs)]
+    for i in eachindex(γs) ]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
@@ -127,7 +127,7 @@ spec = Morlet1DSpec(nFilters_per_octave=8)
 scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-    for i in eachindex(γs)]
+    for i in eachindex(γs) ]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
@@ -144,7 +144,7 @@ spec = Morlet1DSpec(nFilters_per_octave=8, max_scale=4410)
 scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-    for i in eachindex(γs)]
+    for i in eachindex(γs) ]
 @inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
