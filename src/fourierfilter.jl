@@ -244,7 +244,7 @@ spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neg), -ψ.neglast)
 spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
 spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(spin(ψ.coan), spin(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
-    VanishingWithMidpoint1DFilter(spin(ψ.coan), spin(ψ.an), midpoint)
+    VanishingWithMidpoint1DFilter(spin(ψ.coan), spin(ψ.an), ψ.midpoint)
 
 function symmetrize!(lp::Vector)
     N = length(lp)
