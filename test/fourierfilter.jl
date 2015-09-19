@@ -167,28 +167,28 @@ lastω = round(Int, N * ξs[1])
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 ψspinned = spin(ψ)
 @test isa(ψspinned, Coanalytic1DFilter{Float32})
-@test ψspinned.neg == [0.3, 0.1]
+@test_approx_eq ψspinned.neg Float32[0.3, 0.1]
 @test ψspinned.neglast == -2
 # spin(::Coanalytic1DFilter)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψspinned = spin(ψ)
-@test isa(ψspinned, Analytic1DFilter{Float32})
-@test ψspinned.neg == Float32[0.4, 0.3, 0.1]
+@test isa(ψspinned, Coanalytic1DFilter{Float32})
+@test_approx_eq ψspinned.pos Float32[0.4, 0.3, 0.1]
 @test ψspinned.neglast == -3
 # spin(::FullResolution1DFilter)
 ψ = FullResolution1DFilter(Float32[0.1, 0.2, 0.3, 0.4])
 ψspinned = spin(ψ)
 @test isa(ψspinned, FullResolution1DFilter{Float32})
-@test ψspinned.coeff == Float32[0.4, 0.3, 0.2, 0.1]
+@test_approx_eq ψspinned.coeff Float32[0.4, 0.3, 0.2, 0.1]
 # spin(::Vanishing1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
 ψspinned = spin(ψ)
 @test isa(ψspinned, Vanishing1DFilter{Float32})
-@test ψspinned.coan.neg == Float32[0.3, 0.1]
+@test_approx ψspinned.coan.neg Float32[0.3, 0.1]
 @test ψspinned.coan.neglast == -2
-@test ψspinned.an.pos == Float32[0.1, 0.3, 0.4]
+@test_approx_eq ψspinned.an.pos Float32[0.1, 0.3, 0.4]
 @test ψspinned.an.posfirst == 3
 # spin(::VanishingWithMidpoint1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
@@ -197,8 +197,8 @@ midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 ψspinned = spin(ψ)
 @test isa(ψspinned, VanishingWithMidpoint1DFilter{Float32})
-@test ψspinned.coan.neg == Float32[0.3, 0.1]
+@test_approx_eq ψspinned.coan.neg Float32[0.3, 0.1]
 @test ψspinned.coan.neglast == -2
-@test ψspinned.an.pos == Float32[0.1, 0.3, 0.4]
+@test_approx_eq ψspinned.an.pos Float32[0.1, 0.3, 0.4]
 @test ψspinned.an.posfirst == 3
-@test ψspinned.midpoint == Float32(0.5)
+@test_approx_eq ψspinned.midpoint Float32(0.5)
