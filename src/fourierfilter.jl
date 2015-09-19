@@ -242,9 +242,9 @@ to a conjugation in the time domain."""
 spin(ψ::Analytic1DFilter) = Coanalytic1DFilter(reverse(ψ.pos), -ψ.posfirst)
 spin(ψ::Coanalytic1DFilter) = Analytic1DFilter(reverse(ψ.neg), -ψ.neglast)
 spin(ψ::FullResolution1DFilter) = FullResolution1DFilter(reverse(ψ.coeff))
-spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(reverse(ψ.coan), reverse(ψ.an))
+spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(spin(ψ.coan), spin(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
-    VanishingWithMidpoint1DFilter(reverse(ψ.coan), reverse(ψ.an), midpoint)
+    VanishingWithMidpoint1DFilter(spin(ψ.coan), spin(ψ.an), midpoint)
 
 function symmetrize!(lp::Vector)
     N = length(lp)
