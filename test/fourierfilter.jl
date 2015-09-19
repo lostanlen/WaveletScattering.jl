@@ -172,9 +172,9 @@ lastω = round(Int, N * ξs[1])
 # spin(::Coanalytic1DFilter)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψspinned = spin(ψ)
-@test isa(ψspinned, Coanalytic1DFilter{Float32})
+@test isa(ψspinned, Analytic1DFilter{Float32})
 @test_approx_eq ψspinned.pos Float32[0.4, 0.3, 0.1]
-@test ψspinned.neglast == -3
+@test ψspinned.posfirst == 3
 # spin(::FullResolution1DFilter)
 ψ = FullResolution1DFilter(Float32[0.1, 0.2, 0.3, 0.4])
 ψspinned = spin(ψ)
@@ -199,6 +199,6 @@ midpoint = Float32(0.5)
 @test isa(ψspinned, VanishingWithMidpoint1DFilter{Float32})
 @test_approx_eq ψspinned.coan.neg Float32[0.3, 0.1]
 @test ψspinned.coan.neglast == -2
-@test_approx_eq ψspinned.an.pos Float32[0.1, 0.3, 0.4]
+@test_approx_eq ψspinned.an.pos Float32[0.4, 0.3, 0.1]
 @test ψspinned.an.posfirst == 3
 @test_approx_eq ψspinned.midpoint Float32(0.5)
