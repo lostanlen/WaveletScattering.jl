@@ -228,7 +228,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::Vector{F},
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     max_lp = maximum(lp)
-    ψs[idψ] .*= inv(sqrt(max_lp))
+    ψs .*= inv(sqrt(max_lp))
     return scale!(lp, inv(max_lp))
 end
 
