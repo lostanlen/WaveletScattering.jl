@@ -65,26 +65,6 @@ for meta in metas
         @test abs(ψ.midpoint) > spec.ɛ
     end
 end
-# case ɛ=0.0
-spec = Morlet1DSpec(nFilters_per_octave = 16, ɛ = 0.0)
-γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
-ξs, qs = centerfrequencies(spec), qualityfactors(spec)
-scs, bws = scales(spec), bandwidths(spec)
-metas = [NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-         for i in eachindex(γs)]
-halfN = 1 << (spec.log2_size[1] - 1)
-for meta in metas
-    ψ = fourierwavelet(meta, spec)
-    if isa(ψ, Analytic1DFilter)
-        @test length(ψ.pos) == (halfN - 1)
-        @test ψ.posfirst == 1
-    elseif isa(ψ, VanishingWithMidpoint1DFilter)
-        @test length(ψ.an.pos) == (halfN - 1)
-        @test ψ.an.posfirst == 1
-        @test length(ψ.coan.neg) == (halfN - 1)
-        @test ψ.coan.neglast == -1
-    end
-end
 
 # gauss
 @test_approx_eq gauss(0.0, 1.0) 1.0
