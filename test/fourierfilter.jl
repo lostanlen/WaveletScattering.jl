@@ -102,6 +102,25 @@ littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
 
+# Base.maximum
+# Base.maximum(ψ::Analytic1DFilter)
+@test_approx_eq maximum(Analytic1DFilter([0.1, -0.3], 2)) 0.3
+# Base.maximum(ψ::Coanalytic1DFilter)
+@test_approx_eq maximum(Coanalytic1DFilter([0.1, 0.3, 0.4*im], -3)) 0.4
+# Base.maximum(ψ::Symmetric1DFilter)
+@test_approx_eq maximum(Symmetric1DFilter([0.2, 0.1], 1.0)) 1.0
+# Base.maximum(ψ::Vanishing1DFilter)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+ψ = Vanishing1DFilter(an, coan)
+@test_approx_eq maximum(Vanishing1DFilter(ψ)) Float32(0.4)
+# Base.maximum(ψ::VanishingWithMidpoint1DFilter)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+midpoint = Float32(0.5)
+ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
+@test_approx_eq maximum(Vanishing1DFilter(ψ)) Float32(0.5)
+
 # renormalize!
 # case Q=1
 spec = Morlet1DSpec()
