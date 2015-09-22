@@ -18,3 +18,10 @@ bank = FourierNonOriented1DBank(Morlet1DSpec())
     Morlet1DSpec(Float64))
 @test_throws ErrorException FourierNonOriented1DBank{Float64}(
     Morlet1DSpec(Float32))
+
+# FourierOriented1DBank
+bank = FourierOriented1DBank(Morlet1DSpec())
+@test_throws ErrorException FourierOriented1DBank{Float32}(
+    Morlet1DSpec(Float64))
+@test_throws ErrorException FourierOriented1DBank{Float64}(
+    Morlet1DSpec(Float32))
