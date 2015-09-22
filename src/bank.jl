@@ -36,8 +36,13 @@ abstract AbstractBank{T<:Number}
 abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
 abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
-"""An `FourierNonOriented1DBank` is a one-dimensional, non-oriented filter bank
-defined in the Fourier domain."""
+"""A `FourierNonOriented1DBank` is a one-dimensional, non-oriented filter bank
+defined in the Fourier domain. It is not oriented in the sense that only the
+positive frequencies are guaranteed to be covered. Indeed, assuming that the
+input signal will be real — i.e. its Fourier will be symmetric — it can be
+recovered from the "positive half" of its Fourier spectrum. In summary, it is
+advisable to use this type of filter bank when handling real 1d data of
+moderate to large length."""
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
@@ -64,6 +69,11 @@ end
 FourierNonOriented1DBank(spec::Abstract1DSpec) =
     FourierNonOriented1DBank{spec.signaltype}(spec)
 
+"""A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
+in the Fourier domain. It is "oriented" insofar as its filters have negative
+center frequencies as well as positive center frequencies, as represented by
+the orientation parameter θ. It is advisable to use this type of filter bank
+when handling complex 1d data of moderate to large length."""
 immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
     ψs::Matrix{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
