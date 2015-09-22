@@ -81,11 +81,12 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         θs = 0:1
         @inbounds metas = [ OrientedMeta(
             γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
-            for γ in eachindex(γs), θ in 1:2]
-        @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas[:,1]]
-        ψs = [ψs spin(ψs)]
-        lp = renormalize!(ψs, metas, spec)
-        ϕ = scalingfunction!(lp, metas)
+            for γ in eachindex(γs), θ in 1:2 ]
+        @inbounds ψs = [ fourierwavelet(meta, spec)::AbstractFourier1DFilter{T}
+            for meta in metas[:,1] ]
+        ψs = hcat(ψs, map(spin, ψs))
+        ϕ = scalingfunction(spec)
+        renormalize!(ψs, ϕ, metas, spec)
         behavior = Behavior(js)
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
