@@ -211,7 +211,10 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::VecOrMat{F},
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
     if !isinf(spec.max_scale) && spec.max_qualityfactor>1.0
-        elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1; end
+        elbowλ = 1;
+        while (metas[elbowλ].scale<spec.max_scale) && elbowλ<length(metas)
+            elbowλ += 1
+        end
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
         λs = elbowλ:length(metas)
         ψmat = zeros(T, (elbowω, length(λs)))
