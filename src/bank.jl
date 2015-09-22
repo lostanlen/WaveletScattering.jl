@@ -54,9 +54,10 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         @inbounds metas = [
             NonOrientedMeta(γs[γ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
             for γ in eachindex(γs)]
-        @inbounds ψs = [fourierwavelet(meta, spec) for meta in metas]
-        lp = renormalize!(ψs, metas, spec)
-        ϕ = scalingfunction!(lp, metas)
+        @inbounds ψs = [ fourierwavelet(meta, spec)::AbstractFourier1DFilter{T}
+            for meta in metas ]
+        ϕ = scalingfunction(spec)
+        renormalize!(ψs, ϕ, metas, spec)
         behavior = Behavior(js)
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
