@@ -13,5 +13,8 @@ b = Behavior(js)
 @test b.min_log2_resolution == -2
 
 # FourierNonOriented1DBank
-spec = Morlet1DSpec()
-bank = FourierNonOriented1DBank(spec)
+bank = FourierNonOriented1DBank(Morlet1DSpec())
+@test_throws ErrorException FourierNonOriented1DBank{Float32}(
+    Morlet1DSpec(Float64))
+@test_throws ErrorException FourierNonOriented1DBank{Float64}(
+    Morlet1DSpec(Float32))
