@@ -1,7 +1,8 @@
 using Base.Test
 # fourierfilter.jl
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
-    Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter, Vanishing1DFilter, VanishingWithMidpoint1DFilter,
+    Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter,
+    Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction,
     spin
 # meta.jl
