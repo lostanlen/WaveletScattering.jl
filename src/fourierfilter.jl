@@ -41,25 +41,26 @@ immutable VanishingWithMidpoint1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
 end
 
 function AbstractFourier1DFilter(y, first, last, log2_length)
+    supertype = AbstractFourier1DFilter{eltype(y)}
     N = 1 << log2_length
     halfN = N >> 1
     if first==(-halfN)
-        last==(halfN-1) && return FullResolution1DFilter(fftshift(y))
+        last==(halfN-1) && return FullResolution1DFilter(fftshift(y))::supertype
         midpoint = y[1]
-        if last>0
+        if last > 0
             coan = Coanalytic1DFilter(y[1+(1:(halfN-1))], -1)
             an = Analytic1DFilter(y[(1+halfN+1):end], 1)
         else
             an = Analytic1DFilter(zero(typeof(T)), halfN-1)
             coan = Coanalytic1DFilter(y[(1+1):end], last)
         end
-        return VanishingWithMidpoint1DFilter(coan, an, midpoint)
+        return VanishingWithMidpoint1DFilter(coan, an, midpoint)::supertype
     end
-    first>0 && return Analytic1DFilter(y, first)
-    last<0 && return Coanalytic1DFilter(y, first)
+    first>0 && return Analytic1DFilter(y, first)::supertype
+    last<0 && return Coanalytic1DFilter(y, first)::supertype
     an = Analytic1DFilter(y[(1-first):end], 1)
     coan = Coanalytic1DFilter(y[1:(-first)], -1)
-    return Vanishing1DFilter(an, coan)
+    return Vanishing1DFilter(an, coan)::supertype
 end
 
 # multiplication operator with scalar *
@@ -130,7 +131,7 @@ end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
     return T[
         ψ.coan[min(0, I.start):min(-1, I.stop)] ;
-        zeros(T, Int((I.start < 0) && (I.stop >0))) ;
+        zeros(T, Int((I.start < 0) && (I.stop > 0))) ;
         ψ.an[max(1, I.start):max(0, I.stop)] ]
 end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
@@ -143,7 +144,7 @@ function Base.getindex{T}(ψ::VanishingWithMidpoint1DFilter{T},
     halfN = ψ.an.posfirst + length(ψ.an.pos)
     output = T[
         ψ.coan[min(0, I.start):min(-1, I.stop)] ;
-        zeros(T, Int((I.start < 0) && (I.stop >0))) ;
+        zeros(T, Int((I.start < 0) && (I.stop > 0))) ;
         ψ.an[max(1, I.start):max(0, I.stop)] ]
     if I.start<=-halfN
         output[-halfN-I.start+1] = ψ.midpoint
