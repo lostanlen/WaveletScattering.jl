@@ -58,8 +58,11 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         @inbounds metas = [ NonOrientedMeta(
             γs[1+γ], χs[1+γ], bws[1+γ], ξs[1+γ], js[1+γ], qs[1+γ], scs[1+γ])
             for γ in γs ]
-        curryfied_fourierwavelet = meta -> fourierwavelet(meta, spec)
-        ψs = pmap(curryfied_fourierwavelet, metas)
+        if nprocs() > 1
+            ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
+        else
+            ψs = [fourierwavelet(meta, spec) for meta in metas]
+        end
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
         behavior = Behavior(js)
@@ -90,7 +93,6 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         @inbounds metas = [ OrientedMeta(
             γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
             for γ in eachindex(γs), θ in 1:2 ]
-
         @inbounds ψs = [ fourierwavelet(meta, spec)::AbstractFourier1DFilter{T}
             for meta in metas[:,1] ]
         ψs = hcat(ψs, map(spin, ψs))
