@@ -71,11 +71,11 @@ Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
 Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b * ψ.coeff)
 Base.(:*){T<:Number}(ψ::Symmetric1DFilter{T}, b::Number) =
-    Symmetric1DFilter{T}(b * ψ.leg, b * ψ.zero)
+    Symmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
 Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter(b * ψ.an, b * ψ.coan)
 Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
-    VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, b * ψ.midpoint)
+    VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
 Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
 
 # element-wise multiplication operator ".*" with scalar falls back to "*"
