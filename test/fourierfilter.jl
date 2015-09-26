@@ -46,7 +46,7 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 @test_approx_eq ψ2.coan.neg Float32[0.2, 0.6, 0.8]
 @test ψ2.coan.neglast == -3
 # Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number))
-an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
