@@ -11,6 +11,53 @@ import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
 
+# multiplication operator with scalar
+# Base.(:*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number)
+ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
+ψ2 = ψ * 2.0
+@test isa(ψ2, Analytic1DFilter{Float32})
+@test_approx_eq ψ2.pos Float32[0.2, 0.6]
+@test ψ2.posfirst == 2
+# Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number)
+ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+ψ2 = ψ * 2.0
+@test isa(ψ2, Coanalytic1DFilter{Float32})
+@test_approx_eq ψ2.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.neglast == -3
+# Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number)
+ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
+ψ2 = ψ * 2.0
+@test isa(ψ2, FullResolution1DFilter{Float32})
+@test_approx_eq ψ2.coeff Float32[0.02, 0.2, 0.4, 0.6]
+# Base.(:*){T<:Number}(ψ::Symmetric1DFilter{T}, b::Number)
+ψ = Symmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
+ψ2 = ψ * 2.0
+@test isa(ψ2, Symmetric1DFilter{Float32})
+@test_approx_eq ψ2.leg Float32[1.6, 0.6, 0.2]
+@test_approx_eq ψ2.zero Float32(2.0)
+# Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number)
+an = Analytic1DFilter(Float32[0.1, 0.3], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+ψ = Vanishing1DFilter(an, coan)
+ψ2 = ψ * 2.0
+@test isa(ψ2, Vanishing1DFilter{Float32})
+@test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
+@test ψ2.an.posfirst == 2
+@test_approx_eq ψ2.coan.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.coan.neglast == -3
+# Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number))
+an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
+midpoint = Float32(0.5)
+ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
+ψ2 = ψ * 2.0
+@test isa(ψ2, VanishingWithMidpoint1DFilter{Float32})
+@test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
+@test ψ2.an.posfirst == 2
+@test_approx_eq ψ2.coan.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.coan.neglast == -3
+@test_approx_eq ψ2.midpoint Float32(1.0)
+
 # getindex
 # getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
