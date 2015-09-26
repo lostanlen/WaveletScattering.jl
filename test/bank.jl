@@ -30,3 +30,6 @@ bank = FourierOriented1DBank(Morlet1DSpec())
 spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
     nOctaves = 8, log2_size = 16)
 bank = FourierNonOriented1DBank(spec)
+@test length(bank.metas) == length(bank.ψs)
+@test typeof(bank.ψs) ==
+    Array{WaveletScattering.AbstractFourier1DFilter{Float32},1})
