@@ -26,10 +26,20 @@ bank = FourierOriented1DBank(Morlet1DSpec())
 @test_throws ErrorException FourierOriented1DBank{Float64}(
     Morlet1DSpec(Float32))
 
-#
+# FourierNonOriented1DBank
 spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
     nOctaves = 8, log2_size = 16)
 bank = FourierNonOriented1DBank(spec)
 @test length(bank.metas) == length(bank.ψs)
 @test typeof(bank.ψs) ==
-    Array{WaveletScattering.AbstractFourier1DFilter{Float32},1})
+    Array{WaveletScattering.AbstractFourier1DFilter{Float32},1}
+@test typeof(bank.ϕ) == WaveletScattering.Symmetric1DFilter{Float32}
+
+# FourierOriented1DBank
+spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
+    nOctaves = 8, log2_size = 16)
+bank = FourierOriented1DBank(spec)
+@test length(bank.metas) == length(bank.ψs)
+@test typeof(bank.ψs) ==
+    Array{WaveletScattering.AbstractFourier1DFilter{Float32},2}
+@test typeof(bank.ϕ) == WaveletScattering.Symmetric1DFilter{Float32}
