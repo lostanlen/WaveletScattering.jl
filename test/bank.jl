@@ -27,6 +27,15 @@ bank = FourierNonOriented1DBank(spec)
     Array{WaveletScattering.AbstractFourier1DFilter{Float32},1}
 @test typeof(bank.ϕ) == WaveletScattering.Symmetric1DFilter{Float32}
 # multi-core mode
+addprocs(1)
+spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
+    nOctaves = 8, log2_size = 16)
+bank = FourierNonOriented1DBank(spec)
+@test length(bank.metas) == length(bank.ψs)
+@test typeof(bank.ψs) ==
+    Array{WaveletScattering.AbstractFourier1DFilter{Float32},1}
+@test typeof(bank.ϕ) == WaveletScattering.Symmetric1DFilter{Float32}
+rmprocs(2)
 
 # FourierOriented1DBank
 # exception handling
@@ -38,7 +47,17 @@ bank = FourierNonOriented1DBank(spec)
 spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
     nOctaves = 8, log2_size = 16)
 bank = FourierOriented1DBank(spec)
-@test length(bank.metas) == length(bank.ψs)
+@test size(bank.metas) == size(bank.ψs)
 @test typeof(bank.ψs) ==
     Array{WaveletScattering.AbstractFourier1DFilter{Float32},2}
 @test typeof(bank.ϕ) == Symmetric1DFilter{Float32}
+# multi-core mode
+addprocs(1)
+spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
+    nOctaves = 8, log2_size = 16)
+bank = FourierOriented1DBank(spec)
+@test size(bank.metas) == size(bank.ψs)
+@test typeof(bank.ψs) ==
+    Array{WaveletScattering.AbstractFourier1DFilter{Float32},2}
+@test typeof(bank.ϕ) == Symmetric1DFilter{Float32}
+rmprocs(2)

@@ -50,7 +50,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
     function call{T<:Number}(::Type{FourierNonOriented1DBank{T}},
-      spec::Abstract1DSpec)
+                             spec::Abstract1DSpec)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust must be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -86,7 +86,7 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
     metas::Matrix{OrientedMeta}
     spec::Abstract1DSpec{T}
     function call{T<:Number}(::Type{FourierOriented1DBank{T}},
-      spec::Abstract1DSpec)
+                             spec::Abstract1DSpec)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
