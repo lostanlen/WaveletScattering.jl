@@ -14,7 +14,6 @@ b = Behavior(js)
 
 # FourierNonOriented1DBank
 # exception handling
-bank = FourierNonOriented1DBank(Morlet1DSpec())
 @test_throws ErrorException FourierNonOriented1DBank{Float32}(
     Morlet1DSpec(Float64))
 @test_throws ErrorException FourierNonOriented1DBank{Float64}(
@@ -31,7 +30,6 @@ bank = FourierNonOriented1DBank(spec)
 
 # FourierOriented1DBank
 # exception handling
-bank = FourierOriented1DBank(Morlet1DSpec())
 @test_throws ErrorException FourierOriented1DBank{Float32}(
     Morlet1DSpec(Float64))
 @test_throws ErrorException FourierOriented1DBank{Float64}(
@@ -43,4 +41,4 @@ bank = FourierOriented1DBank(spec)
 @test length(bank.metas) == length(bank.ψs)
 @test typeof(bank.ψs) ==
     Array{WaveletScattering.AbstractFourier1DFilter{Float32},2}
-@test typeof(bank.ϕ) == WaveletScattering.Symmetric1DFilter{Float32}
+@test typeof(bank.ϕ) == Symmetric1DFilter{Float32}
