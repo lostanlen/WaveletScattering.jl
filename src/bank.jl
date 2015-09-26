@@ -63,6 +63,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         else
             ψs = [fourierwavelet(meta, spec) for meta in metas]
         end
+        ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
         behavior = Behavior(js)
