@@ -113,14 +113,13 @@ allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 # Base.maximum(ψ::Vanishing1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
-ψ = Vanishing1DFilter(an, coan)
-@test_approx_eq maximum(Vanishing1DFilter(ψ)) Float32(0.4)
+@test_approx_eq maximum(Vanishing1DFilter(an, coan)) Float32(0.4)
 # Base.maximum(ψ::VanishingWithMidpoint1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
-@test_approx_eq maximum(Vanishing1DFilter(ψ)) Float32(0.5)
+@test_approx_eq maximum(ψ) Float32(0.5)
 
 # renormalize!
 # case Q=1
