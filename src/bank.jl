@@ -108,4 +108,4 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
     end
 end
 FourierOriented1DBank(spec::Abstract1DSpec) =
-    FourierNonOriented1DBank{spec.signaltype}(spec)
+    FourierOriented1DBank{spec.signaltype}(spec)
