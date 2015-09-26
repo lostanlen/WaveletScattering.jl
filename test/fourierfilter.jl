@@ -155,6 +155,8 @@ allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test_approx_eq maximum(Analytic1DFilter([0.1, -0.3], 2)) 0.3
 # Base.maximum(ψ::Coanalytic1DFilter)
 @test_approx_eq maximum(Coanalytic1DFilter([0.1, 0.3, 0.4*im], -3)) 0.4
+# Base.maximum(ψ::FullResolution1DFilter)
+@test_approx_eq maximum(FullResolution1DFilter([0.01, 0.1*im, 0.2, -0.3])) 0.3
 # Base.maximum(ψ::Symmetric1DFilter)
 @test_approx_eq maximum(Symmetric1DFilter([0.2, 0.1], 1.0)) 1.0
 # Base.maximum(ψ::Vanishing1DFilter)
