@@ -155,6 +155,12 @@ function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
     return min(nOctaves_a, nOctaves_b)
 end
 
+"""Generic fallback to `isreal` function. Concrete subtypes of AbstractSpec must
+implement a method isreal{T}(::Type{ConcreteSpec{T}}) returning true if the
+corresponding filters are real in the spatial domain, false otherwise. See
+Morlet1DSpec for an example."""
+isreal(spec::AbstractSpec) = isreal(typeof(spec))
+
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
 tuning frequency.
