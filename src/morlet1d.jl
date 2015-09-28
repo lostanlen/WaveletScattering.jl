@@ -107,16 +107,11 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     return AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
 end
 
-"Morlet wavelets are complex in the spatial domain, thus `isreal` returns
-`false` for `Morlet1DSpec`."
-isreal(::Type{Morlet1DSpec}) = false
-isreal{T<:Number}(::Type{Morlet1DSpec{T}}) = isreal(Morlet1DSpec)
-
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
     bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
          uncertainty(spec) * spec.motherfrequency)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-    lastω = bw * sqrt(2.0 / spec.ɛ)
+    lastω = max(bw * sqrt(2.0 / spec.ɛ), 1 << spec.log2_size[1])
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
     leg = leg[1:findlast(leg .>spec.ɛ)]
     return Symmetric1DFilter(leg, one(T))
