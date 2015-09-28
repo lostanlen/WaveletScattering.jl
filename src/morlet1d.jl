@@ -95,16 +95,8 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     """5. **Periodization**"""
     morlet = reshape(morlet, (div(length(morlet),4),4))
     morlet = squeeze(sum(morlet, 2), (2,))
-    """6. **Trimming to true support boundaries**
-    We look for the true ɛ boundaries of the vector above by looking
-    at the first (resp. last) coefficient for which `|ψ|²(ω) > ɛ²`."""
-    ɛ2 = T(spec.ɛ * spec.ɛ)
-    morlet2 = abs2(morlet)
-    first = findfirst(morlet2 .> ɛ2) - 1 - halfN
-    last = findlast(morlet2 .> ɛ2) - 1 - halfN
-    "7. **Construction of AbstractFourier1DFilter object**"
-    @inbounds sub_morlet = morlet[1 + (first:last) + halfN]
-    return AbstractFourier1DFilter(sub_morlet, first, last, log2_length)
+    """6. **Trimming to true support boundaries**"""
+    return AbstractFourier1DFilter(morlet, spec)
 end
 
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})

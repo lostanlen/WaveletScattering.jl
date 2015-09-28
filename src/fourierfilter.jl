@@ -40,26 +40,42 @@ immutable VanishingWithMidpoint1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
     midpoint::T
 end
 
-function AbstractFourier1DFilter(y, first, last, log2_length)
+function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     supertype = AbstractFourier1DFilter{eltype(y)}
-    N = 1 << log2_length
+    N = 1 << spec.log2_length[1]
     halfN = N >> 1
-    if first==(-halfN)
-        last==(halfN-1) && return FullResolution1DFilter(fftshift(y))::supertype
+    ɛ2 = T(spec.ɛ * spec.ɛ)
+    y2 = abs2(y)
+    negbools = y2[1:halfN] .> ɛ2
+    negfirst, neglast = findfirst(negbools), findfirst(negbools)
+    posbools = y2[(2+halfN):end] .> ɛ2
+    posfirst, poslast = findfirst(posbools), findlast(posbools)
+    if (negfirst == 1)
+        (neglast == halfN) && (posfirst == 1) && (poslast == (halfN-1)) &&
+            return FullResolution1DFilter(fftshift(y))
         midpoint = y[1]
-        if last > 0
-            coan = Coanalytic1DFilter(y[1+(1:(halfN-1))], -1)
-            an = Analytic1DFilter(y[(1+halfN+1):end], 1)
+        if (neglast == 1)
+            coan = Coanalytic1DFilter(zero(T), -halfN - 1)
         else
-            an = Analytic1DFilter(zero(typeof(T)), halfN-1)
-            coan = Coanalytic1DFilter(y[(1+1):end], last)
+            coan =
+                Coanalytic1DFilter(y[(1+negfirst):neglast], neglast - halfN - 1)
         end
-        return VanishingWithMidpoint1DFilter(coan, an, midpoint)::supertype
+        if (poslast == 0)
+            an = Analytic1DFilter(zero(T), halfN - 1)
+        else
+            an = Analytic1DFilter(y[(2+halfN):end][posfirst:poslast], posfirst)
+        end
+        an = Analytic1DFilter(y[(2+halfN):end], 1 + posfirst)
+        return VanishingWithMidpoint1DFilter(an, coan, midpoint)::supertype
     end
-    first>0 && return Analytic1DFilter(y, first)::supertype
-    last<0 && return Coanalytic1DFilter(y, first)::supertype
-    an = Analytic1DFilter(y[(1-first):end], 1)
-    coan = Coanalytic1DFilter(y[1:(-first)], -1)
+    if (negfirst == 0)
+        return Analytic1DFilter(pos[posfirst:poslast], posfirst)::supertype
+    end
+    if (posfirst == 0)
+        return Coanalytic1DFilter(neg[negfirst:neglast], neglast)::supertype
+    end
+    an = Analytic1DFilter(y[negfirst:neglast], neglast)
+    coan = Coanalytic1DFilter(y[(1+halfN)+(posfirst:poslast)], 1+posfirst)
     return Vanishing1DFilter(an, coan)::supertype
 end
 
