@@ -42,7 +42,7 @@ end
 
 function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     supertype = AbstractFourier1DFilter{eltype(y)}
-    N = 1 << spec.log2_length[1]
+    N = 1 << spec.log2_size[1]
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
     y2 = abs2(y)
