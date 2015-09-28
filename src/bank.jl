@@ -2,16 +2,14 @@
 values of these fields may be changed *after* the construction of the filter
 bank, without having to recompute the underlying architecture. Fields:
 
-* γ_range: range of wavelet indices that are actually used in the convolutions.
-Default is all of them (see outer constructor).
+* `γ_range`: range of wavelet indices that are actually used in the
+convolutions. Default is all of them (see outer constructor).
 
-* log2_oversampling: base-2 logarithm of the oversampling factor with respect
-to the critical sampling rate. Must be positive.
-Default is 0, i.e. no oversampling.
+* `is_ϕ_applied`: if true, the lowpass filter ϕ is applied
 
-* min_log2_resolution : base-2 logarithm of the minimal undersampling factor.
-Default is (-J+1), i.e. it has no effect. Set min_log2_resolution to 0
-to avoid any undersampling."""
+* `log2_oversampling`: base-2 logarithm of the oversampling factor with respect
+to the critical sampling rate. Must be positive. Default is 0, i.e. no
+oversampling."""
 type Behavior
     γ_range::UnitRange
     log2_oversampling::Int
@@ -25,10 +23,10 @@ function Behavior(js::Vector)
 end
 
 """An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
-* AbstractNonOrientedBank: no orientation variable θ, only a scale variable γ.
-One-dimensional filter banks with real inputs are non-oriented.
-* AbstractOrientedBank: wavelets have an orientation variable θ and a scale
-variable γ. Two-dimensional filter banks are oriented. One-dimensional filter
+* `AbstractNonOrientedBank`: no orientation variable `θ`, only a scale
+variable `γ`. One-dimensional filter banks with real inputs are non-oriented.
+* `AbstractOrientedBank`: wavelets have an orientation variable `θ` and a scale
+variable `γ`. Two-dimensional filter banks are oriented. One-dimensional filter
 banks with complex outputs are also oriented, in the sense that the sign
 of the center frequency is regarded as an orientation variable with two
 possible values."""
@@ -77,7 +75,7 @@ FourierNonOriented1DBank(spec::Abstract1DSpec) =
 """A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
 in the Fourier domain. It is "oriented" insofar as its filters have negative
 center frequencies as well as positive center frequencies, as represented by
-the orientation parameter θ. It is advisable to use this type of filter bank
+the orientation parameter `θ`. It is advisable to use this type of filter bank
 when handling complex 1d data of moderate to large length."""
 immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
     ψs::Matrix{AbstractFourier1DFilter{T}}
