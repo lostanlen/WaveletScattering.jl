@@ -5,21 +5,24 @@ bank, without having to recompute the underlying architecture. Fields:
 * `γ_range`: range of wavelet indices that are actually used in the
 convolutions. Default is all of them (see outer constructor).
 
-* `is_ϕ_applied`: if true, the lowpass filter ϕ is applied
+* `is_ϕ_applied`: true if and only if the lowpass filter `ϕ` (also known as
+scaling function) in addition to the bandpass filters `ψ`'s.
 
 * `log2_oversampling`: base-2 logarithm of the oversampling factor with respect
 to the critical sampling rate. Must be positive. Default is 0, i.e. no
 oversampling."""
 type Behavior
     γ_range::UnitRange
+    is_ϕ_applied::Bool
     log2_oversampling::Int
-    min_log2_resolution::Int
+    max_log2_stride::Int
 end
-function Behavior(js::Vector)
-    γ_range = 0:(length(js)-1)
+function Behavior(nΓs::Int)
+    γ_range = 0:(nΓs-1)
+    is_ϕ_applied = false
     log2_oversampling = 0
-    min_log2_resolution = Int(-js[end] + 1)
-    Behavior(γ_range, log2_oversampling, min_log2_resolution)
+    max_log2_stride = 0
+    Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
 end
 
 """An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
@@ -103,7 +106,7 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
-        behavior = Behavior(js)
+        behavior = Behavior(length(γs))
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
