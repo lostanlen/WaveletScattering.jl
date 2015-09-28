@@ -17,13 +17,6 @@ type Behavior
     log2_oversampling::Int
     max_log2_stride::Int
 end
-function Behavior(nΓs::Int)
-    γ_range = 0:(nΓs-1)
-    is_ϕ_applied = false
-    log2_oversampling = 0
-    max_log2_stride = 0
-    Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
-end
 
 """An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
 * `AbstractNonOrientedBank`: no orientation variable `θ`, only a scale
@@ -41,7 +34,7 @@ abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 defined in the Fourier domain. It is not oriented in the sense that only the
 positive frequencies are guaranteed to be covered. Indeed, assuming that the
 input signal will be real — i.e. its Fourier will be symmetric — it can be
-recovered from the "positive half" of its Fourier spectrum. In summary, it is
+recovered from the ""positive half"" of its Fourier spectrum. In summary, it is
 advisable to use this type of filter bank when handling real 1d data of
 moderate to large length."""
 immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
@@ -51,7 +44,9 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
     function call{T<:Number}(::Type{FourierNonOriented1DBank{T}},
-                             spec::Abstract1DSpec)
+                             spec::Abstract1DSpec ;
+                             γ_range = nothing, is_ϕ_applied = false,
+                             log2_oversampling = 0, max_log2_stride = 0)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust must be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -63,17 +58,19 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         if nprocs() > 1
             ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
         else
-            ψs = [fourierwavelet(meta, spec) for meta in metas]
+            ψs = [ fourierwavelet(meta, spec) for meta in metas ]
         end
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
-        behavior = Behavior(js)
+        (γ_range == nothing) && (γ_range = 0:(length(γs)-1))
+        behavior =
+            Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
-FourierNonOriented1DBank(spec::Abstract1DSpec) =
-    FourierNonOriented1DBank{spec.signaltype}(spec)
+FourierNonOriented1DBank(spec::Abstract1DSpec ; args...) =
+    FourierNonOriented1DBank{spec.signaltype}(spec, args...)
 
 """A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
 in the Fourier domain. It is "oriented" insofar as its filters have negative
@@ -87,7 +84,9 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
     metas::Matrix{OrientedMeta}
     spec::Abstract1DSpec{T}
     function call{T<:Number}(::Type{FourierOriented1DBank{T}},
-                             spec::Abstract1DSpec)
+                             spec::Abstract1DSpec ;
+                             γ_range = nothing, is_ϕ_applied = false,
+                             log2_oversampling = 0, max_log2_stride = 0)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -100,15 +99,17 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         if nprocs() > 1
             ψs = pmap(fourierwavelet, metas[:, 1], fill(spec, length(metas)))
         else
-            ψs = [fourierwavelet(meta, spec) for meta in metas[:, 1]]
+            ψs = [ fourierwavelet(meta, spec) for meta in metas[:, 1] ]
         end
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
-        behavior = Behavior(length(γs))
+        (γ_range == nothing) && (γ_range = 0:(length(γs)-1))
+        behavior =
+            Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
-FourierOriented1DBank(spec::Abstract1DSpec) =
-    FourierOriented1DBank{spec.signaltype}(spec)
+FourierOriented1DBank(spec::Abstract1DSpec ; args...) =
+    FourierOriented1DBank{spec.signaltype}(spec, args...)
