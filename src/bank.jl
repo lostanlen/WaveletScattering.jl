@@ -109,5 +109,9 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         new{T}(ψs, ϕ, behavior, metas, spec)
     end
 end
-FourierOriented1DBank(spec::Abstract1DSpec) =
+function call(::Type{FourierOriented1DBank}, spec::Abstract1DSpec)
+    isreal(spec) && error("Wavelets specified by ", typeof(spec),
+        "are real in the spatial domain. To fix, this error, define a",
+        "FourierNonOriented1DBank instead of a FourierOriented1DBank.")
     FourierOriented1DBank{spec.signaltype}(spec)
+end
