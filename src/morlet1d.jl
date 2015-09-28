@@ -110,7 +110,7 @@ end
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
     halfN = 1 << (spec.log2_size[1] - 1)
     bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
-         uncertainty(spec) * spec.motherfrequency)
+         uncertainty(spec) * spec.motherfrequency )
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
