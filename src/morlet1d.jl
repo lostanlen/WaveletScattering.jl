@@ -114,7 +114,7 @@ function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
-    (spec.ɛ > 0.0) && (leg = leg[1:findlast(leg .> spec.ɛ)])
+    leg = leg[1:findlast(leg .> spec.ɛ)]
     return Symmetric1DFilter(leg, one(T))
 end
 
