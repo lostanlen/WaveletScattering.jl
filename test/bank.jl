@@ -46,6 +46,9 @@ bank = FourierOriented1DBank(spec)
 
 # multi-core mode
 addprocs(1)
+@everywhere import WaveletScattering: Morlet1DSpec
+@everywhere import WaveletScattering: FourierNonOriented1DBank,
+    FourierOriented1DBank
 # FourierNonOriented1DBank
 spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
     nOctaves = 8, log2_size = 16)
