@@ -22,7 +22,7 @@ maximum quality factor.
 * The lowest center frequency must be greater or equal than the number of
 per octaves, i.e. `(log2_size-nOctaves) >= 1 + log2(nFilters_per_octave)`."""
 function checkspec(spec::AbstractSpec)
-    if (spec.ɛ >= 1.0) || (spec.ɛ < 0.0) || (spec.ɛ == -0.0)
+    if (spec.ɛ >= 1.0) || (spec.ɛ < 0.0) || (spec.ɛ === -0.0)
         error("`ɛ` must be in `[0.0, 1.0[`. A typical value is `1e-4`.")
     end
     if any(collect(spec.log2_size) .< 2)
