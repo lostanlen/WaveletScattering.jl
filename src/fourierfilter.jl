@@ -55,18 +55,18 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
             return FullResolution1DFilter(fftshift(y))
-        if (neglast == 1)
-            coan = Coanalytic1DFilter(zero(T), -halfN - 1)
+        if (neglast == 0)
+            coan = Coanalytic1DFilter(zero(T), -halfN + 1)
         else
             coan =
-                Coanalytic1DFilter(y[(1+negfirst):neglast], neglast - halfN - 1)
+                Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
         end
         if (poslast == 0)
             an = Analytic1DFilter(zero(T), halfN - 1)
         else
-            an = Analytic1DFilter(y[(2+halfN):end][posfirst:poslast], posfirst)
+            an = Analytic1DFilter(y[(1+halfN+posfirst):(1+halfN+poslast)],
+                posfirst)
         end
-        an = Analytic1DFilter(y[(2+halfN):end], 1 + posfirst)
         return VanishingWithMidpoint1DFilter(an, coan, midpoint)::supertype
     end
     if (negfirst == 0)
@@ -75,8 +75,8 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     if (posfirst == 0)
         return Coanalytic1DFilter(neg[negfirst:neglast], neglast)::supertype
     end
-    an = Analytic1DFilter(y[negfirst:neglast], neglast)
-    coan = Coanalytic1DFilter(y[(1+halfN)+(posfirst:poslast)], 1+posfirst)
+    an = Analytic1DFilter(y[(1+halfN+posfirst):(1+halfN+poslast)], posfirst)
+    coan = Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
     return Vanishing1DFilter(an, coan)::supertype
 end
 
