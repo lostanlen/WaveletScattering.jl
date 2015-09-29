@@ -47,7 +47,7 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     ɛ2 = T(spec.ɛ * spec.ɛ)
     y2 = abs2(y)
     negbools = y2[1:halfN] .> ɛ2
-    negfirst, neglast = findfirst(negbools), findfirst(negbools)
+    negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
     posfirst, poslast = findfirst(posbools), findlast(posbools)
     if (negfirst == 1)
