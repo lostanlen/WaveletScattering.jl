@@ -46,14 +46,15 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
     y2 = abs2(y)
-    negbools = y2[1:halfN] .> ɛ2
+    negbools = y2[2:halfN] .> ɛ2
     negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
     posfirst, poslast = findfirst(posbools), findlast(posbools)
-    if (negfirst == 1)
-        (neglast == halfN) && (posfirst == 1) && (poslast == (halfN-1)) &&
+    hasmidpoint = y2[1] .> ɛ2
+    if hasmidpoint
+        (negfirst == 1) && (neglast == (halfN-1)) &&
+            (posfirst == 1) && (poslast == (halfN-1)) &&
             return FullResolution1DFilter(fftshift(y))
-        midpoint = y[1]
         if (neglast == 1)
             coan = Coanalytic1DFilter(zero(T), -halfN - 1)
         else
