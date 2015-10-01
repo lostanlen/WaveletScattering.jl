@@ -71,10 +71,12 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
         return VanishingWithMidpoint1DFilter(an, coan, midpoint)::supertype
     end
     if (negfirst == 0)
-        return Analytic1DFilter(pos[posfirst:poslast], posfirst)::supertype
+        return Analytic1DFilter(y[(1+halfN+posfirst):(1+halfN+poslast)],
+            posfirst)::supertype
     end
     if (posfirst == 0)
-        return Coanalytic1DFilter(neg[negfirst:neglast], neglast)::supertype
+        return Coanalytic1DFilter(y[(1+negfirst):(1+neglast)],
+            neglast)::supertype
     end
     an = Analytic1DFilter(y[(1+halfN+posfirst):(1+halfN+poslast)], posfirst)
     coan = Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
