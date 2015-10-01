@@ -103,16 +103,17 @@ Base.(:.*)(ψ::AbstractFourierFilter, b::Number) = ψ * b
 
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
-    i<ψ.posfirst && return zero(T)
-    i>(ψ.posfirst + length(ψ.pos) - 1) && return zero(T)
+    i < ψ.posfirst && return zero(T)
+    i > (ψ.posfirst + length(ψ.pos) - 1) && return zero(T)
     @inbounds return ψ.pos[1 - ψ.posfirst + i]
 end
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
+    I.stop < ψ.posfirst && return zeros(T, length(I))
     start = max(I.start, ψ.posfirst)
     stop = min(I.stop, ψ.posfirst + length(ψ.pos) - 1)
     return T[
-        zeros(T, max(start - I.start, 0));
-        ψ.pos[1 - ψ.posfirst + (start:stop)];
+        zeros(T, max(start - I.start, 0)) ;
+        ψ.pos[1 - ψ.posfirst + (start:stop)] ;
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
@@ -146,7 +147,7 @@ function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
-    return (i>0 ? ψ.an[i] : ψ.coan[i])
+    return (i > 0 ? ψ.an[i] : ψ.coan[i])
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, I::UnitRange{Int64})
     return T[
@@ -157,7 +158,7 @@ end
 function Base.getindex(ψ::VanishingWithMidpoint1DFilter, i::Integer)
     halfN = ψ.an.posfirst + length(ψ.an.pos)
     i==(-halfN) && return ψ.midpoint
-    return (i>0 ? ψ.an[i] : ψ.coan[i])
+    return (i > 0 ? ψ.an[i] : ψ.coan[i])
 end
 function Base.getindex{T}(ψ::VanishingWithMidpoint1DFilter{T},
                           I::UnitRange{Int64})
@@ -166,7 +167,7 @@ function Base.getindex{T}(ψ::VanishingWithMidpoint1DFilter{T},
         ψ.coan[min(0, I.start):min(-1, I.stop)] ;
         zeros(T, Int((I.start < 0) && (I.stop > 0))) ;
         ψ.an[max(1, I.start):max(0, I.stop)] ]
-    if I.start<=-halfN
+    if I.start <= -halfN
         output[-halfN-I.start+1] = ψ.midpoint
     end
     return output
