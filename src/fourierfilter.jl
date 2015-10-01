@@ -52,6 +52,7 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     posfirst, poslast = findfirst(posbools), findlast(posbools)
     hasmidpoint = y2[1] .> ɛ2
     if hasmidpoint
+        midpoint = y2[1]
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
             return FullResolution1DFilter(fftshift(y))
