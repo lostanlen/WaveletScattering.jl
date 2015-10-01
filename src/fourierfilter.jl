@@ -122,6 +122,7 @@ function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, i::Integer)
     return ψ.neg[i - ψ.neglast + end]
 end
 function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
+    I.start > ψ.neglast && return zeros(T, length(I))
     start = max(I.start, ψ.neglast - length(ψ.neg) + 1)
     stop = min(I.stop, ψ.neglast)
     return T[
