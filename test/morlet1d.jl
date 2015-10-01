@@ -59,6 +59,8 @@ for meta in metas
     ψ = fourierwavelet(meta, spec)
     if isa(ψ, Analytic1DFilter)
         @test all(abs(ψ.pos) .> spec.ɛ)
+    elseif isa(ψ, FullResolution1DFilter)
+        @test all(abs(ψ.coeff) .> spec.ɛ)
     elseif isa(ψ, VanishingWithMidpoint1DFilter)
         @test all(abs(ψ.an.pos) .> spec.ɛ)
         @test all(abs(ψ.coan.neg) .> spec.ɛ)
