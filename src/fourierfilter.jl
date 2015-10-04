@@ -178,7 +178,7 @@ end
 `lp` (squared Littlewood-Paley sum)."""
 function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
     @inbounds for ω in eachindex(ψ.pos)
-        @fastmath lp[ψ.posfirst - 1 + ω] += abs2(ψ.pos[ω])
+        @fastmath lp[ψ.posfirst + ω] += abs2(ψ.pos[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
