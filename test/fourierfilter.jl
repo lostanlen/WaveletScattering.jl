@@ -123,7 +123,7 @@ lp = zeros(Float32, 8)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.09, 0.16]
+@test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
 lp = zeros(Float32, 8)
 ψ = Symmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
