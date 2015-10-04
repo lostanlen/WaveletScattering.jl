@@ -134,21 +134,22 @@ allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 # littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
 lp = zeros(Float32, 8)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
-coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -1)
 ψ = Vanishing1DFilter(an, coan)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp [0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
+@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
 # littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 lp = zeros(Float32, 8)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
-coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -1)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
+@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.25, 0.01, 0.09, 0.16]
 
 # Base.maximum
 # Base.maximum(ψ::Analytic1DFilter)
