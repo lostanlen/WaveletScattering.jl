@@ -218,12 +218,6 @@ Base.maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
 Base.maximum(ψ::VanishingWithMidpoint1DFilter) =
     max(maximum(ψ.an), maximum(ψ.coan), abs(ψ.midpoint))
 
-"""Returns the type parameter of a complex type.
-For example, `realtype(Complex{Float32})` returns `Float32`.
-For numeric real types, e.g. `Float32`, it is a no-op."""
-realtype{T<:Real}(::Type{T}) = T
-realtype{T<:Real}(::Type{Complex{T}}) = T
-
 """Renormalizes an array of Fourier-domain wavelets `ψs` by the square root
 of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
@@ -240,7 +234,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::VecOrMat{F},
         λs = elbowλ:length(metas)
         ψmat = zeros(T, (elbowω, length(λs)))
         for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
-        lp = zeros(realtype(T), N)
+        lp = zeros(real(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
         isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
@@ -253,7 +247,7 @@ function renormalize!{F<:AbstractFourier1DFilter}(ψs::VecOrMat{F},
         JuMP.solve(model)
         ψs[λs] .*= sqrt(2 * JuMP.getValue(y))
     end
-    lp = zeros(realtype(T), N)
+    lp = zeros(real(T), N)
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
     isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
     max_lp = maximum(lp)

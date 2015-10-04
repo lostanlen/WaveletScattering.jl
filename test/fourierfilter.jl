@@ -223,13 +223,6 @@ firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
 
-# realtype
-@test realtype(Float32) == Float32
-@test realtype(Float64) == Float64
-@test realtype(Complex{Float32}) == Float32
-@test realtype(Complex{Float64}) == Float64
-@test_throws MethodError realtype(ASCIIString)
-
 # spin
 # spin(::Analytic1DFilter)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
