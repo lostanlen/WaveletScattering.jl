@@ -99,7 +99,7 @@ function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
     corrective_factors = A \ b
     y = gauss_center - corrective_gaussians * corrective_factors
     y = reshape(y, N, nPeriods)
-    y = sum(y, 2)
+    y = squeeze(sum(y, 2), 2)
 end
 
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
