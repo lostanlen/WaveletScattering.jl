@@ -64,17 +64,20 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     The denominator `den = 2σ²` of the Gaussian is thus equal to
         `den = 2σ² = bw² / (2 log(2))."""
     @inbounds log2_length = spec.log2_size[1]
-    halfN = 1 << (log2_length - 1)
-    N = halfN << 1
+    N = 1 << log2_length
+    halfN = N >> 1
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-
-    """5. **Periodization**"""
-    morlet = reshape(morlet, (div(length(morlet), nPeriods), nPeriods))
-    morlet = squeeze(sum(morlet, 2), (2,))
-    """6. **Trimming to true support boundaries**"""
-    return AbstractFourier1DFilter(morlet, spec)
+    """2. **Number of periods**"""
+    halfsupport = sqrt(den * log(inv(spec.ɛ)))
+    firstω = max(center - halfsupport, -5N/2)
+    lastω = min(center + halfsupport, 5N/2 - 1)
+    nPeriods = ceil(Int, (lastω - firstω + 1) / N)
+    """3. **Call to Morlet**"""
+    y = morlet(center, den, N, nPeriods)
+    """4. **Trimming to true support boundaries**"""
+    return AbstractFourier1DFilter(y, spec)
 end
 
 function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
