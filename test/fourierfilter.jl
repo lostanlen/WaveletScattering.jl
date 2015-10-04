@@ -11,6 +11,21 @@ import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
 
+# AbstractFourier1DFilter constructor
+spec = Morlet1DSpec(log2_size = 4)
+N = 16
+y = zeros(Float32, N); y[15] = 1.0
+@test isa(AbstractFourier1DFilter(y, spec), Analytic1DFilter{Float32})
+y = zeros(Float32, N); y[2] = 1.0
+@test isa(AbstractFourier1DFilter(y, spec), Coanalytic1DFilter{Float32})
+y = ones(Float32, N)
+@test isa(AbstractFourier1DFilter(y, spec), FullResolution1DFilter{Float32})
+y = zeros(Float32, N); y[2] = 1.0; y[15] = 1.0
+@test isa(AbstractFourier1DFilter(y, spec), Vanishing1DFilter{Float32})
+y = zeros(Float32, N); y[2] = 1.0; y[9] = 1.0
+@test isa(AbstractFourier1DFilter(y, spec),
+    VanishingWithMidpoint1DFilter{Float32})
+
 # multiplication operator with scalar
 # Base.(:*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
