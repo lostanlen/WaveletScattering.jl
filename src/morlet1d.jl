@@ -97,7 +97,9 @@ function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
     A = T[ gauss((q-p)*N, den)
         for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
     corrective_factors = A \ b
-    return gauss_center - sum(corrective_factors .* corrective_gaussians, 2)
+    y = gauss_center - corrective_gaussians * corrective_factors
+    y = reshape(y, N, nPeriods)
+    y = sum(y, 2)
 end
 
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
