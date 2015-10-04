@@ -79,9 +79,9 @@ end
 
 function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
     halfN = N >> 1
-    pstart = (nPeriods-1)>>1 + iseven(nPeriods)
-    pstop = (nPeriods-1)>>1
-    ωstart = - halfN - pstart * N
+    pstart = - (nPeriods-1)>>1
+    pstop = (nPeriods-1)>>1 + iseven(nPeriods)
+    ωstart = - halfN + pstart * N
     ωstop = halfN + pstop * N - 1
     @inbounds begin
         gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop]
