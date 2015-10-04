@@ -55,11 +55,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
         @inbounds metas = [ NonOrientedMeta(
             γs[1+γ], χs[1+γ], bws[1+γ], ξs[1+γ], js[1+γ], qs[1+γ], scs[1+γ])
             for γ in γs ]
-        if nprocs() > 1
-            ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
-        else
-            ψs = [ fourierwavelet(meta, spec) for meta in metas ]
-        end
+        ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
