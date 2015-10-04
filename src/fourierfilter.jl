@@ -183,7 +183,8 @@ function littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
     @inbounds for ω in eachindex(ψ.neg)
-        @fastmath lp[length(lp) - length(ψ.neg) + ω] += abs2(ψ.neg[ω])
+        @fastmath lp[1 + length(lp) + ψ.neglast - length(ψ.neg) + ω] +=
+            abs2(ψ.neg[ω])
     end
 end
 function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
