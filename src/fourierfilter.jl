@@ -206,7 +206,7 @@ end
 function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
     littlewoodpaleyadd!(lp, ψ.an)
     littlewoodpaleyadd!(lp, ψ.coan)
-    @fastmath lp[length(lp)>>1] += abs2(ψ.midpoint)
+    @fastmath lp[1 + (length(lp)>>1)] += abs2(ψ.midpoint)
 end
 
 """Returns the maximum Fourier-domain absolute value of a filter."""
