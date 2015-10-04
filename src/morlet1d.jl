@@ -69,34 +69,31 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     center = N * T(meta.centerfrequency)
     bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-    "2. **Main Gabor bell curve**"
-    @inbounds gauss_center = T[gauss(ω-center, den) for ω in (-3N/2):(5N/2-1)]
-    "3. **Low-frequency corrective terms**"
-    @inbounds gauss_7periods = T[gauss(ω, den) for ω in (-7N/2):(7N/2-1)]
-    @inbounds gauss_mN = gauss_7periods[1 + (0:(4N-1))]
-    @inbounds gauss_0 =  gauss_7periods[1 + (0:(4N-1)) +  N]
-    @inbounds gauss_N =  gauss_7periods[1 + (0:(4N-1)) + 2N]
-    @inbounds gauss_2N = gauss_7periods[1 + (0:(4N-1)) + 3N]
-    b = [gauss(-N - center, den) ;
-         gauss( 0 - center, den) ;
-         gauss( N - center, den) ;
-         gauss(2N - center, den)  ]
-    A = [gauss(  0, den)   gauss(  N, den)   gauss(2N, den)   gauss(3N, den) ;
-         gauss( -N, den)   gauss(  0, den)   gauss( N, den)   gauss(2N, den) ;
-         gauss(-2N, den)   gauss( -N, den)   gauss( 0, den)   gauss( N, den) ;
-         gauss(-3N, den)   gauss(-2N, den)   gauss(-N, den)   gauss( 0, den)  ]
-    y = A \ b
-    (corr_mN, corr_0, corr_N, corr_2N) = tuple(y...)
-    morlet = gauss_center  -
-        corr_mN * gauss_mN -
-        corr_0  * gauss_0  -
-        corr_N  * gauss_N  -
-        corr_2N * gauss_2N
+
     """5. **Periodization**"""
-    morlet = reshape(morlet, (div(length(morlet),4),4))
+    morlet = reshape(morlet, (div(length(morlet), nPeriods), nPeriods))
     morlet = squeeze(sum(morlet, 2), (2,))
     """6. **Trimming to true support boundaries**"""
     return AbstractFourier1DFilter(morlet, spec)
+end
+
+function morlet(center, den, N, nPeriods)
+    halfN = N >> 1
+    pstart = (nPeriods-1)>>1 + iseven(nPeriods)
+    pstop = (nPeriods-1)>>1
+    ωstart = - halfN - pstart * N
+    ωstop = halfN + pstop * N - 1
+    @inbounds begin
+        gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop]
+        gauss_0 = T[ gauss(ω, den)
+            for ω in (ωstart-(pstart*N)):(ωstop+(pstop*N)) ]
+        corrective_gaussians = [ gauss_0[1 + ω + p*N]
+            for ω in 0:(N*nPeriods-1), p in 1:nPeriods ]
+    end
+    b = [ gauss(p*N - center) for p in pstart:pstop ]
+    A = [ gauss((q-p)*N - center) for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
+    corrective_factors = A \ b
+    return gauss_center - sum(corrective_factors .* corrective_gaussians, 2)
 end
 
 function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
