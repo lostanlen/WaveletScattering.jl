@@ -73,7 +73,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     halfsupport = sqrt(den * log(inv(spec.ɛ)))
     firstω = max(center - halfsupport, -5N/2)
     lastω = min(center + halfsupport, 5N/2 - 1)
-    nPeriods = ceil(Int, (lastω - firstω + 1) / N)
+    nPeriods = 1 + ceil(Int, (lastω-halfN) / N)
     """3. **Call to Morlet**"""
     y = morlet(center, den, N, nPeriods)
     """4. **Trimming to true support boundaries**"""
