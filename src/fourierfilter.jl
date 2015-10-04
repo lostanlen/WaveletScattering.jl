@@ -57,13 +57,13 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
             return FullResolution1DFilter(fftshift(y))
         midpoint = y[1]
         if (neglast == 0)
-            coan = Coanalytic1DFilter(zero(T), -halfN + 1)
+            coan = Coanalytic1DFilter(zeros(T, 1), -halfN + 1)
         else
             coan =
                 Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
         end
         if (poslast == 0)
-            an = Analytic1DFilter(zero(T), halfN - 1)
+            an = Analytic1DFilter(zeros(T, 1), halfN - 1)
         else
             an = Analytic1DFilter(y[(1+halfN+posfirst):(1+halfN+poslast)],
                 posfirst)
