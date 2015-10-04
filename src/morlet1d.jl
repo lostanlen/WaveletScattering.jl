@@ -89,12 +89,13 @@ function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
     @inbounds begin
         gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop]
         gauss_0 = T[ gauss(ω, den)
-            for ω in (ωstart-(pstart*N)):(ωstop+(pstop*N)) ]
-        corrective_gaussians = [ gauss_0[1 + ω + p*N]
-            for ω in 0:(N*nPeriods-1), p in 1:nPeriods ]
+            for ω in (ωstart + pstart*N):(ωstop + pstop*N) ]
+        corrective_gaussians = T[ gauss_0[1 + ω + p*N]
+            for ω in 0:(N*nPeriods-1), p in 0:(nPeriods-1) ]
     end
-    b = [ gauss(p*N - center) for p in pstart:pstop ]
-    A = [ gauss((q-p)*N - center) for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
+    b = T[ gauss(p*N - center, den) for p in pstart:pstop ]
+    A = T[ gauss((q-p)*N, den)
+        for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
     corrective_factors = A \ b
     return gauss_center - sum(corrective_factors .* corrective_gaussians, 2)
 end
