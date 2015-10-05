@@ -3,7 +3,7 @@ using Base.Test
 import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
     Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter,
     Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    getindex, littlewoodpaleyadd!, realtype, renormalize!, scalingfunction,
+    getindex, littlewoodpaleyadd!, renormalize!, scalingfunction,
     spin
 # meta.jl
 import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
@@ -22,7 +22,7 @@ y = ones(Float32, N)
 @test isa(AbstractFourier1DFilter(y, spec), FullResolution1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0; y[15] = 1.0
 @test isa(AbstractFourier1DFilter(y, spec), Vanishing1DFilter{Float32})
-y = zeros(Float32, N); y[2] = 1.0; y[9] = 1.0
+y = zeros(Float32, N); y[1] = 1.0;
 @test isa(AbstractFourier1DFilter(y, spec),
     VanishingWithMidpoint1DFilter{Float32})
 
