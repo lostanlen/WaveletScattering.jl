@@ -1,11 +1,18 @@
 using Base.Test
 
+using Clp
 using DataStructures
+using JuMP
+using MathProgBase
 
 tests = [
     "spec",
+    "meta",
+    "filter",
+    "fourierfilter",
+    "bank",
     "morlet1d",
-    "variables"
+    "path"
 ]
 
 println("Running tests:")

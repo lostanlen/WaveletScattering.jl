@@ -1,32 +1,20 @@
 using Base.Test
+# spec.jl
 import WaveletScattering: AbstractSpec, Abstract1DSpec, Abstract2DSpec,
-    bandwidths, checkspec, centerfrequencies, chromas, default_ɛ,
-    default_max_qualityfactor, default_motherfrequency,
-    default_nFilters_per_octave, default_nOctaves,
-    gammas, realtype, octaves, qualityfactors, scales, tune_motherfrequency
+    checkspec, default_ɛ, default_max_qualityfactor, default_motherfrequency,
+    default_nFilters_per_octave, default_nOctaves, scales, tune_motherfrequency
+# meta.jl
+import WaveletScattering: centerfrequencies, gammas
+# morlet1d.jl
 import WaveletScattering: Morlet1DSpec, uncertainty
 
-# bandwidths, centerfrequencies, default_nOctaves, qualityfactors, scales
+# default_nOctaves
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
-    machine_precision = max(1e-10, default_ɛ(T))
     spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q,
                         log2_size=log2_s, max_scale=max_s)
-    bws = bandwidths(spec)
-    ξs = centerfrequencies(spec)
-    qs = qualityfactors(spec)
-    scs = scales(spec)
-    # bandwidths
-    @test_approx_eq bws ξs./qs
-    # centerfrequencies
-    @test_approx_eq ξs[1] spec.motherfrequency
-    difflogξs = diff(log2(ξs))
-    @test_approx_eq difflogξs (-ones(difflogξs)/spec.nFilters_per_octave)
-    @test all(ξs.>0.0)
-    @test_approx_eq ξs bws.*qs
-    # default_nOctaves
     siglength = 1 << log2_s
     if max_s > siglength
         min_centerfrequency = uncertainty(Morlet1DSpec) / siglength * max_q
@@ -35,22 +23,10 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     end
     nOctaves = default_nOctaves(nothing, Morlet1DSpec, tuple(log2_s),
                                 Float64(max_q), max_s, spec.motherfrequency, nfo)
+    ξs = centerfrequencies(spec)
     nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
     nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
     @test nOctaves == min(nOctaves_a, nOctaves_b)
-    # qualityfactors
-    qs = qualityfactors(spec)
-    @test all(qs.>=0.0)
-    @test all(qs.<=max_q)
-    @test_approx_eq qs ξs./bws
-    # scales
-    @test all(scs.>0.0)
-    @test all(scs[qs.>1.0] .< (max_s+machine_precision))
-    @test all(scs .< (exp2(spec.log2_size[1])+machine_precision))
-    # uncertainty
-    empirical_uncertainty = bws .* scs
-    @test all(abs(diff(empirical_uncertainty)) .< machine_precision)
-    @test all(abs(uncertainty(spec)-empirical_uncertainty).< machine_precision)
 end
 
 # checkspec
@@ -122,37 +98,11 @@ scales(::UncheckedSpec) = [1e3]
 type WhateverType end
 @test default_nOctaves(5, WhateverType) == 5
 
-# realtype
-@test realtype(Float32) == Float32
-@test realtype(Float64) == Float64
-@test realtype(Complex{Float32}) == Float32
-@test realtype(Complex{Float64}) == Float64
-@test_throws MethodError realtype(ASCIIString)
-
-# gammas, chromas, octaves
+# tune_motherfrequency
 immutable TestSpec <: AbstractSpec
     nFilters_per_octave::Int
     nOctaves::Int
 end
-spec = TestSpec(1, 1)
-@test gammas(spec) == [0]
-@test chromas(spec) == [0]
-@test octaves(spec) == [0]
-spec = TestSpec(2, 1)
-@test gammas(spec) == [0, 1]
-@test chromas(spec) == [0, 1]
-@test octaves(spec) == [0, 0]
-spec = TestSpec(1, 2)
-@test gammas(spec) == [0, 1]
-@test chromas(spec) == [0, 0]
-@test octaves(spec) == [0, 1]
-spec = TestSpec(12, 8)
-nWavelets = spec.nFilters_per_octave * spec.nOctaves
-@test length(gammas(spec)) == nWavelets
-@test length(chromas(spec)) == nWavelets
-@test length(octaves(spec)) == nWavelets
-
-# tune_motherfrequency
 nfos = [1, 2, 4, 8, 12, 16, 24]
 pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
 for nfo in nfos, pitchfork in pitchforks

@@ -8,10 +8,11 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
     nOctaves::Int
     signaltype::Type{T}
     function call{T<:Number}(::Type{Morlet1DSpec{T}}, ::Type{T};
-                             ɛ=default_ɛ(T), log2_size=15,
-                             max_qualityfactor=nothing, max_scale=Inf,
-                             nFilters_per_octave=nothing, nOctaves=nothing,
-                             tuningfrequency=nothing)
+                             ɛ = default_ɛ(T), log2_size = 15,
+                             max_qualityfactor = nothing, max_scale = Inf,
+                             nFilters_per_octave = nothing, nOctaves = nothing,
+                             tuningfrequency = nothing)
+        "Integer log2_size is automatically converted to one-element tuple"
         isa(log2_size, Int) && (log2_size = tuple(log2_size))
         max_qualityfactor, nFilters_per_octave =
              default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
@@ -38,6 +39,79 @@ nFilters_per_octave==max_qualityfactor==1 as the Morlet low-frequency corrective
 term is no longer negligible."""
 default_motherfrequency(::Type{Morlet1DSpec}, nFilters_per_octave) =
     nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
+
+"""Computes gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den).
+The Gaussian bell curve is defined as gauss(ω) = exp(- ω² / 2σ²).
+For performance reasons, we memoize the denominator 2σ², which is computed only
+once in the caller morlet1d.
+Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω.
+"""
+gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))::T
+
+"""Computes a one-dimensional Morlet wavelet in the Fourier domain.
+A Morlet wavelet of center frequency ξ and of variance σ looks almost like
+a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
+substract a corrective term around the zeroth frequency. Since we operate over
+signals of finite length N, the corrective term must also be applied around the
+frequencies -N, +N, and +2N."""
+function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
+    """1. **Gaussian denominator `den = 2σ²`**
+    The FWHM (full width at half maximum) bw of a Gaussian bell curve of
+    variance `σ` is defined by the equation
+        `g(±bw/2) = exp(- (bw/2)²/(2σ²)) = 1/sqrt(2)`
+    which leads to
+        `bw² = 2 log(2) * 2σ²`.
+    The denominator `den = 2σ²` of the Gaussian is thus equal to
+        `den = 2σ² = bw² / (2 log(2))."""
+    @inbounds log2_length = spec.log2_size[1]
+    N = 1 << log2_length
+    halfN = N >> 1
+    center = N * T(meta.centerfrequency)
+    bw = N * T(meta.bandwidth)
+    den = @fastmath bw * bw / T(2.0 * log(2.0))
+    """2. **Number of periods**"""
+    halfsupport = sqrt(den * log(inv(spec.ɛ)))
+    firstω = max(center - halfsupport, -5N/2)
+    lastω = min(center + halfsupport, 5N/2 - 1)
+    nPeriods = 1 + ceil(Int, (lastω-halfN) / N)
+    """3. **Call to Morlet**"""
+    y = morlet(center, den, N, nPeriods)
+    """4. **Trimming to true support boundaries**"""
+    return AbstractFourier1DFilter(y, spec)
+end
+
+function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
+    halfN = N >> 1
+    pstart = - ((nPeriods-1)>>1)
+    pstop = (nPeriods-1)>>1 + iseven(nPeriods)
+    ωstart = - halfN + pstart * N
+    ωstop = halfN + pstop * N - 1
+    @inbounds begin
+        gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop]
+        gauss_0 = T[ gauss(ω, den)
+            for ω in (ωstart + pstart*N):(ωstop + pstop*N) ]
+        corrective_gaussians = T[ gauss_0[1 + ω + p*N]
+            for ω in 0:(N*nPeriods-1), p in 0:(nPeriods-1) ]
+    end
+    b = T[ gauss(p*N - center, den) for p in pstart:pstop ]
+    A = T[ gauss((q-p)*N, den)
+        for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
+    corrective_factors = A \ b
+    y = gauss_center - corrective_gaussians * corrective_factors
+    y = reshape(y, N, nPeriods)
+    y = squeeze(sum(y, 2), 2)
+end
+
+function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
+    halfN = 1 << (spec.log2_size[1] - 1)
+    bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
+         uncertainty(spec) * spec.motherfrequency )
+    den = @fastmath bw * bw / T(2.0 * log(2.0))
+    lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
+    leg = T[ gauss(ω, den) for ω in 1:lastω ]
+    leg = leg[1:findlast(leg .> spec.ɛ)]
+    return Symmetric1DFilter(leg, one(T))
+end
 
 """
 By neglecting the low-frequency corective term, we write the Morlet wavelet as a
