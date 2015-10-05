@@ -10,7 +10,11 @@ scaling function) in addition to the bandpass filters `ψ`'s.
 
 * `log2_oversampling`: base-2 logarithm of the oversampling factor with respect
 to the critical sampling rate. Must be positive. Default is 0, i.e. no
-oversampling."""
+oversampling.
+
+* `max_log2_stride`: base-2 logarithm of the maximum distance between
+neighboring coefficients after subsampling (also known as *hop size* or
+*stride*)"""
 type Behavior
     γ_range::UnitRange
     is_ϕ_applied::Bool
