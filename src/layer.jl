@@ -19,4 +19,6 @@ immutable WaveletLayerState{B<:AbstractBank} <: Mocha.LayerState
     blobs::Vector{Mocha.Blob}
     blobs_diff::Vector{Mocha.Blob}
     bank::B
+# AbstractScatteredBlob
+abstract AbstractScatteredBlob{T} <: Mocha.Blob{T}
 end
