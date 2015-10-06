@@ -8,9 +8,5 @@ immutable FourierNode{T<:Number,N} <: AbstractNode
 end
 
 function fft!(node::FourierNode, dims)
-    blob.data_ft[:] = fft(blob.data, dims)
-end
-
-function fft!(blob::ScatteredBlob, dims)
-    pmap(pair -> (pair.first, fft!(pair.second, dims)), blob)
+    node.data_ft[:] = fft(node.data, dims)
 end

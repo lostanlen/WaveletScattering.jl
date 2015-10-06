@@ -3,3 +3,7 @@ immutable ScatteredBlob{T<:Number, N} <: Mocha.Blob{T, N}
     nodes::Dict{Path, AbstractNode{T, N}}
     subscripts::NTuple{PathKey}
 end
+
+function fft!(blob::ScatteredBlob, dims)
+    pmap(pair -> (pair.first, fft!(pair.second, dims)), blob)
+end
