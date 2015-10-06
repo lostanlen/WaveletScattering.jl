@@ -35,4 +35,9 @@ immutable FourierNode{T<:Number,N} <: AbstractNode
     data_ft::AbstractArray
     ranges::NTuple{PathRange, N}
 end
+
+function fft!(node::FourierNode, dims)
+    blob.data_ft[:] = fft(blob.data, dims)
+end
+
 end
