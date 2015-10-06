@@ -4,6 +4,7 @@ module WaveletScattering
 using DataStructures
 using JuMP
 using MathProgBase
+using Mocha
 
 include("spec.jl")
 include("meta.jl")
