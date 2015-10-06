@@ -15,7 +15,7 @@ Mocha.@characterize_layer(WaveletLayer,
 
 # WaveletLayerState
 immutable WaveletLayerState <: Mocha.LayerState
-    bank::AbstractBank
+    bank
     blobs::Vector{ScatteredBlob}
     blobs_diff::Vector{ScatteredBlob}
     layer::WaveletLayer
