@@ -1,6 +1,6 @@
 module WaveletScattering
 
-using Clp
+# using Clp
 using DataStructures
 using JuMP
 using MathProgBase
