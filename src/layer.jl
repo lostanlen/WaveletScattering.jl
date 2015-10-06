@@ -5,3 +5,9 @@ Mocha.@defstruct ScatteringLayer Mocha.Layer (
   (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
   neuron :: ActivationFunction = Neurons.Identity(),
 )
+
+Mocha.@characterize_layer(ScatteringLayer,
+    has_param => false,
+    has_neuron => true,
+    can_do_bp => true
+)
