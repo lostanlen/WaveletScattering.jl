@@ -20,9 +20,3 @@ immutable WaveletLayerState <: Mocha.LayerState
     blobs_diff::Vector{ScatteredBlob}
     layer::WaveletLayer
 end
-
-# ScatteredBlob
-immutable ScatteredBlob{T<:Number, N} <: Mocha.Blob{T, N}
-    nodes::Dict{Path, AbstractNode{T, N}}
-    subscripts::NTuple{PathKey}
-end
