@@ -1,10 +1,10 @@
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
 Mocha.@defstruct WaveletLayer Mocha.Layer (
-    name :: AbstractString = "scattering",
+    name :: AbstractString = "wavelets",
     (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
     (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
-    neuron :: ActivationFunction = Mocha.Neurons.Identity(),
+    neuron :: ActivationFunction = Mocha.Neurons.Identity()
 )
 
 Mocha.@characterize_layer(WaveletLayer,
