@@ -63,7 +63,7 @@ function chromas(spec::AbstractSpec)
 end
 
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
-proportional to 2^(-γ). γ ranges from 0 to nFilters_per_octave*nOctaves, where
+proportional to 2^(-γ). γ ranges from 0 to `nFilters_per_octave*nOctaves`, where
 γ=0 corresponds to the mother frequency. The convention is that higher indices
 `γs` mean *lower* center frequencies. Log-periods γs`, chromas ``χs`, and
 octaves `js` are linked by
