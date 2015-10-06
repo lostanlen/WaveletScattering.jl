@@ -12,6 +12,7 @@ tests = [
 #    "fourierfilter",
     "bank",
     "morlet1d",
+    "layer",
     "path"
 ]
 
