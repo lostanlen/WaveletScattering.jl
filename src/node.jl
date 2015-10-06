@@ -4,7 +4,7 @@ abstract AbstractNode{T, N}
 immutable FourierNode{T<:Number,N} <: AbstractNode
     data::AbstractArray{T,N}
     data_ft::AbstractArray
-    ranges::NTuple{PathRange, N}
+    ranges::NTuple{N, PathRange}
 end
 
 function fft!(node::FourierNode, dims)
