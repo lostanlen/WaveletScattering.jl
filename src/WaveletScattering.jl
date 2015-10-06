@@ -13,6 +13,7 @@ include("fourierfilter.jl")
 include("bank.jl")
 include("morlet1d.jl")
 include("path.jl")
+include("node.jl")
 include("layer.jl")
 
 end

@@ -15,7 +15,7 @@ Mocha.@characterize_layer(WaveletLayer,
 
 # WaveletLayerState
 immutable WaveletLayerState <: Mocha.LayerState
-    bank
+    bank::AbstractBank
     blobs::Vector{ScatteredBlob}
     blobs_diff::Vector{ScatteredBlob}
     layer::WaveletLayer
@@ -25,21 +25,4 @@ end
 immutable ScatteredBlob{T<:Number, N} <: Mocha.Blob{T, N}
     nodes::Dict{Path, AbstractNode{T, N}}
     subscripts::NTuple{PathKey}
-end
-
-# Node
-abstract AbstractNode{T, N}
-
-immutable FourierNode{T<:Number,N} <: AbstractNode
-    data::AbstractArray{T,N}
-    data_ft::AbstractArray
-    ranges::NTuple{PathRange, N}
-end
-
-function fft!(node::FourierNode, dims)
-    blob.data_ft[:] = fft(blob.data, dims)
-end
-
-function fft!(blob::ScatteredBlob, dims)
-    pmap(pair -> (pair.first, fft!(pair.second, dims)), blob)
 end
