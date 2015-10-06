@@ -1,6 +1,6 @@
 using Base.Test
 
-using Clp
+# using Clp
 using DataStructures
 using JuMP
 using MathProgBase
@@ -9,7 +9,7 @@ tests = [
     "spec",
     "meta",
     "filter",
-    "fourierfilter",
+#    "fourierfilter",
     "bank",
     "morlet1d",
     "path"
