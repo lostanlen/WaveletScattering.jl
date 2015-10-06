@@ -12,3 +12,11 @@ Mocha.@characterize_layer(WaveletLayer,
     has_neuron => true,
     can_do_bp => true
 )
+
+# WaveletLayerState
+immutable WaveletLayerState{B<:AbstractBank} <: Mocha.LayerState
+    layer::WaveletLayer
+    blobs::Vector{Mocha.Blob}
+    blobs_diff::Vector{Mocha.Blob}
+    bank::B
+end
