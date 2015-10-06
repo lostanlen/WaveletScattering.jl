@@ -17,3 +17,5 @@ end
 """A `Path` is a dictionary whose keys `PathKeys` and whose values are
 integer indices"""
 typealias Path Dict{PathKey, Int}
+
+typealias PathRange Dict{PathKey, Range}
