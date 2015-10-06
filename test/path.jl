@@ -9,10 +9,12 @@ gamma2_literal = Literal((:γ, 2))
 @test isimmutable(gamma2_literal)
 
 # PathKey
-@test isa(PathKey(),Nil{Literal})
+@test isa(PathKey(),PathKey)
+@test isa(PathKey().list, Nil{Literal})
 pathkey = PathKey(:time, (:γ, 2))
-@test pathkey.head == time_literal
-@test pathkey.tail.head == gamma2_literal
-@test pathkey.tail.tail == PathKey()
+@test isa(pathkey, PathKey)
+@test pathkey.list.head == time_literal
+@test pathkey.list.tail.head == gamma2_literal
+@test pathkey.list.tail.tail == nil(Literal)
 
 # Path
