@@ -14,3 +14,5 @@ function ScatteredBlob{T<:Number,N}(x::AbstractArray{T,N},
     nodes = Dict{Path, AbstractNode{T,N}}(emptypath => x)
     ScatteredBlob{T,N}(nodes, subscripts)
 end
+
+fft!(blob::ScatteredBlob) = pmap(fft!, blob)
