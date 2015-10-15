@@ -20,3 +20,10 @@ immutable WaveletLayerState <: Mocha.LayerState
     blobs_diff::Vector{ScatteredBlob}
     layer::WaveletLayer
 end
+
+function forward{B<:Mocha.Blob}(backend::Mocha.CPUBackend,
+                                state::WaveletLayerState, inputs::Vector{B})
+    for idblob in eachindex(inputs)
+        forward!(state.blobs[idblob], backend, state, input[idblobd])
+    end
+end
