@@ -15,4 +15,4 @@ function InplaceFourierNode{T<:Number,N}(data::Array{T,N},
     InplaceFourierNode(complex(data), fourierdims, ranges)
 end
 
-fft!(node::InplaceFourierNode) = fft(node.data, node.fourierdims)
+fft!(node::InplaceFourierNode) = fft!(node.data, node.fourierdims)
