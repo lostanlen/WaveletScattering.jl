@@ -14,7 +14,6 @@ include("bank.jl")
 include("morlet1d.jl")
 include("path.jl")
 include("node.jl")
-include("blob.jl")
 include("layer.jl")
 
 end
