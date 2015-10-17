@@ -11,7 +11,7 @@ function ScatteredBlob{T<:Number,N}(x::AbstractArray{T,N},
     ScatteredBlob{T,N}(nodes, subscripts)
 end
 
-fft!(blob::ScatteredBlob) = pmap(fft!, blob)
+Base.fft!(blob::ScatteredBlob) = pmap(fft!, blob)
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
