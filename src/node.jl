@@ -8,7 +8,7 @@ immutable InplaceFourierNode{T<:Number,N} <: AbstractNode
 end
 
 function InplaceFourierNode{T<:Complex,N}(data::Array{T,N},
-                                         fourierdims::Vararg{Tuple{Int}},
+                                         fourierdims,
                                          subscripts::NTuple{N, PathKey})
     ranges = ntuple(k -> PathRange(subscripts(k),1:size(data,k)), ndims(data))
     FourierNode(data, fourierdims, ranges)

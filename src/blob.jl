@@ -4,10 +4,6 @@ immutable ScatteredBlob{T<:Number,N} <: Mocha.Blob{T, N}
     subscripts::NTuple{N,PathKey}
 end
 
-function fft!(blob::ScatteredBlob, dims)
-    pmap(pair -> (pair.first, fft!(pair.second, dims)), blob)
-end
-
 function ScatteredBlob{T<:Number,N}(x::AbstractArray{T,N},
                                     subscripts::NTuple{N,PathKey})
     emptypath = Dict{PathKey,Int}()
@@ -16,3 +12,8 @@ function ScatteredBlob{T<:Number,N}(x::AbstractArray{T,N},
 end
 
 fft!(blob::ScatteredBlob) = pmap(fft!, blob)
+
+function forward!(blob::ScatteredBlob, backend::CPUBackend,
+                  state::WaveletLayerState, input::ScatteredBlob)
+
+end

@@ -1,3 +1,5 @@
+
+
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
 Mocha.@defstruct WaveletLayer Mocha.Layer (
