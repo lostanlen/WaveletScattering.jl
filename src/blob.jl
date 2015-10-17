@@ -1,3 +1,6 @@
+# import from layer.jl
+import WaveletScattering: WaveletLayerState
+
 # ScatteredBlob
 immutable ScatteredBlob{T<:Number,N} <: Mocha.Blob{T, N}
     nodes::Dict{Path, AbstractNode{T,N}}
