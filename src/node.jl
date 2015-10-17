@@ -3,7 +3,7 @@ abstract AbstractNode{T, N}
 
 immutable InplaceFourierNode{T<:Number,N} <: AbstractNode
     data::Array{T,N}
-    fourierdims::Tuple{Vararg{Int}}
+    fourierdims
     ranges::NTuple{N, PathRange}
 end
 
