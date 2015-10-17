@@ -10,7 +10,8 @@ end
 function InplaceFourierNode{T<:Number,N}(data::Array{T,N},
                                          fourierdims,
                                          subscripts::NTuple{N, PathKey})
-    ranges = ntuple(k -> PathRange(subscripts[k], 1:size(data,k)), ndims(data))
+    ranges =
+        ntuple(k -> PathRange(subscripts[k] => (1:size(data,k))), ndims(data))
     InplaceFourierNode(complex(data), fourierdims, ranges)
 end
 
