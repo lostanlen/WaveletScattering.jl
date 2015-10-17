@@ -13,7 +13,5 @@ function InplaceFourierNode{T<:Complex,N}(data::Array{T,N},
     ranges = ntuple(k -> PathRange(subscripts(k),1:size(data,k)), ndims(data))
     FourierNode(data, fourierdims, ranges)
 end
-InplaceFourierNode{T<:Number}(data::Array{T}, fourierdims, subscripts) =
-    InplaceFourierNode(complex(data), fourierdims, subscripts)
 
 fft!(node::InplaceFourierNode) = fft(node.data, node.fourierdims)
