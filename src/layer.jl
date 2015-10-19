@@ -48,7 +48,19 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
-function forward!(blob::ScatteredBlob, backend::CPUBackend,
-                  state::WaveletLayerState, input::ScatteredBlob)
+function forward!(backend::Mocha.CPUBackend,
+                  blob_out::AbstractScatteredBlob,
+                  bank::AbstractNonOrientedBank,
+                  blob_in::AbstractScatteredBlob)
+    γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
+    for γ in 0:(nGammas-1)
+        ψ = bank.ψs[1+γ]
+        for (path_in, node_in) in input.nodes
+            path_out = copy(path_in)
+            path_out[γkey] = γ
+            transform!(blob[path_out], node_in[path_in], ψ)
+        end
+    end
+end
 
 end
