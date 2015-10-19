@@ -6,11 +6,11 @@ immutable FourierScatteredBlob{T<:Number, N} <: AbstractScatteredBlob{T,N}
     subscripts::NTuple{N,PathKey}
 end
 
-function ScatteredBlob{T<:Number,N}(x::AbstractArray{T,N},
-                                    subscripts::NTuple{N,PathKey})
+function FourierScatteredBlob{T<:Number,N}(
+        node::AbstractNode{T,N}, subscripts::NTuple{N,PathKey})
     emptypath = Dict{PathKey,Int}()
-    nodes = Dict{Path, AbstractNode{T,N}}(emptypath => x)
-    ScatteredBlob{T,N}(nodes, subscripts)
+    nodes = Dict(emptypath => node)
+    FourierScatteredBlob{T,N}(nodes, subscripts)
 end
 
 Base.fft!(blob::ScatteredBlob) = pmap(fft!, blob)
