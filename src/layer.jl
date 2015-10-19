@@ -13,7 +13,7 @@ function FourierScatteredBlob{T<:Number,N}(
     FourierScatteredBlob{T,N}(nodes, subscripts)
 end
 
-Base.fft!(blob::FourierScatteredBlob) = pmap(fft!, blob)
+Base.fft!(blob::FourierScatteredBlob) = pmap(fft!, blob.nodes)
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
