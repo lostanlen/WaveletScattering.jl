@@ -63,4 +63,17 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
+function transform!(node_in::FourierNode,
+                    node_out::FourierNode,
+                    ψ::FullResolution1DFilter)
+    inds = fill(Colon(), ndims(node_in))
+    N = length(ψ.coeff)
+    for ω in 0:(N-1)
+        inds[node_in.fourierdims[1]] = 1 + ω
+        view_in = view(node_in, inds)
+        view_out = view(node_out, inds)
+        for id in eachindex(view_in)
+            view_out[id] = view_in[id] * ψ[1 + ω]
+        end
+    end
 end
