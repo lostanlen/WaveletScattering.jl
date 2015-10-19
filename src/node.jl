@@ -1,7 +1,7 @@
 # Node
 abstract AbstractNode{T, N}
 
-immutable FourierNode{T<:Complex,N} <: AbstractNode
+immutable FourierNode{T<:Complex,N} <: AbstractNode{T,N}
     data::Array{T,N}
     fourierdims
     ranges::NTuple{N, PathRange}
