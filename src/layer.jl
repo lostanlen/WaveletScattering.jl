@@ -1,6 +1,7 @@
 # ScatteredBlob
 immutable ScatteredBlob{T<:Number,N} <: Mocha.Blob{T, N}
     nodes::Dict{Path, AbstractNode{T,N}}
+abstract AbstractScatteredBlob{T,N} <: Mocha.Blob{T,N}
     subscripts::NTuple{N,PathKey}
 end
 
