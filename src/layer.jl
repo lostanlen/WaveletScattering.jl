@@ -38,10 +38,13 @@ immutable WaveletLayerState{B<:AbstractScatteredBlob} <: Mocha.LayerState
     layer::WaveletLayer
 end
 
-function forward{B<:Mocha.Blob}(backend::Mocha.CPUBackend,
-                                state::WaveletLayerState, inputs::Vector{B})
+function forward!(backend::Mocha.CPUBackend,
+                  state::WaveletLayerState{FourierScatteredBlob},
+                  inputs::Vector{FourierScatteredBlob})
     for idblob in eachindex(inputs)
-        forward!(state.blobs[idblob], backend, state, input[idblobd])
+        fft!(input[idblob])
+        forward!(backend, state.blobs[idblob], state.bank, input[idblob])
+        ifft!(state.blobs[idblob])
     end
 end
 
