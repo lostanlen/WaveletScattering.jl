@@ -13,7 +13,7 @@ function FourierScatteredBlob{T<:Number,N}(
     FourierScatteredBlob{T,N}(nodes, subscripts)
 end
 
-Base.fft!(blob::ScatteredBlob) = pmap(fft!, blob)
+Base.fft!(blob::FourierScatteredBlob) = pmap(fft!, blob)
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
@@ -31,10 +31,10 @@ Mocha.@characterize_layer(WaveletLayer,
 )
 
 # WaveletLayerState
-immutable WaveletLayerState <: Mocha.LayerState
+immutable WaveletLayerState{B<:AbstractScatteredBlob} <: Mocha.LayerState
     bank::AbstractBank
-    blobs::Vector{ScatteredBlob}
-    blobs_diff::Vector{ScatteredBlob}
+    blobs::Vector{B}
+    blobs_diff::Vector{B}
     layer::WaveletLayer
 end
 
