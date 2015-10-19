@@ -1,7 +1,8 @@
 # ScatteredBlob
-immutable ScatteredBlob{T<:Number,N} <: Mocha.Blob{T, N}
-    nodes::Dict{Path, AbstractNode{T,N}}
 abstract AbstractScatteredBlob{T,N} <: Mocha.Blob{T,N}
+
+immutable FourierScatteredBlob{T<:Number, N} <: AbstractScatteredBlob{T,N}
+    nodes::Dict{Path,FourierNode{T,N}}
     subscripts::NTuple{N,PathKey}
 end
 
