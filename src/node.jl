@@ -2,6 +2,9 @@
 abstract AbstractNode{T, N}
 
 immutable FourierNode{T<:Complex,N} <: AbstractNode{T,N}
+Base.complex{T<:Real}(::Type{T}) = Complex{T}
+Base.complex{T<:Complex}(::Type{T}) = T
+
     data::Array{T,N}
     fourierdims
     ranges::NTuple{N, PathRange}
