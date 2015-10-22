@@ -5,9 +5,16 @@ immutable FourierNode{T<:Complex,N} <: AbstractNode{T,N}
 Base.complex{T<:Real}(::Type{T}) = Complex{T}
 Base.complex{T<:Complex}(::Type{T}) = T
 
+immutable FourierNode{T<:Number,C<:Complex, N} <: AbstractNode{T,N}
     data::Array{T,N}
+    data_ft::Array{C,N}
     fourierdims
     ranges::NTuple{N, PathRange}
+    fourier FourierNode(data::Array{T,N}, fourierdims, ranges)
+        data_ft = complex(data)
+        fft!(data_ft, fourierdims)
+        new{T, complex(T), N}(data, data_ft, fourierdims, ranges)
+    end
 end
 
 function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
