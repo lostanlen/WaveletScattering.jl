@@ -15,3 +15,4 @@ function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
 end
 
 Base.fft!(node::FourierNode) = fft!(node.data, node.fourierdims)
+Base.ifft!(node::FourierNode) = ifft!(node.data, node.fourierdims)
