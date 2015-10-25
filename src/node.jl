@@ -27,6 +27,8 @@ function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims::Vector{Int},
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
     FourierNode(data, fourierdims, ranges)
 end
+FourierNode(data, fourierdims::Int, subscripts) =
+    FourierNode(data, collect(fourierdims), subscripts)
 
 function Base.fft!{T<:Real}(node::FourierNode{T})
     map!(complex, node.data_ft, node.data)
