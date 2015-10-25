@@ -14,6 +14,8 @@ function FourierScatteredBlob{T<:Number,N}(
 end
 
 Base.fft!(blob::FourierScatteredBlob) = pmap(fft!, values(blob.nodes))
+Base.fft!(blob::FourierScatteredBlob, dims) =
+    pmap(node -> fft!(node, dims), values(blob.nodes))
 Base.ifft!(blob::FourierScatteredBlob) = pmap(ifft!, values(blob.nodes))
 
 # WaveletLayer
