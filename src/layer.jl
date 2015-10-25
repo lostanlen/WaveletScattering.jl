@@ -30,8 +30,8 @@ Mocha.@defstruct WaveletLayer Mocha.Layer (
 )
 
 Mocha.@characterize_layer(WaveletLayer,
+    has_neuron => false,
     has_param => false,
-    has_neuron => true,
     can_do_bp => true
 )
 
