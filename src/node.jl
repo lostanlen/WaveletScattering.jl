@@ -1,11 +1,10 @@
 # Node
 abstract AbstractNode{T, N}
 
-immutable FourierNode{T<:Complex,N} <: AbstractNode{T,N}
 Base.complex{T<:Real}(::Type{T}) = Complex{T}
 Base.complex{T<:Complex}(::Type{T}) = T
 
-immutable FourierNode{T<:Number,C<:Complex, N} <: AbstractNode{T,N}
+immutable FourierNode{T<:Number,C<:Complex,N} <: AbstractNode{T,N}
     data::Array{T,N}
     data_ft::Array{C,N}
     fourierdims
@@ -17,6 +16,11 @@ immutable FourierNode{T<:Number,C<:Complex, N} <: AbstractNode{T,N}
     end
 end
 
+immutable Node{T<:Number,N} <: AbstractNode{T,N}
+    data::Array{T,N}
+    ranges::NTUple{N,PathRange}
+end
+
 function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
                                   subscripts::NTuple{N, PathKey})
     ranges =
@@ -24,5 +28,11 @@ function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
     FourierNode(complex(data), fourierdims, ranges)
 end
 
-Base.fft!(node::FourierNode) = fft!(node.data, node.fourierdims)
-Base.ifft!(node::FourierNode) = ifft!(node.data, node.fourierdims)
+function Base.fft!(node::FourierNode{T<:Real})
+    map!(complex, node.data_ft, node.data)
+    fft!(node.data_ft, node.fourierdims)
+end
+function Base.fft!(node::FourierNode{T<:Complex})
+    copy!(node.data_ft, node.data)
+    fft!(node.data_ft, node.fourierdims)
+end
