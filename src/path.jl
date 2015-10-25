@@ -18,4 +18,4 @@ end
 integer indices"""
 typealias Path Dict{PathKey, Int}
 
-typealias PathRange Dict{PathKey, Range}
+typealias PathRange Dict{PathKey, StepRange{Int}}
