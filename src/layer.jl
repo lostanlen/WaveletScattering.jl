@@ -49,7 +49,7 @@ function forward!(backend::Mocha.CPUBackend,
     for idblob in eachindex(inputs)
         fft!(input[idblob])
         forward!(backend, state.blobs[idblob], state.bank, input[idblob])
-        ifft!(state.blobs[idblob])
+        ifft!(input[idblob], input[idblob].fourierdims)
     end
 end
 
