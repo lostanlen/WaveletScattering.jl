@@ -18,7 +18,7 @@ end
 
 immutable Node{T<:Number,N} <: AbstractNode{T,N}
     data::Array{T,N}
-    ranges::NTUple{N,PathRange}
+    ranges::NTuple{N,PathRange}
 end
 
 function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
