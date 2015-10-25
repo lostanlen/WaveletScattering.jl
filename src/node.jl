@@ -28,11 +28,11 @@ function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
     FourierNode(complex(data), fourierdims, ranges)
 end
 
-function Base.fft!(node::FourierNode{T<:Real})
+function Base.fft!{T<:Real}(node::FourierNode{T})
     map!(complex, node.data_ft, node.data)
     fft!(node.data_ft, node.fourierdims)
 end
-function Base.fft!(node::FourierNode{T<:Complex})
+function Base.fft!{T<:Complex}(node::FourierNode{T})
     copy!(node.data_ft, node.data)
     fft!(node.data_ft, node.fourierdims)
 end
