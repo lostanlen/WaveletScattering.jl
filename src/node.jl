@@ -24,7 +24,7 @@ end
 function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims,
                                   subscripts::NTuple{N, PathKey})
     ranges =
-        ntuple(k -> PathRange(subscripts[k] => (1:size(data,k))), ndims(data))
+        ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
     FourierNode(data, fourierdims, ranges)
 end
 
