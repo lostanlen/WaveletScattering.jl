@@ -17,6 +17,8 @@ Base.fft!(blob::FourierScatteredBlob) = pmap(fft!, values(blob.nodes))
 Base.fft!(blob::FourierScatteredBlob, dims) =
     pmap(node -> fft!(node, dims), values(blob.nodes))
 Base.ifft!(blob::FourierScatteredBlob) = pmap(ifft!, values(blob.nodes))
+Base.ifft!(blob::FourierScatteredBlob, dims) =
+    pmap(node -> ifft!(node, dims), values(blob.nodes))
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
