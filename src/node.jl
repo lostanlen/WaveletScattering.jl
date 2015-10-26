@@ -9,11 +9,6 @@ immutable FourierNode{T<:Number,C<:Complex,N} <: AbstractNode{T,N}
     data_ft::Array{C,N}
     fourierdims::Vector{Int}
     ranges::NTuple{N, PathRange}
-    function FourierNode(data::Array{T,N}, fourierdims, ranges)
-        data_ft = complex(data)
-        fft!(data_ft, fourierdims)
-        new{T,complex(T),N}(data, data_ft, fourierdims, ranges)
-    end
 end
 
 immutable Node{T<:Number,N} <: AbstractNode{T,N}
@@ -21,7 +16,8 @@ immutable Node{T<:Number,N} <: AbstractNode{T,N}
     ranges::NTuple{N,PathRange}
 end
 
-function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims, ranges)
+function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims::Vector{Int},
+                                  ranges::NTuple{N,PathRange})
     data_ft = complex(data)
     fft!(data_ft, fourierdims)
     FourierNode{T,complex(T),N}(data, data_ft, fourierdims, ranges)
