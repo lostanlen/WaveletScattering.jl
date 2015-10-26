@@ -32,7 +32,9 @@ FourierNode(data, fourierdims::Int, subscripts) =
     FourierNode(data, collect(fourierdims), subscripts)
 
 function Base.fft!{T<:Real}(node::FourierNode{T})
-    map!(complex, node.data_ft, node.data)
+    @inbounds for id in eachindex(node.data)
+        node.data_ft[id] = complex(node.data[id])
+    end
     fft!(node.data_ft, node.fourierdims)
 end
 function Base.fft!{T<:Complex}(node::FourierNode{T})
