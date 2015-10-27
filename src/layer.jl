@@ -2,7 +2,7 @@
 abstract AbstractScatteredBlob{T,N} <: Mocha.Blob{T,N}
 abstract AbstractFourierBlob{T,N} <: AbstractScatteredBlob{T,N}
 
-immutable RealFourierBlob{T<:Real,N} <: AbstractScatteredBlob{T,N}
+immutable RealFourierBlob{T<:Real,N} <: AbstractFourierBlob{T,N}
     nodes::Dict{Path,RealFourierNode{T,N}}
     subscripts::NTuple{N,PathKey}
 end
@@ -13,8 +13,8 @@ immutable Modulus <: AbstractPointwise end
 map!(ρ::Modulus, blob_in::AbstractNode, blob_out::AbstractNode) =
     map!(abs, blob_in.data, blob_out.data)
 
-function RealFourierBlob{T<:Number,N}(node::RealFourierNode{T,N},
-                                      subscripts::NTuple{N,PathKey})
+function RealFourierBlob{T<:FFTW.fftwReal,N}(node::RealFourierNode{T,N},
+                                             subscripts::NTuple{N,PathKey})
     emptypath = Dict{PathKey,Int}()
     nodes = Dict(emptypath => node)
     RealFourierBlob{T,N}(nodes, subscripts)
@@ -40,7 +40,8 @@ Mocha.@characterize_layer(WaveletLayer,
 abstract AbstractScatteredLayerState <: Mocha.LayerState
 
 # WaveletLayerState
-immutable WaveletLayerState{W<:AbstractBank} <: AbstractScatteredLayerState
+immutable WaveletLayerState{W<:AbstractBank,B<:AbstractScatteredBlob} <:
+        AbstractScatteredLayerState
     bank::W
     blobs::Vector{B}
     blobs_diff::Vector{B}
@@ -54,9 +55,9 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
     end
 end
 
-function forward!(backend::Mocha.CPUBackend,
-                  state::WaveletLayerState{AbstractFourierBlob},
-                  inputs::Vector{AbstractFourierBlob})
+function forward!{IN<:AbstractFourierBlob,OUT<:AbstractFourierBlob}(
+        backend::Mocha.CPUBackend, state::WaveletLayerState{OUT},
+        inputs::Vector{IN})
     for idblob in eachindex(inputs)
         fft!(input[idblob])
         forward!(backend, state.blobs[idblob], state.bank, input[idblob])
@@ -64,10 +65,8 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
-function forward!(backend::Mocha.CPUBackend,
-                  blob_out::AbstractScatteredBlob,
-                  bank::AbstractNonOrientedBank,
-                  blob_in::AbstractScatteredBlob)
+function forward!(backend::Mocha.CPUBackend, blob_out::AbstractScatteredBlob,
+                  bank::AbstractNonOrientedBank, blob_in::AbstractScatteredBlob)
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for γ in 0:(nGammas-1)
         ψ = bank.ψs[1 + γ]
@@ -79,8 +78,7 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
-function transform!(node_in::RealFourierNode,
-                    node_out::AbstractFourierNode,
+function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(ψ.coeff)
