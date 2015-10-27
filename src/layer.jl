@@ -17,6 +17,8 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
         map!(ρ, state.blobs[idblob], inputs[idblob])
     end
 end
+map!(ρ::Modulus, blob_in::AbstractNode, blob_out::AbstractNode) =
+    map!(abs, blob_in.data, blob_out.data)
     emptypath = Dict{PathKey,Int}()
     nodes = Dict(emptypath => node)
     FourierScatteredBlob{T,N}(nodes, subscripts)
