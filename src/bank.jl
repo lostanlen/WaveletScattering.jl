@@ -95,7 +95,7 @@ immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
         θs = 0:1
         @inbounds metas = [ OrientedMeta(
             γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
-            for γ in eachindex(γs), θ in 1:2 ]
+            for γ in eachindex(γs), θ in eachindex(θs) ]
         ψs = pmap(fourierwavelet, metas[:, 1], fill(spec, length(metas)))
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ψs = hcat(ψs, map(spin, ψs))
