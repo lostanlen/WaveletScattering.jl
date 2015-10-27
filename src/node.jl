@@ -5,26 +5,26 @@ abstract AbstractFourierNode{T,N} <: AbstractNode{T,N}
 Base.complex{T<:Real}(::Type{T}) = Complex{T}
 Base.complex{T<:Complex}(::Type{T}) = T
 
-immutable RealFourierNode{T<:Base.FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
+immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     data_ft::Array{Complex{T},N}
-    forward_plan::Base.DFT.FFTW.rFFTWPlan{T,K,false,N}
+    forward_plan::FFTW.rFFTWPlan{T,K,false,N}
     ranges::NTuple{N,PathRange}
 end
 
-immutable ComplexFourierNode{T<:Base.FFTW.fftwReal,N} <:
+immutable ComplexFourierNode{T<:FFTW.fftwReal,K,N} <:
         AbstractFourierNode{Complex{T},N}
     data::Array{Complex{T},N}
     data_ft::Array{Complex{T},N}
-    forward_plan::Base.DFT.FFTW.cFFTWPlan{Complex{T},K,false,N}
+    forward_plan::FFTW.cFFTWPlan{Complex{T},K,false,N}
     ranges::NTuple{N,PathRange}
 end
 
-immutable InverseFourierNode{T<:Base.FFTW.fftwReal,K,N} <:
+immutable InverseFourierNode{T<:FFTW.fftwReal,K,N} <:
         AbstractFourierNode{Complex{T},N}
     data::Array{Complex{T},N}
     inverse_plan::Base.DFT.ScaledPlan{Complex{T},
-        Base.DFT.FFTW.cFFTWPlan{Complex{T},K,true,N},T}
+        FFTW.cFFTWPlan{Complex{T},K,true,N},T}
     ranges::NTuple{N,PathRange}
 end
 
@@ -32,9 +32,9 @@ immutable ComplexInverseFourierNode{T<:Base.FFTW.fftwReal,K,N} <:
         AbstractFourierNode{Complex{T},N}
     data::Array{Complex{T},N}
     data_ft::Array{Complex{T},N}
-    forward_plan::Base.DFT.FFTW.cFFTWPlan{Complex{T},K,false,N}
+    forward_plan::FFTW.cFFTWPlan{Complex{T},K,false,N}
     inverse_plan::Base.DFT.ScaledPlan{Complex{T},
-        Base.DFT.FFTW.cFFTWPlan{Complex{T},K,true,N},T}
+        FFTW.cFFTWPlan{Complex{T},K,true,N},T}
     ranges::NTuple{N,PathRange}
 end
 
