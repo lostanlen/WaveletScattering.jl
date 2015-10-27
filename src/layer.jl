@@ -72,7 +72,7 @@ function forward!(backend::Mocha.CPUBackend,
         for (path_in, node_in) in input.nodes
             path_out = copy(path_in)
             path_out[γkey] = γ
-            transform!(blob[path_out], node_in[path_in], ψ)
+            transform!(blob[path_out], blob_in[path_in], ψ)
         end
     end
 end
@@ -80,36 +80,37 @@ end
 function transform!(node_in::RealFourierNode,
                     node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
-    inds = fill(Colon(), ndims(node_in))
+    inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(ψ.coeff)
     # Zeroth frequency
-    inds[node_in.region[1]] = 1 + 0
-    view_in = view(node_in.data_ft, inds)
-    view_out = view(node_out.data, inds)
+    inds[node_in.forward_plan.region[1]] = 1 + 0
+    view_in = ArrayViews.view(node_in.data_ft, inds...)
+    view_out = ArrayViews.view(node_out.data, inds...)
     for id in eachindex(view_in)
         view_out[id] = view_in[id] * ψ[1 + 0]
     end
     # Positive frequencies
     for ω in 1:(N>>1-1)
-        inds[node_in.region[1]] = 1 + ω
-        view_in = view(node_in.data_ft, inds)
-        view_out = view(node_out.data, inds)
+        inds[node_in.forward_plan.region[1]] = 1 + ω
+        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        view_out = ArrayViews.view(node_out.data, inds...)
         for id in eachindex(view_in)
             view_out[id] = view_in[id] * ψ[1 + ω]
         end
     end
     # Midpoint
-    inds[node_in.region[1]] = 1 + N>>1
-    view_in = view(node_in.data_ft, inds)
-    view_out = view(node_out.data, inds)
+    inds[node_in.forward_plan.region[1]] = 1 + N>>1
+    view_in = ArrayViews.view(node_in.data_ft, inds...)
+    view_out = ArrayViews.view(node_out.data, inds...)
     for id in eachindex(view_in)
         view_out[id] = view_in[id] * ψ[1 + N>>1]
     end
     # Negative frequencies
     for ω in 1:(N>>1-1)
-        inds[node_ind.region[1]] = 1 + ω
-        view_in = view(node_in.data_ft, inds)
-        view_out = view(node_out.data, inds)
+        inds[node_in.forward_plan.region[1]] = 1 + ω
+        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        inds[node_in.forward_plan.region[1]] = 1 + N - ω
+        view_out = ArrayViews.view(node_out.data, inds...)
         for id in eachindex(view_in)
             view_out[id] = view_in[id] * ψ[1 + N - ω]
         end
