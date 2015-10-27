@@ -10,13 +10,6 @@ end
 abstract AbstractPointwise
 immutable Modulus <: AbstractPointwise end
 
-function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
-                  ρ::AbstractPointwise, inputs::Vector)
-    @inbounds for idblob in eachindex(inputs)
-        map!(ρ, state.blobs[idblob], inputs[idblob])
-    end
-end
-
 map!(ρ::Modulus, blob_in::AbstractNode, blob_out::AbstractNode) =
     map!(abs, blob_in.data, blob_out.data)
 
@@ -50,6 +43,13 @@ immutable WaveletLayerState{B<:AbstractScatteredBlob} <: Mocha.LayerState
     blobs::Vector{B}
     blobs_diff::Vector{B}
     layer::WaveletLayer
+end
+
+function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
+                  ρ::AbstractPointwise, inputs::Vector)
+    @inbounds for idblob in eachindex(inputs)
+        map!(ρ, state.blobs[idblob], inputs[idblob])
+    end
 end
 
 function forward!(backend::Mocha.CPUBackend,
