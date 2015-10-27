@@ -77,17 +77,41 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
-function transform!(node_in::AbstractFourierNode,
+function transform!(node_in::RealFourierNode,
                     node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill(Colon(), ndims(node_in))
     N = length(ψ.coeff)
-    for ω in 0:(N-1)
-        inds[node_in.fourierdims[1]] = 1 + ω
-        view_in = view(node_in, inds)
-        view_out = view(node_out, inds)
+    # Zeroth frequency
+    inds[node_in.region[1]] = 1 + 0
+    view_in = view(node_in.data_ft, inds)
+    view_out = view(node_out.data, inds)
+    for id in eachindex(view_in)
+        view_out[id] = view_in[id] * ψ[1 + 0]
+    end
+    # Positive frequencies
+    for ω in 1:(N>>1-1)
+        inds[node_in.region[1]] = 1 + ω
+        view_in = view(node_in.data_ft, inds)
+        view_out = view(node_out.data, inds)
         for id in eachindex(view_in)
             view_out[id] = view_in[id] * ψ[1 + ω]
+        end
+    end
+    # Midpoint
+    inds[node_in.region[1]] = 1 + N>>1
+    view_in = view(node_in.data_ft, inds)
+    view_out = view(node_out.data, inds)
+    for id in eachindex(view_in)
+        view_out[id] = view_in[id] * ψ[1 + N>>1]
+    end
+    # Negative frequencies
+    for ω in 1:(N>>1-1)
+        inds[node_ind.region[1]] = 1 + ω
+        view_in = view(node_in.data_ft, inds)
+        view_out = view(node_out.data, inds)
+        for id in eachindex(view_in)
+            view_out[id] = view_in[id] * ψ[1 + N - ω]
         end
     end
 end
