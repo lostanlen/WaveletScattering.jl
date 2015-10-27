@@ -58,7 +58,7 @@ function AbstractFourierNode{T<:Number,N}(data::Array{T,N},
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
     AbstractFourierNode(data, fourierdims, ranges; args...)
 end
-AbstractFourierNode{T<:Number}(data, fourierdims::Int, subscripts; args...) =
+AbstractFourierNode(data, fourierdims::Int, subscripts; args...) =
     AbstractFourierNode(data, collect(fourierdims), subscripts; args...)
 
 Base.fft!(node::AbstractFourierNode) =
