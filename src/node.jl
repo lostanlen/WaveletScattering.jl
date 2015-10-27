@@ -8,7 +8,7 @@ Base.complex{T<:Complex}(::Type{T}) = T
 immutable RealFourierNode{T<:Real,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     data_ft::Array{Complex{T},N}
-    plan::Base.DFT.FFTW.rFFTWPlan{T}
+    forward_plan::Base.DFT.FFTW.rFFTWPlan{T}
     ranges::NTuple{N,PathRange}
 end
 
