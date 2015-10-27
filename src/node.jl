@@ -44,8 +44,8 @@ function AbstractFourierNode{T<:Real,N}(data::Array{T,N},
 end
 function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
                                            fourierdims::Vector{Int},
-                                           ranges::NTuple{N,PathRange},
-                                           flags = FFTW.ESTIMATE;
+                                           ranges::NTuple{N,PathRange};
+                                           flags = FFTW.ESTIMATE,
                                            timelimit = Inf)
     plan = plan_fft(data, fourierdims; flags)
     data_ft = plan * data
