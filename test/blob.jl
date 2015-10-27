@@ -2,12 +2,11 @@
 import WaveletScattering: FourierNonOriented1DBank
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec
-# layer.jl
+# path.jl
 import WaveletScattering: PathKey
 # node.jl
 import WaveletScattering: AbstractFourierNode, InverseFourierNode
 
-# node
 subscripts = (PathKey(:time), PathKey(:chunk))
 data = rand(Float32, 32768, 256)
 node = AbstractFourierNode(data, 1, subscripts)

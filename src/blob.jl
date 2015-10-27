@@ -2,7 +2,7 @@
 abstract AbstractScatteredBlob{T,N} <: Mocha.Blob{T,N}
 abstract AbstractFourierBlob{T,N} <: AbstractScatteredBlob{T,N}
 
-immutable RealFourierBlob{T<:Real,N} <: AbstractFourierBlob{T,N}
+immutable RealFourierBlob{T<:FFTW.fftwReal,N} <: AbstractFourierBlob{T,N}
     nodes::Dict{Path,RealFourierNode{T,N}}
     subscripts::NTuple{N,PathKey}
 end

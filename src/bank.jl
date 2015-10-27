@@ -41,16 +41,17 @@ input signal will be real — i.e. its Fourier will be symmetric — it can be
 recovered from the ""positive half"" of its Fourier spectrum. In summary, it is
 advisable to use this type of filter bank when handling real 1d data of
 moderate to large length."""
-immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
+immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
+        AbstractNonOrientedBank{T}
     ψs::Vector{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
     behavior::Behavior
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
-    function call{T<:Number}(::Type{FourierNonOriented1DBank{T}},
-                             spec::Abstract1DSpec ;
-                             γ_range = nothing, is_ϕ_applied = false,
-                             log2_oversampling = 0, max_log2_stride = 0)
+    function call{T<:FFTW.fftwNumber}(
+            ::Type{FourierNonOriented1DBank{T}}, spec::Abstract1DSpec ;
+            γ_range = nothing, is_ϕ_applied = false,
+            log2_oversampling = 0, max_log2_stride = 0)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust must be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -77,16 +78,16 @@ in the Fourier domain. It is "oriented" insofar as its filters have negative
 center frequencies as well as positive center frequencies, as represented by
 the orientation parameter `θ`. It is advisable to use this type of filter bank
 when handling complex 1d data of moderate to large length."""
-immutable FourierOriented1DBank{T<:Number} <: AbstractOrientedBank{T}
+immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
     ψs::Matrix{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
     behavior::Behavior
     metas::Matrix{OrientedMeta}
     spec::Abstract1DSpec{T}
-    function call{T<:Number}(::Type{FourierOriented1DBank{T}},
-                             spec::Abstract1DSpec ;
-                             γ_range = nothing, is_ϕ_applied = false,
-                             log2_oversampling = 0, max_log2_stride = 0)
+    function call{T<:FFTW.fftwNumber}(
+            ::Type{FourierOriented1DBank{T}}, spec::Abstract1DSpec ;
+            γ_range = nothing, is_ϕ_applied = false,
+            log2_oversampling = 0, max_log2_stride = 0)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
