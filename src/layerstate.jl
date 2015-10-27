@@ -31,7 +31,7 @@ function setup{T<:FFTW.fftwReal,N}(
         layer::WaveletLayer,
         bank::FourierNonOriented1DBank{T},
         inputs::Vector{Mocha.CPUBlob{T,N}},
-        diffs::Vector{RealFourierBlob{T,N}}) ;
+        diffs::Vector{RealFourierBlob{T,N}} ;
         subscripts = (:time,))
     nBlobs = length(inputs)
     blobs = Array(RealFourierBlob{T,N}, nBlobs)
