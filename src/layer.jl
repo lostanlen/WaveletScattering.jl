@@ -53,8 +53,8 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
 end
 
 function forward!(backend::Mocha.CPUBackend,
-                  state::WaveletLayerState{FourierScatteredBlob},
-                  inputs::Vector{FourierScatteredBlob})
+                  state::WaveletLayerState{AbstractFourierBlob},
+                  inputs::Vector{AbstractFourierBlob})
     for idblob in eachindex(inputs)
         fft!(input[idblob])
         forward!(backend, state.blobs[idblob], state.bank, input[idblob])
