@@ -20,7 +20,8 @@ function RealFourierBlob{T<:Number,N}(node::RealFourierNode{T,N},
     RealFourierBlob{T,N}(nodes, subscripts)
 end
 
-fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
+Base.fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
+Base.ifft!(blob::AbstractFourierBlob) = pmap(ifft!, values(blob.nodes))
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
@@ -28,7 +29,6 @@ Mocha.@defstruct WaveletLayer Mocha.Layer (
     name :: AbstractString = "wavelets",
     (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
     (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
-    neuron :: ActivationFunction = Mocha.Neurons.Identity()
 )
 
 Mocha.@characterize_layer(WaveletLayer,
@@ -68,7 +68,7 @@ function forward!(backend::Mocha.CPUBackend,
                   blob_in::AbstractScatteredBlob)
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for γ in 0:(nGammas-1)
-        ψ = bank.ψs[1+γ]
+        ψ = bank.ψs[1 + γ]
         for (path_in, node_in) in input.nodes
             path_out = copy(path_in)
             path_out[γkey] = γ
