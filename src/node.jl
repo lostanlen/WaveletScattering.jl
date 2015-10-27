@@ -2,9 +2,6 @@
 abstract AbstractNode{T,N}
 abstract AbstractFourierNode{T,N} <: AbstractNode{T,N}
 
-Base.complex{T<:Real}(::Type{T}) = Complex{T}
-Base.complex{T<:Complex}(::Type{T}) = T
-
 immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     data_ft::Array{Complex{T},N}
@@ -12,54 +9,47 @@ immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
     ranges::NTuple{N,PathRange}
 end
 
-immutable ComplexFourierNode{T<:FFTW.fftwReal,K,N} <:
-        AbstractFourierNode{Complex{T},N}
-    data::Array{Complex{T},N}
-    data_ft::Array{Complex{T},N}
-    forward_plan::FFTW.cFFTWPlan{Complex{T},K,false,N}
+immutable ComplexFourierNode{T<:FFTW.fftwComplex,K,N} <:
+        AbstractFourierNode{T,N}
+    data::Array{T,N}
+    data_ft::Array{T,N}
+    forward_plan::FFTW.cFFTWPlan{T,K,false,N}
     ranges::NTuple{N,PathRange}
 end
 
-immutable InverseFourierNode{T<:FFTW.fftwReal,K,N} <:
+immutable InverseFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,K,N} <:
         AbstractFourierNode{Complex{T},N}
     data::Array{Complex{T},N}
-    inverse_plan::Base.DFT.ScaledPlan{Complex{T},
-        FFTW.cFFTWPlan{Complex{T},K,true,N},T}
+    inverse_plan::Base.DFT.ScaledPlan{T,FFTW.cFFTWPlan{T,K,true,N},R}
     ranges::NTuple{N,PathRange}
 end
 
-immutable ComplexInverseFourierNode{T<:Base.FFTW.fftwReal,K,N} <:
-        AbstractFourierNode{Complex{T},N}
-    data::Array{Complex{T},N}
-    data_ft::Array{Complex{T},N}
-    forward_plan::FFTW.cFFTWPlan{Complex{T},K,false,N}
-    inverse_plan::Base.DFT.ScaledPlan{Complex{T},
-        FFTW.cFFTWPlan{Complex{T},K,true,N},T}
+immutable ComplexInverseFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,K,N} <:
+        AbstractFourierNode{T,N}
+    data::Array{T,N}
+    data_ft::Array{T,N}
+    forward_plan::FFTW.cFFTWPlan{T,K,false,N}
+    inverse_plan::Base.DFT.ScaledPlan{T,FFTW.cFFTWPlan{T,K,true,N},R}
     ranges::NTuple{N,PathRange}
 end
 
-function AbstractFourierNode{T<:Real,N}(data::Array{T,N},
-                                        fourierdims::Vector{Int},
-                                        ranges::NTuple{N,PathRange};
-                                        flags = FFTW.ESTIMATE,
-                                        timelimit = Inf)
+function AbstractFourierNode{T<:FFTW.fftwReal,N}(
+        data::Array{T,N}, fourierdims::Vector{Int}, ranges::NTuple{N,PathRange};
+        flags = FFTW.ESTIMATE, timelimit = Inf)
     plan = plan_rfft(data, fourierdims ; flags = flags, timelimit = timelimit)
     data_ft = plan * data
     RealFourierNode(data, data_ft, plan, ranges)
 end
-function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
-                                           fourierdims::Vector{Int},
-                                           ranges::NTuple{N,PathRange};
-                                           flags = FFTW.ESTIMATE,
-                                           timelimit = Inf)
+function AbstractFourierNode{T<:FFTW.fftwComplex,N}(data::Array{T,N},
+        fourierdims::Vector{Int}, ranges::NTuple{N,PathRange};
+        flags = FFTW.ESTIMATE, timelimit = Inf)
     plan = plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
     data_ft = plan * data
     ComplexFourierNode(data, data_ft, plan, ranges)
 end
-function AbstractFourierNode{T<:Number,N}(data::Array{T,N},
-                                          fourierdims::Vector{Int},
-                                          subscripts::NTuple{N, PathKey};
-                                          args...)
+function AbstractFourierNode{T<:FFTW.fftwNumber,N}(
+        data::Array{T,N}, fourierdims::Vector{Int},
+        subscripts::NTuple{N, PathKey}; args...)
     ranges =
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
     AbstractFourierNode(data, fourierdims, ranges; args...)
@@ -70,5 +60,5 @@ AbstractFourierNode(data, fourierdims::Int, subscripts ; args...) =
 Base.fft!(node::AbstractFourierNode) =
     A_mul_B!(node.data_ft, node.forward_plan, node.data)
 
-Base.ifft!{T<:Complex}(node::AbstractFourierNode{T}) =
+Base.ifft!{T<:FFTW.fftwComplex}(node::AbstractFourierNode{FFTW.fftwComplex}) =
     A_mul_B!(node.data, node.inverse_plan, node.data)
