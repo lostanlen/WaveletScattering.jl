@@ -60,5 +60,30 @@ AbstractFourierNode(data, fourierdims::Int, subscripts ; args...) =
 Base.fft!(node::AbstractFourierNode) =
     A_mul_B!(node.data_ft, node.forward_plan, node.data)
 
-Base.ifft!{T<:FFTW.fftwComplex}(node::AbstractFourierNode{FFTW.fftwComplex}) =
+Base.ifft!{T<:FFTW.fftwComplex}(node::AbstractFourierNode{T}) =
     A_mul_B!(node.data, node.inverse_plan, node.data)
+
+function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
+                    ψ::FullResolution1DFilter)
+    inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
+    N = length(ψ.coeff)
+    # Positive frequencies, including zero and midpoint
+    @inbounds for ω in 0:(N>>1)
+        inds[node_in.forward_plan.region[1]] = 1 + ω
+        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        view_out = ArrayViews.view(node_out.data, inds...)
+        @inbounds for id in eachindex(view_in)
+            view_out[id] = view_in[id] * ψ[1 + ω]
+        end
+    end
+    # Negative frequencies
+    @inbounds for ω in (N>>1+1):N
+        inds[node_in.forward_plan.region[1]] = 1 + N - ω
+        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        inds[node_in.forward_plan.region[1]] = 1 + ω
+        view_out = ArrayViews.view(node_out.data, inds...)
+        @inbounds for id in eachindex(view_in)
+            view_out[id] = view_in[id] * ψ[1 + ω]
+        end
+    end
+end
