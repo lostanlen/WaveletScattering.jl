@@ -27,10 +27,12 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
 end
 
 function setup{T<:FFTW.fftwReal,N}(
-    backend::Mocha.CPUBackend, layer::WaveletLayer,
-    bank::FourierNonOriented1DBank{T},
-    inputs::Vector{Mocha.CPUBlob{T,N}}, diffs::Vector{RealFourierBlob{T,N}) ;
-    subscripts = (:time,))
+        backend::Mocha.CPUBackend,
+        layer::WaveletLayer,
+        bank::FourierNonOriented1DBank{T},
+        inputs::Vector{Mocha.CPUBlob{T,N}},
+        diffs::Vector{RealFourierBlob{T,N}) ;
+        subscripts = (:time,))
     nBlobs = length(inputs)
     blobs = Array(RealFourierBlob{T,N}, nBlobs)
     subscripts = setup_subscripts(subscripts, N)
