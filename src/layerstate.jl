@@ -28,7 +28,7 @@ end
 
 function setup{T<:FFTW.fftwReal,N}(
     backend::Mocha.CPUBackend, layer::WaveletLayer,
-    bank::Vector{FourierNonOriented1DBank{T}},
+    bank::FourierNonOriented1DBank{T},
     inputs::Vector{Mocha.CPUBlob{T,N}}, diffs::Vector{RealFourierBlob{T,N}) ;
     subscripts = (:time,))
     nBlobs = length(inputs)
@@ -37,10 +37,11 @@ function setup{T<:FFTW.fftwReal,N}(
     for idblob in eachindex(inputs)
         blobs[idblob] = RealFourierBlob(inputs[idblob].data, subscripts)
     end
+    blobs_diff = 0
     WaveletLayerState(bank, blobs, blobs_diff, layer)
 end
 
 function setup_subscripts{NS}(subscripts::NTuple{NS,Symbol}, ND::Int)
-    suffix_subscripts = ntuple(n -> symbol(:var,n), ND-NS)
+    suffix_subscripts = ntuple(n -> symbol(:var, n), ND-NS)
     return (subscripts..., suffix_subscripts...)
 end
