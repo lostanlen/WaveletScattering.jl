@@ -16,6 +16,19 @@ immutable ComplexFourierNode{T<:Complex,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     data_ft::Array{T,N}
     forward_plan::Base.DFT.FFTW.cFFTWPlan{T}
+    ranges::NTuple{N,PathRange}
+end
+
+immutable InverseFourierNode{T<:Complex,N} <: AbstractFourierNode{T,N}
+    data::Array{T,N}
+    inverse_plan::Base.DFT.FFTW.cFFTWPlan{T}
+    ranges::NTuple{N,PathRange}
+end
+
+immutable ComplexInverseFourierNode{T<:Complex,N} <: AbstractFourierNode{T,N}
+    data::Array{T,N}
+    data_ft::Array{T,N}
+    forward_plan::Base.DFT.FFTW.cFFTWPlan{T}
     inverse_plan::Base.DFT.FFTW.cFFTWPlan{T}
     ranges::NTuple{N,PathRange}
 end
@@ -49,4 +62,7 @@ AbstractFourierNode{T<:Number}(data, fourierdims::Int, subscripts; args...) =
     AbstractFourierNode(data, collect(fourierdims), subscripts; args...)
 
 Base.fft!(node::AbstractFourierNode) =
-    A_mul_B!(node.data_ft, node.plan, node.data)
+    A_mul_B!(node.data_ft, node.forward_plan, node.data)
+
+Base.ifft!(node::AbstractFourierNode{T<:Complex}) =
+    A_mul_B!(node.data, node.inverse_plan, node.data)
