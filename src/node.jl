@@ -40,7 +40,7 @@ function AbstractFourierNode{T<:Real,N}(data::Array{T,N},
                                         timelimit = Inf)
     plan = plan_rfft(data, fourierdims; flags)
     data_ft = plan * data
-    RealFourierNode{T,N}(data, data_ft, plan, ranges)
+    RealFourierNode(data, data_ft, plan, ranges)
 end
 function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
                                            fourierdims::Vector{Int},
