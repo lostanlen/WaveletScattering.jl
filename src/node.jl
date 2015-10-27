@@ -15,7 +15,8 @@ end
 immutable ComplexFourierNode{T<:Complex,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     data_ft::Array{T,N}
-    plan::Base.DFT.FFTW.cFFTWPlan{T}
+    forward_plan::Base.DFT.FFTW.cFFTWPlan{T}
+    inverse_plan::Base.DFT.FFTW.cFFTWPlan{T}
     ranges::NTuple{N,PathRange}
 end
 
