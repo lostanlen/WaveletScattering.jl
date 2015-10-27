@@ -1,43 +1,48 @@
 # Node
-abstract AbstractNode{T, N}
+abstract AbstractNode{T,N}
+abstract AbstractFourierNode{T,N} <: AbstractNode{T,N}
 
 Base.complex{T<:Real}(::Type{T}) = Complex{T}
 Base.complex{T<:Complex}(::Type{T}) = T
 
-immutable FourierNode{T<:Number,C<:Complex,N} <: AbstractNode{T,N}
+immutable RealFourierNode{T<:Real,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
-    data_ft::Array{C,N}
-    fourierdims::Vector{Int}
-    ranges::NTuple{N, PathRange}
-end
-
-immutable Node{T<:Number,N} <: AbstractNode{T,N}
-    data::Array{T,N}
+    data_ft::Array{Complex{T},N}
+    plan::Base.DFT.FFTW.rFFTWPlan{T}
     ranges::NTuple{N,PathRange}
 end
 
-function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims::Vector{Int},
-                                  ranges::NTuple{N,PathRange})
-    data_ft = complex(data)
-    fft!(data_ft, fourierdims)
-    FourierNode{T,complex(T),N}(data, data_ft, fourierdims, ranges)
+immutable ComplexFourierNode{T<:Complex,N} <: AbstractFourierNode{T,N}
+    data::Array{T,N}
+    data_ft::Array{T,N}
+    plan::Base.DFT.FFTW.cFFTWPlan{T}
+    ranges::NTuple{N,PathRange}
 end
-function FourierNode{T<:Number,N}(data::Array{T,N}, fourierdims::Vector{Int},
-                                  subscripts::NTuple{N, PathKey})
+
+function AbstractFourierNode{T<:Real,N}(data::Array{T,N},
+                                        fourierdims::Vector{Int},
+                                        ranges::NTuple{N,PathRange},
+                                        flags = FFTW.ESTIMATE;
+                                        timelimit = Inf)
+    plan = plan_rfft(data, fourierdims ; flags)
+    data_ft = plan * data
+    RealFourierNode{T,N}(data, data_ft, plan, ranges)
+end
+function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
+                                           fourierdims::Vector{Int},
+                                           ranges::NTuple{N,PathRange},
+                                           flags = FFTW.ESTIMATE;
+                                           timelimit = Inf)
+    plan = plan_fft(data, fourierdims ; flags)
+    data_ft = plan * data
+    ComplexFourierNode{T,N}(data, data_ft, plan, ranges)
+end
+function AbstractFourierNode{T<:Number,N}(data::Array{T,N},
+                                      fourierdims::Vector{Int},
+                                      subscripts::NTuple{N, PathKey}; args...)
     ranges =
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
-    FourierNode(data, fourierdims, ranges)
+    AbstractFourierNode(data, fourierdims, ranges; args...)
 end
-FourierNode(data, fourierdims::Int, subscripts) =
-    FourierNode(data, collect(fourierdims), subscripts)
-
-function Base.fft!{T<:Real}(node::FourierNode{T})
-    @inbounds for id in eachindex(node.data)
-        node.data_ft[id] = complex(node.data[id])
-    end
-    fft!(node.data_ft, node.fourierdims)
-end
-function Base.fft!{T<:Complex}(node::FourierNode{T})
-    copy!(node.data_ft, node.data)
-    fft!(node.data_ft, node.fourierdims)
-end
+AbstractFourierNode{T<:Number}(data, fourierdims::Int, subscripts; args...) =
+    AbstractFourierNode(data, collect(fourierdims), subscripts; args...)
