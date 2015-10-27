@@ -13,14 +13,14 @@ immutable Modulus <: AbstractPointwise end
 map!(ρ::Modulus, blob_in::AbstractNode, blob_out::AbstractNode) =
     map!(abs, blob_in.data, blob_out.data)
 
-function FourierScatteredBlob{T<:Number,N}(node::AbstractNode{T,N},
-                                           subscripts::NTuple{N,PathKey})
+function RealFourierBlob{T<:Number,N}(node::RealFourierNode{T,N},
+                                      subscripts::NTuple{N,PathKey})
     emptypath = Dict{PathKey,Int}()
     nodes = Dict(emptypath => node)
-    FourierScatteredBlob{T,N}(nodes, subscripts)
+    RealFourierBlob{T,N}(nodes, subscripts)
 end
 
-fft!(blob::FourierScatteredBlob) = pmap(fft!, values(blob.nodes))
+fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
 
 # WaveletLayer
 # We adopt the same whitespace convention as in the Mocha code base
