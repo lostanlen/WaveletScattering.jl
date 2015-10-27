@@ -52,8 +52,9 @@ function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
     ComplexFourierNode{T,N}(data, data_ft, plan, ranges)
 end
 function AbstractFourierNode{T<:Number,N}(data::Array{T,N},
-                                      fourierdims::Vector{Int},
-                                      subscripts::NTuple{N, PathKey}; args...)
+                                          fourierdims::Vector{Int},
+                                          subscripts::NTuple{N, PathKey};
+                                          args...)
     ranges =
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
     AbstractFourierNode(data, fourierdims, ranges; args...)
