@@ -24,7 +24,7 @@ function AbstractFourierNode{T<:Real,N}(data::Array{T,N},
                                         ranges::NTuple{N,PathRange},
                                         flags = FFTW.ESTIMATE;
                                         timelimit = Inf)
-    plan = plan_rfft(data, fourierdims ; flags)
+    plan = plan_rfft(data, fourierdims; flags)
     data_ft = plan * data
     RealFourierNode{T,N}(data, data_ft, plan, ranges)
 end
@@ -33,7 +33,7 @@ function AbstractFourierNode{T<:Complex,N}(data::Array{T,N},
                                            ranges::NTuple{N,PathRange},
                                            flags = FFTW.ESTIMATE;
                                            timelimit = Inf)
-    plan = plan_fft(data, fourierdims ; flags)
+    plan = plan_fft(data, fourierdims; flags)
     data_ft = plan * data
     ComplexFourierNode{T,N}(data, data_ft, plan, ranges)
 end
@@ -46,3 +46,6 @@ function AbstractFourierNode{T<:Number,N}(data::Array{T,N},
 end
 AbstractFourierNode{T<:Number}(data, fourierdims::Int, subscripts; args...) =
     AbstractFourierNode(data, collect(fourierdims), subscripts; args...)
+
+Base.fft!(node::AbstractFourierNode) =
+    A_mul_B!(node.data_ft, node.plan, node.data)
