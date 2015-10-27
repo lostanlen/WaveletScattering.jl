@@ -77,8 +77,8 @@ function forward!(backend::Mocha.CPUBackend,
     end
 end
 
-function transform!(node_in::FourierNode,
-                    node_out::FourierNode,
+function transform!(node_in::AbstractFourierNode,
+                    node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill(Colon(), ndims(node_in))
     N = length(ψ.coeff)
