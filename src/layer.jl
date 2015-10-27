@@ -37,9 +37,11 @@ Mocha.@characterize_layer(WaveletLayer,
     can_do_bp => true
 )
 
+abstract AbstractScatteredLayerState <: Mocha.LayerState
+
 # WaveletLayerState
-immutable WaveletLayerState{B<:AbstractScatteredBlob} <: Mocha.LayerState
-    bank::AbstractBank
+immutable WaveletLayerState{W<:AbstractBank} <: AbstractScatteredLayerState
+    bank::W
     blobs::Vector{B}
     blobs_diff::Vector{B}
     layer::WaveletLayer
@@ -82,37 +84,23 @@ function transform!(node_in::RealFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(ψ.coeff)
-    # Zeroth frequency
-    inds[node_in.forward_plan.region[1]] = 1 + 0
-    view_in = ArrayViews.view(node_in.data_ft, inds...)
-    view_out = ArrayViews.view(node_out.data, inds...)
-    for id in eachindex(view_in)
-        view_out[id] = view_in[id] * ψ[1 + 0]
-    end
-    # Positive frequencies
-    for ω in 1:(N>>1-1)
+    # Positive frequencies, including zero and midpoint
+    @inbounds for ω in 0:(N>>1)
         inds[node_in.forward_plan.region[1]] = 1 + ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
         view_out = ArrayViews.view(node_out.data, inds...)
-        for id in eachindex(view_in)
+        @inbounds for id in eachindex(view_in)
             view_out[id] = view_in[id] * ψ[1 + ω]
         end
     end
-    # Midpoint
-    inds[node_in.forward_plan.region[1]] = 1 + N>>1
-    view_in = ArrayViews.view(node_in.data_ft, inds...)
-    view_out = ArrayViews.view(node_out.data, inds...)
-    for id in eachindex(view_in)
-        view_out[id] = view_in[id] * ψ[1 + N>>1]
-    end
     # Negative frequencies
-    for ω in 1:(N>>1-1)
-        inds[node_in.forward_plan.region[1]] = 1 + ω
-        view_in = ArrayViews.view(node_in.data_ft, inds...)
+    @inbounds for ω in (N>>1+1):N
         inds[node_in.forward_plan.region[1]] = 1 + N - ω
+        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        inds[node_in.forward_plan.region[1]] = 1 + ω
         view_out = ArrayViews.view(node_out.data, inds...)
-        for id in eachindex(view_in)
-            view_out[id] = view_in[id] * ψ[1 + N - ω]
+        @inbounds for id in eachindex(view_in)
+            view_out[id] = view_in[id] * ψ[1 + ω]
         end
     end
 end
