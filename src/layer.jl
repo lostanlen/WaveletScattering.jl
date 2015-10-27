@@ -9,6 +9,8 @@ end
 
 function FourierScatteredBlob{T<:Number,N}(
         node::AbstractNode{T,N}, subscripts::NTuple{N,PathKey})
+abstract AbstractPointwise
+immutable Modulus <: AbstractPointwise end
     emptypath = Dict{PathKey,Int}()
     nodes = Dict(emptypath => node)
     FourierScatteredBlob{T,N}(nodes, subscripts)
