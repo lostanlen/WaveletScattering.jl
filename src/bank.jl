@@ -70,7 +70,7 @@ immutable FourierNonOriented1DBank{T<:Number} <: AbstractNonOrientedBank{T}
     end
 end
 FourierNonOriented1DBank(spec::Abstract1DSpec ; args...) =
-    FourierNonOriented1DBank{spec.signaltype}(spec, args...)
+    FourierNonOriented1DBank{spec.signaltype}(spec ; args)
 
 """A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
 in the Fourier domain. It is "oriented" insofar as its filters have negative
