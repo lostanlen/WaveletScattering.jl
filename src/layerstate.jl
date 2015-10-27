@@ -5,7 +5,7 @@ immutable WaveletLayerState{W<:AbstractBank,B<:AbstractScatteredBlob} <:
         AbstractScatteredLayerState
     bank::W
     blobs::Vector{B}
-    blobs_diff::Vector{B}
+    blobs_diff::Any
     layer::WaveletLayer
 end
 
@@ -24,4 +24,23 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
     @inbounds for idblob in eachindex(inputs)
         map!(ρ, state.blobs[idblob], inputs[idblob])
     end
+end
+
+function setup{T<:FFTW.fftwReal,N}(
+    backend::Mocha.CPUBackend, layer::WaveletLayer,
+    bank::Vector{FourierNonOriented1DBank{T}},
+    inputs::Vector{Mocha.CPUBlob{T,N}}, diffs::Vector{RealFourierBlob{T,N}) ;
+    subscripts = (:time,))
+    nBlobs = length(inputs)
+    blobs = Array(RealFourierBlob{T,N}, nBlobs)
+    subscripts = setup_subscripts(subscripts, N)
+    for idblob in eachindex(inputs)
+        blobs[idblob] = RealFourierBlob(inputs[idblob].data, subscripts)
+    end
+    WaveletLayerState(bank, blobs, blobs_diff, layer)
+end
+
+function setup_subscripts{NS}(subscripts::NTuple{NS,Symbol}, ND::Int)
+    suffix_subscripts = ntuple(n -> symbol(:var,n), ND-NS)
+    return (subscripts..., suffix_subscripts...)
 end
