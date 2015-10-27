@@ -64,5 +64,5 @@ AbstractFourierNode{T<:Number}(data, fourierdims::Int, subscripts; args...) =
 Base.fft!(node::AbstractFourierNode) =
     A_mul_B!(node.data_ft, node.forward_plan, node.data)
 
-Base.ifft!(node::AbstractFourierNode{T<:Complex}) =
+Base.ifft!{T<:Complex}(node::AbstractFourierNode{T}) =
     A_mul_B!(node.data, node.inverse_plan, node.data)
