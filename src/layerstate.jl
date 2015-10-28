@@ -32,18 +32,22 @@ function setup{T<:FFTW.fftwReal,N}(
         bank::FourierNonOriented1DBank{T},
         inputs::Vector{Mocha.CPUBlob{T,N}},
         diffs::Vector{RealFourierBlob{T,N}} ;
-        subscripts = (:time,))
+        symbols = (:time,))
     nBlobs = length(inputs)
     blobs = Array(RealFourierBlob{T,N}, nBlobs)
-    subscripts = setup_subscripts(subscripts, N)
+    symbols = setup_subscripts(symbols, N)
+    subscripts = map(WaveletScattering.PathKey, symbols)
+    fourierdims = 
     for idblob in eachindex(inputs)
-        blobs[idblob] = RealFourierBlob(inputs[idblob].data, subscripts)
+        node = WaveletScattering.AbstractFourierNode(
+            inputs[idblob].data, fourierdims, subscripts)
+        blobs[idblob] = RealFourierBlob(inputs[idblob].data, symbols)
     end
     blobs_diff = 0
     WaveletLayerState(bank, blobs, blobs_diff, layer)
 end
 
-function setup_subscripts{NS}(subscripts::NTuple{NS,Symbol}, ND::Int)
-    suffix_subscripts = ntuple(n -> symbol(:var, n), ND-NS)
-    return (subscripts..., suffix_subscripts...)
+function setup_symbols{NS}(symbols::NTuple{NS,Symbol}, ND::Int)
+    suffixes = ntuple(n -> symbol(:var, n), ND-NS)
+    return (symbols..., suffixes...)
 end
