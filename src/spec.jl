@@ -7,7 +7,7 @@ abstract Abstract2DSpec{T<:Number} <: AbstractSpec
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
 
-* The truncation threshold `ɛ` must be `in [0.0, 1.0[``.
+* The truncation threshold `ɛ` must be `in [0.0, 1.0[`.
 
 * The signal length must be a power of two above 4, i.e. `log2_size > 1`.
 
