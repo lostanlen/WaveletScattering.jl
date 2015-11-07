@@ -16,29 +16,28 @@ oversampling.
 neighboring coefficients after subsampling (also known as *hop size* or
 *stride*)"""
 type Behavior
-    γ_range::UnitRange
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
     is_ϕ_applied::Bool
+    j_range::UnitRange
     log2_oversampling::Int
     max_log2_stride::Int
 end
 
 function Behavior{T}(ϕ::Symmetric1DFilter{T},
         ψs::AbstractArray{AbstractFourier1DFilter{T}},
-        spec::AbstractSpec, γ_range::UnitRange, is_ϕ_applied::Bool,
+        spec::AbstractSpec, is_ϕ_applied::Bool, j_range::UnitRange{Int},
         log2_oversampling::Int, max_log2_stride::Int)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
-    nGammas = spec.nFilters_per_octave * spec.nOctaves
-    edge_ids = spec.nFilters_per_octave : spec.nFilters_per_octave : nGammas
+    edge_ids = (j_range+1) * spec.nFilters_per_octave - 1
     ψ_critical_log2_samplings =
         Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[edge_ids,1] ]
     ψ_log2_samplings = clamp(ψ_critical_log2_samplings + log2_oversampling,
         -max_log2_stride, 0)
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
-    Behavior(γ_range, ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied,
+    Behavior(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
         log2_oversampling, max_log2_stride)
 end
 
@@ -70,9 +69,9 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
     spec::Abstract1DSpec{T}
     function call{T<:FFTW.fftwNumber}(
             ::Type{FourierNonOriented1DBank{T}}, spec::Abstract1DSpec ;
-            γ_range::UnitRange{Int} = 0:typemax(Int),
-            is_ϕ_applied::Bool = false, log2_oversampling::Int = 0,
-            max_log2_stride::Int = typemax(Int))
+            is_ϕ_applied::Bool = false,
+            j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
+            log2_oversampling::Int = 0, max_log2_stride::Int = spec.nOctaves-1)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust must be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -85,9 +84,8 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
-        γ_range = max(γ_range.start, 0):min(γ_range.stop, length(γs) - 1)
         behavior = Behavior(ϕ, ψs, spec,
-            γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
+            is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
         new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
@@ -107,9 +105,9 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
     spec::Abstract1DSpec{T}
     function call{T<:FFTW.fftwNumber}(
             ::Type{FourierOriented1DBank{T}}, spec::Abstract1DSpec ;
-            γ_range::UnitRange{Int} = 0:typemax(Int),
-            is_ϕ_applied::Bool = false, log2_oversampling::Int = 0,
-            max_log2_stride::Int = typemax(Int))
+            is_ϕ_applied::Bool = false,
+            j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
+            log2_oversampling::Int = 0, max_log2_stride::Int = spec.nOctaves-1)
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -124,9 +122,8 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
-        γ_range = max(γ_range.start, 0):min(γ_range.stop, length(γs) - 1)
         behavior = Behavior(ϕ, ψs, spec,
-            γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
+            is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
         new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
