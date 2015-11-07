@@ -2,13 +2,15 @@ abstract AbstractFourierFilter{T<:FFTW.fftwNumber,K} <: AbstractFilter{T,K}
 abstract AbstractFourier1DFilter{T<:FFTW.fftwNumber} <:
     AbstractFourierFilter{T,1}
 
-"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
+"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
+ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
 immutable Analytic1DFilter{T} <: AbstractFourier1DFilter{T}
     pos::Vector{T}
     posfirst::Int
 end
 
-"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
+"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain
+support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
 immutable Coanalytic1DFilter{T} <: AbstractFourier1DFilter{T}
     neg::Vector{T}
     neglast::Int
@@ -113,8 +115,8 @@ critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
 critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
 critical_log2_sampling(ψ::Symmetric1DFilter, spec::AbstractSpec) =
     spec.log2_size[1] - nextpow2_exponent(length(ψ.leg))
-critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) =
-    max(critical_log2_sampling(ψ.an), critical_log2_sampling(ψ.coan))
+critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) = max(
+    critical_log2_sampling(ψ.an, spec), critical_log2_sampling(ψ.coan, spec))
 critical_log2_sampling(ψ::VanishingWithMidpoint1DFilter, spec::AbstractSpec) = 0
 
 # indexing between -N/2 and N/2-1
