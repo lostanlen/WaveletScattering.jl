@@ -103,8 +103,9 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
     spec::Abstract1DSpec{T}
     function call{T<:FFTW.fftwNumber}(
             ::Type{FourierOriented1DBank{T}}, spec::Abstract1DSpec ;
-            γ_range = nothing, is_ϕ_applied::Bool = false,
-            log2_oversampling::Int = 0, max_log2_stride::Int = 0)
+            γ_range::UnitRange{Int} = 0:typemax(Int),
+            is_ϕ_applied::Bool = false, log2_oversampling::Int = 0,
+            max_log2_stride::Int = typemax(Int))
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
