@@ -1,6 +1,6 @@
 using Base.Test
 # fourierfilter.jl
-import WaveletScattering: AbstractFourier1DFilter, Analytic1DFilter,
+import WaveletScattering: AbstractFourierFilter, Analytic1DFilter,
     Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter,
     Vanishing1DFilter, VanishingWithMidpoint1DFilter,
     getindex, littlewoodpaleyadd!, renormalize!, scalingfunction,
@@ -11,19 +11,19 @@ import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
 
-# AbstractFourier1DFilter constructor
+# AbstractFourierFilter 1D constructor
 spec = Morlet1DSpec(log2_size = 4)
 N = 16
 y = zeros(Float32, N); y[15] = 1.0
-@test isa(AbstractFourier1DFilter(y, spec), Analytic1DFilter{Float32})
+@test isa(AbstractFourierFilter(y, spec), Analytic1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0
-@test isa(AbstractFourier1DFilter(y, spec), Coanalytic1DFilter{Float32})
+@test isa(AbstractFourierFilter(y, spec), Coanalytic1DFilter{Float32})
 y = ones(Float32, N)
-@test isa(AbstractFourier1DFilter(y, spec), FullResolution1DFilter{Float32})
+@test isa(AbstractFourierFilter(y, spec), FullResolution1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0; y[15] = 1.0
-@test isa(AbstractFourier1DFilter(y, spec), Vanishing1DFilter{Float32})
+@test isa(AbstractFourierFilter(y, spec), Vanishing1DFilter{Float32})
 y = zeros(Float32, N); y[1] = 1.0;
-@test isa(AbstractFourier1DFilter(y, spec),
+@test isa(AbstractFourierFilter(y, spec),
     VanishingWithMidpoint1DFilter{Float32})
 
 # multiplication operator with scalar
@@ -195,7 +195,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
     for i in eachindex(γs) ]
-@inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
+@inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
 lp = renormalize!(ψs, ϕ, metas, spec)
@@ -212,7 +212,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
     for i in eachindex(γs) ]
-@inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
+@inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
 lp = renormalize!(ψs, ϕ, metas, spec)
@@ -229,7 +229,7 @@ scs, bws = scales(spec), bandwidths(spec)
 @inbounds metas = [
     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
     for i in eachindex(γs) ]
-@inbounds ψs = AbstractFourier1DFilter{spec.signaltype}[
+@inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
 lp = renormalize!(ψs, ϕ, metas, spec)

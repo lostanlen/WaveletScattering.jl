@@ -41,8 +41,8 @@ immutable VanishingWithMidpoint1DFilter{T} <: AbstractFourierFilter{T,1}
     midpoint::T
 end
 
-function AbstractFourierFilter{T,1}(y::Vector{T}, spec::Abstract1DSpec)
-    supertype = AbstractFourier1DFilter{eltype(y)}
+function AbstractFourierFilter{T}(y::Vector{T}, spec::Abstract1DSpec)
+    supertype = AbstractFourierFilter{eltype(y),1}
     N = 1 << spec.log2_size[1]
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
@@ -240,7 +240,7 @@ of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
 The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes)."""
-function renormalize!{F<:AbstractFourier1DFilter}(ϕ::Symmetric1DFilter,
+function renormalize!{F<:AbstractFourierFilter}(ϕ::Symmetric1DFilter,
                                                   ψs::VecOrMat{F},
                                                   metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]

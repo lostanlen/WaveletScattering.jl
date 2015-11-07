@@ -3,7 +3,7 @@ using Base.Test
 import WaveletScattering: Behavior, FourierNonOriented1DBank,
     FourierOriented1DBank
 # fourierfilter.jl
-import WaveletScattering: AbstractFourier1DFilter, Symmetric1DFilter
+import WaveletScattering: AbstractFourierFilter, Symmetric1DFilter
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec
 

@@ -77,7 +77,7 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     """3. **Call to Morlet**"""
     y = morlet(center, den, N, nPeriods)
     """4. **Trimming to true support boundaries**"""
-    return AbstractFourier1DFilter(y, spec)
+    return AbstractFourierFilter(y, spec)
 end
 
 function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
