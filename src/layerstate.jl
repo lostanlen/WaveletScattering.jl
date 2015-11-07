@@ -14,7 +14,7 @@ function forward!{IN<:AbstractFourierBlob,OUT<:AbstractFourierBlob}(
         inputs::Vector{IN})
     for idblob in eachindex(inputs)
         fft!(input[idblob])
-        forward!(backend, state.blobs[idblob], state.bank, input[idblob])
+        forward!(backend, state.blobs[idblob], state.bank, inputs[idblob])
         ifft!(state.blobs[idblob])
     end
 end
