@@ -31,7 +31,7 @@ end
 "By default, `Morlet1DSpec operates on single-precision real input (Float32)."
 Morlet1DSpec(T=Float32; args...) = Morlet1DSpec{T}(T; args...)
 
-"""In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`, which
+"""In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`. That
 is more accurate with the Littlewood-Paley energy conservation criterion than
 the generic fallback `ξ=0.4`, which is only valid when the wavelet has a
 symmetric profile in the Fourier domain. This is no longer the case for
