@@ -63,6 +63,10 @@ Base.fft!(node::AbstractFourierNode) =
 Base.ifft!{T<:FFTW.fftwComplex}(node::AbstractFourierNode{T}) =
     A_mul_B!(node.data, node.inverse_plan, node.data)
 
+function pathdepth(node::AbstractFourierNode, refkey::PathKey)
+    mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
+end
+
 function transform!(node_in::AbstractFourierNode, node_out::AbstractFourierNode,
                     ψ::Analytic1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
