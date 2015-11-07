@@ -9,9 +9,15 @@ Literal(sym::Symbol) = Literal(sym, 1)
 
 "A `PathKey` is a double-ended queue (Deque) of `Literal`s"
 type PathKey
-    list::DataStructures.Deque{Literal}
+    deque::DataStructures.Deque{Literal}
     PathKey() = new(DataStructures.Deque{Literal}())
-    PathKey(x, args...) = DataStructures.unshift!(PathKey(args...), Literal(x))
+    function PathKey(args...)
+        deque = DataStructures.Deque{Literal}()
+        for arg in args
+            DataStructures.unshift!(deque, Literal(arg))
+        end
+        new(deque)
+    end
 end
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
