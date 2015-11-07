@@ -18,7 +18,8 @@ Base.fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
 Base.ifft!(blob::AbstractFourierBlob) = pmap(ifft!, values(blob.nodes))
 
 pathdepth(path::Path, refkey::PathKey) =
-    mapreduce(key -> pathdepth(path, refkey), max, 0, keys(path))
+    mapreduce(key -> pathdepth(path, refkey), max, 1, keys(path))
+
 function pathdepth(key::PathKey, refkey::PathKey)
     while ~isempty(key) && ~isempty(refkey) && (back(key) == back(refkey))
         pop!(key)
@@ -26,11 +27,9 @@ function pathdepth(key::PathKey, refkey::PathKey)
     end
     if isempty(refkey) && ~isempty(key)
         keyback = pop!(key)
-        if isempty(key) && (keyback.symbol == :γ)
-            return keyback.level
-        end
+        isempty(key) && (keyback.symbol == :γ) && return (1 + keyback.level)
     end
-    return 0
+    return 1
 end
 function forward!(backend::Mocha.CPUBackend, blob_out::AbstractScatteredBlob,
                   bank::AbstractNonOrientedBank, blob_in::AbstractScatteredBlob)
