@@ -30,4 +30,4 @@ pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
 integer indices"""
 typealias Path Dict{PathKey, Int}
 
-typealias PathRange Dict{PathKey, StepRange{Int, Int}}
+typealias PathRange Pair{PathKey, StepRange{Int, Int}}
