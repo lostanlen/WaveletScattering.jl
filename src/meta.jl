@@ -56,7 +56,7 @@ centerfrequencies(spec::AbstractSpec) =
 """Returns the chroma indices `χs`, i.e. locations within the octave, of a
 wavelet spec. Chroma indices range from `0` to `nFilters_per_octave-1`. The
 convention is that higher chroma indices `χs` mean *lower* center frequencies.
-Log-periods `γs`, chromas ``χs`, and octaves `js` are linked by
+Log-periods `γs`, chromas `χs`, and octaves `js` are linked by
     γ = j + nFilters_per_octave * χ"""
 function chromas(spec::AbstractSpec)
     repmat(collect(0:(spec.nFilters_per_octave-1)), spec.nOctaves)
@@ -65,7 +65,7 @@ end
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
 proportional to 2^(-γ). γ ranges from 0 to `nFilters_per_octave*nOctaves`, where
 γ=0 corresponds to the mother frequency. The convention is that higher indices
-`γs` mean *lower* center frequencies. Log-periods γs`, chromas ``χs`, and
+`γs` mean *lower* center frequencies. Log-periods γs`, chromas `χs`, and
 octaves `js` are linked by
     γ = j + nFilters_per_octave * χ"""
 gammas(spec::AbstractSpec) =
