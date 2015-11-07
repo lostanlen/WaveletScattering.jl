@@ -26,7 +26,7 @@ type Behavior
 end
 
 function Behavior{T}(ϕ::Symmetric1DFilter{T},
-        ψs::AbstractArray{AbstractFourier1DFilter{T}},
+        ψs::AbstractArray{AbstractFourierFilter{T}},
         spec::AbstractSpec, is_ϕ_applied::Bool, j_range::UnitRange{Int},
         log2_oversampling::Int, max_log2_stride::Int)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
@@ -34,7 +34,7 @@ function Behavior{T}(ϕ::Symmetric1DFilter{T},
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
     edge_ids = (j_range+1) * spec.nFilters_per_octave - 1
     ψ_critical_log2_samplings =
-        Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[edge_ids,1] ]
+        Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[edge_ids, 1] ]
     ψ_log2_samplings = clamp(ψ_critical_log2_samplings + log2_oversampling,
         -max_log2_stride, 0)
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
@@ -64,7 +64,7 @@ moderate to large length."""
 immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         AbstractNonOrientedBank{T}
     ϕ::Symmetric1DFilter{T}
-    ψs::Vector{AbstractFourier1DFilter{T}}
+    ψs::Vector{AbstractFourierFilter{T,1}}
     behavior::Behavior
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
@@ -82,7 +82,7 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
             γs[1+γ], χs[1+γ], bws[1+γ], ξs[1+γ], js[1+γ], qs[1+γ], scs[1+γ])
             for γ in γs ]
         ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
-        ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
+        ψs = convert(Array{AbstractFourierFilter{T,1}}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
         behavior = Behavior(ϕ, ψs, spec,
@@ -100,7 +100,7 @@ the orientation parameter `θ`. It is advisable to use this type of filter bank
 when handling complex 1d data of moderate to large length."""
 immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
     ϕ::Symmetric1DFilter{T}
-    ψs::Matrix{AbstractFourier1DFilter{T}}
+    ψs::Matrix{AbstractFourierFilter{T,1}}
     behavior::Behavior
     metas::Matrix{OrientedMeta}
     spec::Abstract1DSpec{T}
@@ -119,7 +119,7 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
             γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
             for γ in eachindex(γs), θ in eachindex(θs) ]
         ψs = pmap(fourierwavelet, metas[:, 1], fill(spec, length(metas)))
-        ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
+        ψs = convert(Array{AbstractFourierFilter{T,1}}, ψs)
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
