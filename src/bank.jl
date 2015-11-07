@@ -43,8 +43,8 @@ advisable to use this type of filter bank when handling real 1d data of
 moderate to large length."""
 immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         AbstractNonOrientedBank{T}
-    ψs::Vector{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
+    ψs::Vector{AbstractFourier1DFilter{T}}
     behavior::Behavior
     metas::Vector{NonOrientedMeta}
     spec::Abstract1DSpec{T}
@@ -67,7 +67,7 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         (γ_range == nothing) && (γ_range = 0:(length(γs)-1))
         behavior =
             Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
-        new{T}(ψs, ϕ, behavior, metas, spec)
+        new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
 FourierNonOriented1DBank(spec::Abstract1DSpec ; args...) =
@@ -79,8 +79,8 @@ center frequencies as well as positive center frequencies, as represented by
 the orientation parameter `θ`. It is advisable to use this type of filter bank
 when handling complex 1d data of moderate to large length."""
 immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
-    ψs::Matrix{AbstractFourier1DFilter{T}}
     ϕ::Symmetric1DFilter{T}
+    ψs::Matrix{AbstractFourier1DFilter{T}}
     behavior::Behavior
     metas::Matrix{OrientedMeta}
     spec::Abstract1DSpec{T}
@@ -101,11 +101,11 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
-        renormalize!(ψs, ϕ, metas, spec)
+        renormalize!(ϕ, ψs, metas, spec)
         (γ_range == nothing) && (γ_range = 0:(length(γs)-1))
         behavior =
             Behavior(γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
-        new{T}(ψs, ϕ, behavior, metas, spec)
+        new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
 FourierOriented1DBank(spec::Abstract1DSpec ; args...) =

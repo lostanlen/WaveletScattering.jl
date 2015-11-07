@@ -226,8 +226,8 @@ of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
 The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes)."""
-function renormalize!{F<:AbstractFourier1DFilter}(ψs::VecOrMat{F},
-                                                  ϕ::Symmetric1DFilter,
+function renormalize!{F<:AbstractFourier1DFilter}(ϕ::Symmetric1DFilter,
+                                                  ψs::VecOrMat{F},
                                                   metas, spec::Abstract1DSpec)
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
