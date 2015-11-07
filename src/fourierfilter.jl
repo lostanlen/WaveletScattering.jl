@@ -35,8 +35,7 @@ spanning both in positive and negative frequencies. It is null for ω=0 but
 nonzero at the midpoint ω=N/2. Thus, it is defined as the combination of
 an Analytic1DFilter (positive frequencies), a Coanalytic1DFilter (negative
 frequencies), and a midpoint (frequency ω=N/2)."""
-immutable VanishingWithMidpoint1DFilter{T} <:
-        AbstractFourier1DFilter{T}
+immutable VanishingWithMidpoint1DFilter{T} <: AbstractFourier1DFilter{T}
     an::Analytic1DFilter{T}
     coan::Coanalytic1DFilter{T}
     midpoint::T
