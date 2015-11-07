@@ -24,6 +24,21 @@ type Behavior
     max_log2_stride::Int
 end
 
+function Behavior(ϕ::Symmetric1DFilter, ψs::Array{AbstractFourier1DFilter},
+        γ_range::UnitRange, is_ϕ_applied::Bool, log2_oversampling::Int,
+        max_log2_stride::Int)
+    ϕ_critical_log2_sampling = critical_log2_sampling(ϕ)
+    ϕ_log2_sampling =
+        max(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride)
+    ψ_critical_log2_samplings = map(critical_log2_samplings, ψs[:, 1])
+    ψ_log2_samplings =
+        max(ψ_critical_log2_samplings + log2_oversampling, -max_log2_stride)
+    min_log2_sampling = min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
+    max_log2_stride = min(max_log2_stride, -min_log2_sampling)
+    Behavior(γ_range, ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied,
+        log2_oversampling, max_log2_stride)
+end
+
 """An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
 * `AbstractNonOrientedBank`: no orientation variable `θ`, only a scale
 variable `γ`. One-dimensional filter banks with real inputs are non-oriented.
