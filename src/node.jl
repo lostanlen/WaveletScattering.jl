@@ -83,8 +83,8 @@ function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
-    # Positive frequencies, including zero and midpoint
-    @inbounds for ω in 0:(N>>1)
+    # Positive frequencies, including midpoint
+    @inbounds for ω in 1:(N>>1)
         inds[node_in.forward_plan.region[1]] = 1 + ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
         view_out = ArrayViews.view(node_out.data, inds...)
@@ -108,8 +108,8 @@ function transform!(node_in::ComplexFourierNode, node_out::AbstractFourierNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
-    # All frequencies at once
-    @inbounds for ω in 0:(N-1)
+    # All nonzero frequencies in a single loop
+    @inbounds for ω in 1:(N-1)
         inds[node_in.forward_plan.region[1]] = 1 + ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
         view_out = ArrayViews.view(node_out.data, inds...)
@@ -123,7 +123,7 @@ function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
                     ψ::Vanishing1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
-    # Positive frequencies, excluding midpoint
+    # Positive frequencies, excluding zero midpoint
     @inbounds for ω in 0:(N>>1)
         inds[node_in.forward_plan.region[1]] = 1 + ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
