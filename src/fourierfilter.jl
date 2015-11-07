@@ -109,12 +109,12 @@ nextpow2_exponent(n::Integer) = oftype(n,
     n < 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
 
 critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
-    spec.log2_size[1] - nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1)
+    1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size[1]
 critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
-    spec.log2_size[1] - nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1)
+    1 + nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1) - spec.log2_size[1]
 critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
 critical_log2_sampling(ψ::Symmetric1DFilter, spec::AbstractSpec) =
-    spec.log2_size[1] - nextpow2_exponent(length(ψ.leg))
+    1 + nextpow2_exponent(length(ψ.leg)) - spec.log2_size[1]
 critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) = max(
     critical_log2_sampling(ψ.an, spec), critical_log2_sampling(ψ.coan, spec))
 critical_log2_sampling(ψ::VanishingWithMidpoint1DFilter, spec::AbstractSpec) = 0
