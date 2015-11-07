@@ -83,10 +83,10 @@ end
 """Returns the quality factors (ratios of center frequencies over bandwidths).
 
 There is a classical tradeoff between spatial and frequential localizations
-in a filter bank. We address it by supporting two user specifications
+in a filter bank. We address it by supporting two user specifications:
 * spatial localization: `max_scale` sets the maximal wavelet scale, in the sense
   of squared-magnitude full width at tenth maximum (FWTM).
-* frequential localization: `max_qualityfactor` set the quality factor (ratio
+* frequential localization: `max_qualityfactor` sets the quality factor (ratio
   between center frequency and 3dB bandwidth) in absence of spatial localization
   constraints.
 
