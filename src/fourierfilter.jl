@@ -55,13 +55,13 @@ function AbstractFourier1DFilter{T}(y::Vector{T}, spec::Abstract1DSpec)
     if hasmidpoint
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
-            return FullResolution1DFilter(fftshift(y))
+            return FullResolution1DFilter(fftshift(y))::supertype
         midpoint = y[1]
         if (neglast == 0)
             coan = Coanalytic1DFilter(zeros(T, 1), -halfN + 1)
         else
-            coan =
-                Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
+            coan = Coanalytic1DFilter(y[(1+negfirst):(1+neglast)],
+                neglast - halfN)
         end
         if (poslast == 0)
             an = Analytic1DFilter(zeros(T, 1), halfN - 1)
