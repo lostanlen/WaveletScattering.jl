@@ -24,7 +24,8 @@ type Behavior
     max_log2_stride::Int
 end
 
-function Behavior(ϕ::Symmetric1DFilter, ψs::Array{AbstractFourier1DFilter},
+function Behavior{T}(ϕ::Symmetric1DFilter{T},
+        ψs::AbstractArray{AbstractFourier1DFilter{T}},
         spec::AbstractSpec, γ_range::UnitRange, is_ϕ_applied::Bool,
         log2_oversampling::Int, max_log2_stride::Int)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
@@ -69,7 +70,8 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
     function call{T<:FFTW.fftwNumber}(
             ::Type{FourierNonOriented1DBank{T}}, spec::Abstract1DSpec ;
             γ_range::UnitRange{Int} = 0:typemax(Int),
-            is_ϕ_applied::Bool = false, log2_oversampling::Int = 0, max_log2_stride::Int = typemax(Int))
+            is_ϕ_applied::Bool = false, log2_oversampling::Int = 0,
+            max_log2_stride::Int = typemax(Int))
         T == spec.signaltype || error("""Type parameter of
         FourierNonOriented1DBankmust must be equal to spec.signaltype""")
         γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
@@ -81,7 +83,7 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         ψs = pmap(fourierwavelet, metas, fill(spec, length(metas)))
         ψs = convert(Array{AbstractFourier1DFilter{T}}, ψs)
         ϕ = scalingfunction(spec)
-        renormalize!(ψs, ϕ, metas, spec)
+        renormalize!(ϕ, ψs, metas, spec)
         γ_range = max(γ_range.start, 0):min(γ_range.stop, length(γs) - 1)
         behavior = Behavior(ϕ, ψs, spec,
             γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
