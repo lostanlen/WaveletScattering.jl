@@ -49,7 +49,7 @@ bandwidths(spec::AbstractSpec) = centerfrequencies(spec) ./ qualityfactors(spec)
 
 """Returns the center frequencies of a given spec. They are exponentially
 decreasing because they are indexed by `γ`. The first coefficient corresponds
-to the so-called ""mother"" frequency, i.e. γ=0."""
+to the so-called ""mother"" frequency, i.e. `γ=0`."""
 centerfrequencies(spec::AbstractSpec) =
     spec.motherfrequency * exp2(-gammas(spec)/spec.nFilters_per_octave)
 
@@ -74,7 +74,7 @@ gammas(spec::AbstractSpec) =
 """Returns the octave indices js of a wavelet spec.
 Octave indices range from `0` to `nOctaves-1`. The convention is that
 higher octave indices `js` mean *lower* center frequencies. Log-periods
-``γs`, chromas ``χs`, and octaves `js` are linked by
+`γs`, chromas `χs`, and octaves `js` are linked by
     γ = j + nFilters_per_octave * χ"""
 function octaves(spec::AbstractSpec)
     vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
@@ -101,7 +101,7 @@ max_scale, we proceed with the following steps:
 1. compute center frequencies `ξs` and uncertainty `h`,
 2. compute unbounded scales `max_qualityfactor/(h*ξs)`,
 3. bound scales from above by `max_scale`,
-4. compute unbounded quality factors `scales.*ξs/h``, and
+4. compute unbounded quality factors `scales.*ξs/h`, and
 5. bound quality factors from below by `1.0`.
 """
 function qualityfactors(spec::AbstractSpec)
