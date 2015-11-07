@@ -17,6 +17,19 @@ end
 Base.fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
 Base.ifft!(blob::AbstractFourierBlob) = pmap(ifft!, values(blob.nodes))
 
+function pathdepth(key::PathKey, refkey::PathKey)
+    while ~isempty(key) && ~isempty(refkey) && (back(key) == back(refkey))
+        pop!(key)
+        pop!(refkey)
+    end
+    if isempty(refkey) && ~isempty(key)
+        keyback = pop!(key)
+        if isempty(key) && (keyback.symbol == :γ)
+            return keyback.level
+        end
+    end
+    return 0
+end
 function forward!(backend::Mocha.CPUBackend, blob_out::AbstractScatteredBlob,
                   bank::AbstractNonOrientedBank, blob_in::AbstractScatteredBlob)
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
