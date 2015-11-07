@@ -77,7 +77,7 @@ function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
         end
     end
     # Negative frequencies
-    @inbounds for ω in (N>>1+1):N
+    @inbounds for ω in (N>>1+1):(N-1)
         inds[node_in.forward_plan.region[1]] = 1 + N - ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
         inds[node_in.forward_plan.region[1]] = 1 + ω
