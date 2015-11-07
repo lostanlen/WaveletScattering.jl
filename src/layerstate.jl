@@ -35,9 +35,9 @@ function setup{T<:FFTW.fftwReal,N}(
         symbols = (:time,))
     nBlobs = length(inputs)
     blobs = Array(RealFourierBlob{T,N}, nBlobs)
-    symbols = setup_subscripts(symbols, N)
     subscripts = map(WaveletScattering.PathKey, symbols)
     fourierdims = 
+    symbols = appendsymbols(symbols, N)
     for idblob in eachindex(inputs)
         node = WaveletScattering.AbstractFourierNode(
             inputs[idblob].data, fourierdims, subscripts)
@@ -47,7 +47,7 @@ function setup{T<:FFTW.fftwReal,N}(
     WaveletLayerState(bank, blobs, blobs_diff, layer)
 end
 
-function setup_symbols{NS}(symbols::NTuple{NS,Symbol}, ND::Int)
+function appendsymbols{NS}(symbols::NTuple{NS,Symbol}, ND::Int)
     suffixes = ntuple(n -> symbol(:var, n), ND-NS)
     return (symbols..., suffixes...)
 end
