@@ -1,7 +1,7 @@
-"A `Literal` is given by a symbol and a level > 0, defaulting to 1."
+"A `Literal` is given by a symbol and a depth > 0, defaulting to 1."
 immutable Literal
     symbol::Symbol
-    level::Int
+    depth::Int
 end
 typealias SymbolInt Tuple{Symbol,Int}
 Literal(tup::SymbolInt) = Literal(tup[1], tup[2])
