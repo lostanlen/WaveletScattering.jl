@@ -17,6 +17,8 @@ neighboring coefficients after subsampling (also known as *hop size* or
 *stride*)"""
 type Behavior
     γ_range::UnitRange
+    ϕ_log2_sampling::Int
+    ψ_log2_samplings::Vector{Int}
     is_ϕ_applied::Bool
     log2_oversampling::Int
     max_log2_stride::Int
