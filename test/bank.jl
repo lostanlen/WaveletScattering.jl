@@ -26,7 +26,7 @@ spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
 bank = FourierNonOriented1DBank(spec)
 @test length(bank.metas) == length(bank.ψs)
 @test typeof(bank.ψs) ==
-    Array{AbstractFourier1DFilter{Float32},1}
+    Array{AbstractFourierFilter{Float32,1},1}
 @test typeof(bank.ϕ) == Symmetric1DFilter{Float32}
 # FourierOriented1DBank
 spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
@@ -34,5 +34,5 @@ spec = Morlet1DSpec(nFilters_per_octave = 24, max_scale = 4410,
 bank = FourierOriented1DBank(spec)
 @test size(bank.metas) == size(bank.ψs)
 @test typeof(bank.ψs) ==
-    Array{AbstractFourier1DFilter{Float32},2}
+    Array{AbstractFourierFilter{Float32,1},2}
 @test typeof(bank.ϕ) == Symmetric1DFilter{Float32}
