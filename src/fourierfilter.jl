@@ -102,6 +102,10 @@ Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
 # element-wise multiplication operator ".*" with scalar falls back to "*"
 Base.(:.*)(ψ::AbstractFourierFilter, b::Number) = ψ * b
 
+nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
+nextpow2_exponent(n::Integer) = oftype(n,
+    n < 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
+
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i < ψ.posfirst && return zero(T)
