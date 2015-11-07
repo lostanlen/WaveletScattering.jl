@@ -21,6 +21,11 @@ type PathKey
 end
 
 back(pathkey::PathKey) = DataStructures.back(pathkey.deque)
+
+isempty(pathkey::PathKey) = DataStructures.isempty(pathkey.deque)
+
+pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
+
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices"""
 typealias Path Dict{PathKey, Int}
