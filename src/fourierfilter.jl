@@ -106,6 +106,17 @@ nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
 nextpow2_exponent(n::Integer) = oftype(n,
     n < 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
 
+critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
+    spec.log2_size - nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1)
+critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
+    spec.log2_size - nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1)
+critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
+critical_log2_sampling(ψ::Symmetric1DFilter, spec::AbstractSpec) =
+    spec.log2_size - nextpow2_exponent(length(ψ.leg))
+critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) =
+    max(critical_log2_sampling(ψ.an), critical_log2_sampling(ψ.coan))
+critical_log2_sampling(ψ::VanishingWithMidpoint1DFilter, spec::AbstractSpec) = 0
+
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
     i < ψ.posfirst && return zero(T)
