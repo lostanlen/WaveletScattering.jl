@@ -32,7 +32,7 @@ function Behavior{T}(ϕ::Symmetric1DFilter{T},
     ϕ_log2_sampling =
         max(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride)
     ψ_critical_log2_samplings =
-        [ critical_log2_sampling(ψ, spec) for ψ in ψs[:,1] ]
+        Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[:,1] ]
     ψ_log2_samplings =
         max(ψ_critical_log2_samplings + log2_oversampling, -max_log2_stride)
     min_log2_sampling = min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
