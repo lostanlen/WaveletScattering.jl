@@ -30,13 +30,14 @@ function Behavior{T}(ϕ::Symmetric1DFilter{T},
         log2_oversampling::Int, max_log2_stride::Int)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
-        max(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride)
+        clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
+    nGammas = spec.nFilters_per_octave * spec.nOctaves
+    edge_ids = spec.nFilters_per_octave : spec.nFilters_per_octave : nGammas
     ψ_critical_log2_samplings =
-        Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[:,1] ]
-    ψ_log2_samplings =
-        max(ψ_critical_log2_samplings + log2_oversampling, -max_log2_stride)
-    min_log2_sampling = min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
-    max_log2_stride = min(max_log2_stride, -min_log2_sampling)
+        Int[ critical_log2_sampling(ψ, spec) for ψ in ψs[edge_ids,1] ]
+    ψ_log2_samplings = clamp(ψ_critical_log2_samplings + log2_oversampling,
+        -max_log2_stride, 0)
+    max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
     Behavior(γ_range, ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied,
         log2_oversampling, max_log2_stride)
 end
