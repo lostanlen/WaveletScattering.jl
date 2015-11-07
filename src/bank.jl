@@ -82,7 +82,7 @@ immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
         ϕ = scalingfunction(spec)
         renormalize!(ψs, ϕ, metas, spec)
         γ_range = max(γ_range.start, 0):min(γ_range.stop, length(γs) - 1)
-        behavior = Behavior(ϕ, ψs,
+        behavior = Behavior(ϕ, ψs, spec,
             γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
         new{T}(ϕ, ψs, behavior, metas, spec)
     end
@@ -121,7 +121,7 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
         γ_range = max(γ_range.start, 0):min(γ_range.stop, length(γs) - 1)
-        behavior = Behavior(ϕ, ψs,
+        behavior = Behavior(ϕ, ψs, spec,
             γ_range, is_ϕ_applied, log2_oversampling, max_log2_stride)
         new{T}(ϕ, ψs, behavior, metas, spec)
     end
