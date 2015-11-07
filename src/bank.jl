@@ -2,11 +2,11 @@
 values of these fields may be changed *after* the construction of the filter
 bank, without having to recompute the underlying architecture. Fields:
 
-* `γ_range`: range of wavelet indices that are actually used in the
-convolutions. Default is all of them (see outer constructor).
-
 * `is_ϕ_applied`: true if and only if the lowpass filter `ϕ` (also known as
 scaling function) in addition to the bandpass filters `ψ`'s.
+
+* `j_range`: range of wavelet octaves that are actually used in the
+convolutions. Default is all of them.
 
 * `log2_oversampling`: base-2 logarithm of the oversampling factor with respect
 to the critical sampling rate. Must be positive. Default is 0, i.e. no
@@ -14,7 +14,8 @@ oversampling.
 
 * `max_log2_stride`: base-2 logarithm of the maximum distance between
 neighboring coefficients after subsampling (also known as *hop size* or
-*stride*)"""
+*stride*). Must be positive. Default is the number of octaves minus one, which
+imposes no oversampling per se."""
 type Behavior
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
@@ -54,10 +55,10 @@ abstract AbstractNonOrientedBank{T<:Number} <: AbstractBank{T}
 abstract AbstractOrientedBank{T<:Number} <: AbstractBank{T}
 
 """A `FourierNonOriented1DBank` is a one-dimensional, non-oriented filter bank
-defined in the Fourier domain. It is not oriented in the sense that only the
+defined in the Fourier domain. It is ""non-oriented"" in the sense that only the
 positive frequencies are guaranteed to be covered. Indeed, assuming that the
 input signal will be real — i.e. its Fourier will be symmetric — it can be
-recovered from the ""positive half"" of its Fourier spectrum. In summary, it is
+recovered from the ""positive half"" of its Fourier spectrum. It is
 advisable to use this type of filter bank when handling real 1d data of
 moderate to large length."""
 immutable FourierNonOriented1DBank{T<:FFTW.fftwNumber} <:
@@ -93,7 +94,7 @@ FourierNonOriented1DBank(spec::Abstract1DSpec ; args...) =
     FourierNonOriented1DBank{spec.signaltype}(spec ; args)
 
 """A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
-in the Fourier domain. It is "oriented" insofar as its filters have negative
+in the Fourier domain. It is ""oriented"" insofar as its filters have negative
 center frequencies as well as positive center frequencies, as represented by
 the orientation parameter `θ`. It is advisable to use this type of filter bank
 when handling complex 1d data of moderate to large length."""
