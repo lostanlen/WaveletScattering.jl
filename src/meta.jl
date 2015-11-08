@@ -112,7 +112,7 @@ function qualityfactors(spec::AbstractSpec)
     unbounded_scales = h * spec.max_qualityfactor ./ ξs
     scales = min(unbounded_scales, spec.max_scale)
     unbounded_qualityfactors = scales .* ξs / h
-    # we also bound qualityfactors from above for better numerical accuracy
+    # we also clamp qualityfactors from above for better numerical accuracy
     return clamp(unbounded_qualityfactors, 1.0, spec.max_qualityfactor)
 end
 
