@@ -1,8 +1,6 @@
 """An `AbstractSpec` object contains all the immutable specifications in a
 wavelet filter bank"""
-abstract AbstractSpec
-abstract Abstract1DSpec{T<:Number} <: AbstractSpec
-abstract Abstract2DSpec{T<:Number} <: AbstractSpec
+abstract AbstractSpec{T<:Number,D<:AbstractDomain,G<:AbstractPointGroup}
 
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
@@ -99,7 +97,7 @@ function checkspec(spec::AbstractSpec)
         "motherfrequency*2^(-nOctaves)/qualityfactor = ``", max_bandwidth,
         "and a scale `< 2^(log2_size) = `", size, ".\n",
         """Either increase log2_size, decrease max_qualityfactor,
-        set `max_scale<=log2_size`, or decrease `nOctaves`.""")
+        set `max_scale <= log2_size`, or decrease `nOctaves`.""")
     end
     return true
 end
