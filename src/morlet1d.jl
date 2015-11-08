@@ -1,17 +1,21 @@
-immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
+immutable Morlet1DSpec{T<:FFTW.fftwReal,D<:LineDomains,G<:LineGroups} <:
+        AbstractSpec{T,D,G}
     ɛ::Float64
+    domain::D
     log2_size::Tuple{Int}
     max_qualityfactor::Float64
     max_scale::Float64
     motherfrequency::Float64
     nFilters_per_octave::Int
     nOctaves::Int
+    pointgroup::G
     signaltype::Type{T}
-    function call{T<:Number}(::Type{Morlet1DSpec{T}}, ::Type{T};
-                             ɛ = default_ɛ(T), log2_size = 15,
-                             max_qualityfactor = nothing, max_scale = Inf,
-                             nFilters_per_octave = nothing, nOctaves = nothing,
-                             tuningfrequency = nothing)
+    function call{T<:FFTW.fftwReal,D<:LineDomains,G<:LineGroups}(
+            ::Type{Morlet1DSpec}, ::Type{T} = Float32,
+            ::Type{D} = FourierDomain{1}, ::Type{G} = TrivialGroup;
+            ɛ = default_ɛ(T), log2_size = 15, max_qualityfactor = nothing,
+            max_scale = Inf, nFilters_per_octave = nothing, nOctaves = nothing,
+            tuningfrequency = nothing)
         "Integer log2_size is automatically converted to one-element tuple"
         isa(log2_size, Int) && (log2_size = tuple(log2_size))
         max_qualityfactor, nFilters_per_octave =
@@ -27,9 +31,6 @@ immutable Morlet1DSpec{T<:Number} <: Abstract1DSpec{T}
         checkspec(spec) && return spec
     end
 end
-
-"By default, `Morlet1DSpec operates on single-precision real input (Float32)."
-Morlet1DSpec(T=Float32; args...) = Morlet1DSpec{T}(T; args...)
 
 """In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`. That
 is more accurate with the Littlewood-Paley energy conservation criterion than
@@ -54,7 +55,8 @@ a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
 frequencies -N, +N, and +2N."""
-function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
+function AbstractFilter{T<:FFTW.fftwReal}(meta::AbstractMeta,
+        spec::Morlet1DSpec{T,FourierDomain{1}})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of
     variance `σ` is defined by the equation
@@ -74,13 +76,14 @@ function fourierwavelet{T<:Real}(meta::AbstractMeta, spec::Morlet1DSpec{T})
     firstω = max(center - halfsupport, -5N/2)
     lastω = min(center + halfsupport, 5N/2 - 1)
     nPeriods = 1 + ceil(Int, (lastω-halfN) / N)
-    """3. **Call to Morlet**"""
-    y = morlet(center, den, N, nPeriods)
+    """3. **Call to morlet**"""
+    y = morlet(FourierDomain{1}, center, den, N, nPeriods)
     """4. **Trimming to true support boundaries**"""
-    return AbstractFourierFilter(y, spec)
+    return AbstractFilter(y, spec)
 end
 
-function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
+function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
+        center::T, den::T, N::Int, nPeriods::Int)
     halfN = N >> 1
     pstart = - ((nPeriods-1)>>1)
     pstop = (nPeriods-1)>>1 + iseven(nPeriods)
@@ -102,7 +105,7 @@ function morlet{T<:Number}(center::T, den::T, N::Int, nPeriods::Int)
     y = squeeze(sum(y, 2), 2)
 end
 
-function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
+function scalingfunction{T<:Number}(spec::Morlet1DSpec{T,FourierDomain{1}})
     halfN = 1 << (spec.log2_size[1] - 1)
     bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
          uncertainty(spec) * spec.motherfrequency )
@@ -110,7 +113,7 @@ function scalingfunction{T<:Number}(spec::Morlet1DSpec{T})
     lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
     leg = leg[1:findlast(leg .> spec.ɛ)]
-    return Symmetric1DFilter(leg, one(T))
+    return FourierSymmetric1DFilter(leg, one(T))
 end
 
 """
