@@ -1,22 +1,25 @@
-abstract AbstractFourierFilter{T<:FFTW.fftwNumber,K} <: AbstractFilter{T,K}
-
 """An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
 ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
-immutable Analytic1DFilter{T} <: AbstractFourierFilter{T,1}
+immutable Analytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     pos::Vector{T}
     posfirst::Int
 end
 
 """A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain
 support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
-immutable Coanalytic1DFilter{T} <: AbstractFourierFilter{T,1}
+immutable Coanalytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     neg::Vector{T}
     neglast::Int
 end
 
+immutable FourierSymmetric1DFilter{T} <: AbstractFilter{T,SpatialDomain{1}}
+    leg::Vector{T}
+    zero::T
+end
+
 """A FullResolution1DFilter spans the entire spectrum. Its is defined in the
 Fourier domain as a vector of size N."""
-immutable FullResolution1DFilter{T} <: AbstractFourierFilter{T,1}
+immutable FullResolution1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     coeff::Vector{T}
 end
 
@@ -25,7 +28,7 @@ in positive and negative frequencies. Moreover, it is null for ω=0 and
 at the midpoint ω=N/2. Thus, it is defined as the combination of an
 Analytic1DFilter (positive frequencies) and a Coanalytic1DFilter (negative
 frequencies)."""
-immutable Vanishing1DFilter{T} <: AbstractFourierFilter{T,1}
+immutable Vanishing1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     an::Analytic1DFilter
     coan::Coanalytic1DFilter{T}
 end
@@ -35,14 +38,14 @@ spanning both in positive and negative frequencies. It is null for ω=0 but
 nonzero at the midpoint ω=N/2. Thus, it is defined as the combination of
 an Analytic1DFilter (positive frequencies), a Coanalytic1DFilter (negative
 frequencies), and a midpoint (frequency ω=N/2)."""
-immutable VanishingWithMidpoint1DFilter{T} <: AbstractFourierFilter{T,1}
+immutable VanishingWithMidpoint1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     an::Analytic1DFilter{T}
     coan::Coanalytic1DFilter{T}
     midpoint::T
 end
 
-function AbstractFourierFilter{T}(y::Vector{T}, spec::Abstract1DSpec)
-    supertype = AbstractFourierFilter{eltype(y),1}
+function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
+    supertype = AbstractFilter{T,FourierDomain{1}}
     N = 1 << spec.log2_size[1]
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
@@ -97,10 +100,6 @@ Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter{T}(b * ψ.an, b * ψ.coan)
 Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
-Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
-
-# element-wise multiplication operator ".*" with scalar falls back to "*"
-Base.(:.*)(ψ::AbstractFourierFilter, b::Number) = ψ * b
 
 nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
 nextpow2_exponent(n::Integer) = oftype(n,
