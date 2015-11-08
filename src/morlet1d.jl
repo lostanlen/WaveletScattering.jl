@@ -132,4 +132,4 @@ is equal to
     h = b*s = sqrt(log(10)/log(2)) = 1.8226...
 """
 uncertainty(::Type{Morlet1DSpec}) = sqrt(log(10.0) / log(2.0))
-uncertainty{T<:Number}(::Type{Morlet1DSpec{T}}) = uncertainty(Morlet1DSpec)
+uncertainty{T,D,G}(::Type{Morlet1DSpec{T,D,G}}) = uncertainty(Morlet1DSpec)
