@@ -1,6 +1,6 @@
 """A `Meta` object contains all the meta-information to identify a wavelet
 within a filter bank."""
-abstract AbstractMeta
+abstract AbstractMeta{G<:AbstractPointGroup}
 
 """A `NonOrientedMeta` object contains all the meta-information to identify a
 non-oriented wavelet within a filter bank. Fields:
@@ -11,7 +11,7 @@ non-oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] is expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable NonOrientedMeta <: AbstractMeta
+immutable NonOrientedMeta <: AbstractMeta{TrivialGroup}
     γ::Int16
     χ::Int8
     bandwidth::Float64
@@ -31,13 +31,15 @@ an oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable OrientedMeta <: AbstractMeta
+immutable OrientedMeta{G<:Union{ReflectionGroup,RotationGroup}} <:
+        AbstractMeta{G}
     γ::Int16
     θ::Int8
     χ::Int8
     bandwidth::Float64
     centerfrequency::Float64
     j::Int8
+    pointgroup::G
     qualityfactor::Float64
     scale::Float64
 end
