@@ -94,8 +94,8 @@ Base.(:*){T}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b * ψ.neg, ψ.neglast)
 Base.(:*){T}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b * ψ.coeff)
-Base.(:*){T}(ψ::Symmetric1DFilter{T}, b::Number) =
-    Symmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
+Base.(:*){T}(ψ::FourierSymmetric1DFilter{T}, b::Number) =
+    FourierSymmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
 Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter{T}(b * ψ.an, b * ψ.coan)
 Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
@@ -110,7 +110,7 @@ critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
 critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
     1 + nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1) - spec.log2_size[1]
 critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
-critical_log2_sampling(ψ::Symmetric1DFilter, spec::AbstractSpec) =
+critical_log2_sampling(ψ::FourierSymmetric1DFilter, spec::AbstractSpec) =
     1 + nextpow2_exponent(length(ψ.leg)) - spec.log2_size[1]
 critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) = max(
     critical_log2_sampling(ψ.an, spec), critical_log2_sampling(ψ.coan, spec))
@@ -207,7 +207,7 @@ function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
         @fastmath lp[ω] += abs2(ψ.coeff[ω])
     end
 end
-function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
+function littlewoodpaleyadd!(lp::Vector, ψ::FourierSymmetric1DFilter)
     @inbounds for ω in eachindex(ψ.leg)
         @fastmath lp[1 + ω] += abs2(ψ.leg[ω])
         @fastmath lp[length(lp) + 1 - ω] += abs2(ψ.leg[ω])
@@ -228,7 +228,7 @@ end
 Base.maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2(ψ.pos)))
 Base.maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2(ψ.neg)))
 Base.maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2(ψ.coeff)))
-Base.maximum(ψ::Symmetric1DFilter) =
+Base.maximum(ψ::FourierSymmetric1DFilter) =
     sqrt(max(maximum(abs2(ψ.leg)), abs2(ψ.zero)))
 Base.maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
 Base.maximum(ψ::VanishingWithMidpoint1DFilter) =
