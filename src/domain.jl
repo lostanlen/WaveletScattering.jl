@@ -1,11 +1,11 @@
 abstract AbstractDomain
-immutable FourierDomain{N} <: AbstractDomain
-    dim::Val{N}
+immutable FourierDomain{K} <: AbstractDomain
+    dim::Val{K}
 end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
 immutable GraphDomain <: AbstractDomain end
-immutable SpatialDomain{N} <: AbstractDomain
-    dim::Val{N}
+immutable SpatialDomain{K} <: AbstractDomain
+    dim::Val{K}
 end
 SpatialDomain(dim::Int) = SpatialDomain{dim}(Val{dim}())
 
