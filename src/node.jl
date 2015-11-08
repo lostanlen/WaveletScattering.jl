@@ -1,8 +1,8 @@
 # Node
-abstract AbstractNode{T,N}
-abstract AbstractFourierNode{T,N} <: AbstractNode{T,N}
+abstract AbstractNode{T<:Number,D<:AbstractDomain}
 
-immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
+immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <:
+        AbstractNode{T,FourierDomain{K}}
     data::Array{T,N}
     data_ft::Array{Complex{T},N}
     forward_plan::FFTW.rFFTWPlan{T,K,false,N}
@@ -10,7 +10,7 @@ immutable RealFourierNode{T<:FFTW.fftwReal,K,N} <: AbstractFourierNode{T,N}
 end
 
 immutable ComplexFourierNode{T<:FFTW.fftwComplex,K,N} <:
-        AbstractFourierNode{T,N}
+        AbstractFourierNode{T,FourierDomain{K}}
     data::Array{T,N}
     data_ft::Array{T,N}
     forward_plan::FFTW.cFFTWPlan{T,K,false,N}
@@ -18,14 +18,14 @@ immutable ComplexFourierNode{T<:FFTW.fftwComplex,K,N} <:
 end
 
 immutable InverseFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,K,N} <:
-        AbstractFourierNode{T,N}
+        AbstractFourierNode{T,FourierDomain{K}}
     data::Array{T,N}
     inverse_plan::Base.DFT.ScaledPlan{T,FFTW.cFFTWPlan{T,K,true,N},R}
     ranges::NTuple{N,PathRange}
 end
 
 immutable ComplexInverseFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,K,N} <:
-        AbstractFourierNode{T,N}
+        AbstractFourierNode{T,FourierDomain{K}}
     data::Array{T,N}
     data_ft::Array{T,N}
     forward_plan::FFTW.cFFTWPlan{T,K,false,N}
@@ -33,41 +33,41 @@ immutable ComplexInverseFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,K,N} <:
     ranges::NTuple{N,PathRange}
 end
 
-function AbstractFourierNode{T<:FFTW.fftwReal,N}(
+function setup{T<:FFTW.fftwReal,N}(
         data::Array{T,N}, fourierdims::Vector{Int}, ranges::NTuple{N,PathRange};
         flags = FFTW.ESTIMATE, timelimit = Inf)
     plan = plan_rfft(data, fourierdims ; flags = flags, timelimit = timelimit)
     data_ft = plan * data
     RealFourierNode(data, data_ft, plan, ranges)
 end
-function AbstractFourierNode{T<:FFTW.fftwComplex,N}(data::Array{T,N},
-        fourierdims::Vector{Int}, ranges::NTuple{N,PathRange};
+function setup{T<:FFTW.fftwComplex,N}(
+        data::Array{T,N}, fourierdims::Vector{Int}, ranges::NTuple{N,PathRange};
         flags = FFTW.ESTIMATE, timelimit = Inf)
     plan = plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
     data_ft = plan * data
     ComplexFourierNode(data, data_ft, plan, ranges)
 end
-function AbstractFourierNode{T<:FFTW.fftwNumber,N}(
+function setup{T<:FFTW.fftwNumber,N}(
         data::Array{T,N}, fourierdims::Vector{Int},
-        subscripts::NTuple{N, PathKey}; args...)
+        subscripts::NTuple{N,PathKey}; args...)
     ranges =
         ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))), ndims(data))
-    AbstractFourierNode(data, fourierdims, ranges; args...)
+    setup(data, fourierdims, ranges; args...)
 end
-AbstractFourierNode(data, fourierdims::Int, subscripts ; args...) =
-    AbstractFourierNode(data, collect(fourierdims), subscripts ; args...)
+setup(data, fourierdims::Int, subscripts ; args...) =
+    setup(data, collect(fourierdims), subscripts ; args...)
 
-Base.fft!(node::AbstractFourierNode) =
+Base.fft!(node::AbstractNode) =
     A_mul_B!(node.data_ft, node.forward_plan, node.data)
 
-Base.ifft!{T<:FFTW.fftwComplex}(node::AbstractFourierNode{T}) =
+Base.ifft!(node::AbstractFourierNod) =
     A_mul_B!(node.data, node.inverse_plan, node.data)
 
-function pathdepth(node::AbstractFourierNode, refkey::PathKey)
+function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
 
-function transform!(node_in::AbstractFourierNode, node_out::AbstractFourierNode,
+function transform!(node_in::AbstractNode, node_out::AbstractNode,
                     ψ::Analytic1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
@@ -83,7 +83,7 @@ function transform!(node_in::AbstractFourierNode, node_out::AbstractFourierNode,
     end
 end
 
-function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
+function transform!(node_in::RealNode, node_out::AbstractNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
@@ -108,7 +108,7 @@ function transform!(node_in::RealFourierNode, node_out::AbstractFourierNode,
     end
 end
 
-function transform!(node_in::ComplexFourierNode, node_out::AbstractFourierNode,
+function transform!(node_in::ComplexFourierNode, node_out::AbstractNode,
                     ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
