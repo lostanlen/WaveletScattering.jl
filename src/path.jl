@@ -28,6 +28,10 @@ pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices"""
+immutable Path
+    _dict::Dict{PathKey,Int}
+end
+Path(pairs::Pair{PathKey,Int}...) = Path(Dict(pairs...))
 typealias Path Dict{PathKey, Int}
 
 typealias PathRange Pair{PathKey, StepRange{Int, Int}}
