@@ -12,7 +12,7 @@ immutable Coanalytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     neglast::Int
 end
 
-immutable FourierSymmetric1DFilter{T} <: AbstractFilter{T,SpatialDomain{1}}
+immutable FourierSymmetric1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     leg::Vector{T}
     zero::T
 end
