@@ -73,11 +73,11 @@ octaves `js` are linked by
 gammas(spec::AbstractSpec) =
     collect(0:(spec.nFilters_per_octave * spec.nOctaves-1))
 
-"""Returns the octave indices js of a wavelet spec.
+"""Returns the octave indices `js` of a wavelet spec.
 Octave indices range from `0` to `nOctaves-1`. The convention is that
 higher octave indices `js` mean *lower* center frequencies. Log-periods
 `γs`, chromas `χs`, and octaves `js` are linked by
-    γ = j + nFilters_per_octave * χ"""
+    `γ = j + nFilters_per_octave * χ`"""
 function octaves(spec::AbstractSpec)
     vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
 end
