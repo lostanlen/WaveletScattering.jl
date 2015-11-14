@@ -241,7 +241,7 @@ The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes)."""
 function renormalize!{T<:Number,D<:FourierDomain{1},G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
-        ψs::Array{AbstractFilter{T,D,G},3},
+        ψs::Array{AbstractFilter{T,D},3},
         metas::Vector{Meta{G}},
         spec::AbstractSpec{T,D,G})
     N = 1 << spec.log2_size[1]
