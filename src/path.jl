@@ -48,6 +48,8 @@ immutable Path
     end
 end
 
+"""A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
+integer ranges"""
 immutable PathRange
     _dict::Dict{PathKey,StepRange{Int,Int}}
     function PathRange(pairs...)
