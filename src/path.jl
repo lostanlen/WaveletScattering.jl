@@ -6,7 +6,7 @@ end
 Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
-"A `PathKey` is a double-ended queue (Deque) of `Literal`s"
+"A `PathKey` is a double-ended queue (Deque) of `Literal`s."
 type PathKey
     deque::DataStructures.Deque{Literal}
     PathKey() = new(DataStructures.Deque{Literal}())
@@ -36,7 +36,7 @@ isempty(pathkey::PathKey) = DataStructures.isempty(pathkey.deque)
 pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
-integer indices"""
+integer indices."""
 immutable Path
     _dict::Dict{PathKey,Int}
     function Path(pairs...)
@@ -49,7 +49,7 @@ immutable Path
 end
 
 """A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
-integer ranges"""
+integer ranges."""
 immutable PathRange
     _dict::Dict{PathKey,StepRange{Int,Int}}
     function PathRange(pairs...)
