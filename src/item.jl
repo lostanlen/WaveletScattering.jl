@@ -2,6 +2,12 @@
 within a filter bank."""
 abstract AbstractMeta{G<:AbstractPointGroup}
 
+immutable MetaVector <: AbstractMetaVector{TrivialGroup}
+    metas::Vector{NonOrientedMeta}
+end
+
+
+
 """A `NonOrientedMeta` object contains all the meta-information to identify a
 non-oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
@@ -11,7 +17,7 @@ non-oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] is expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable NonOrientedMeta <: AbstractMeta{TrivialGroup}
+immutable NonOrientedMeta
     γ::Int16
     χ::Int8
     bandwidth::Float64
@@ -31,8 +37,7 @@ an oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable OrientedMeta{G<:Union{ReflectionGroup,RotationGroup}} <:
-        AbstractMeta{G}
+immutable OrientedMeta{G<:Union{ReflectionGroup,RotationGroup}}
     γ::Int16
     θ::Int8
     χ::Int8
@@ -65,11 +70,11 @@ function chromas(spec::AbstractSpec)
 end
 
 """Returns the wavelet log-period integer indices `γs`. Center frequencies are
-proportional to 2^(-γ). γ ranges from 0 to `nFilters_per_octave*nOctaves`, where
-γ=0 corresponds to the mother frequency. The convention is that higher indices
-`γs` mean *lower* center frequencies. Log-periods γs`, chromas `χs`, and
+proportional to `2^(-γ)`. `γ` ranges from 0 to `nFilters_per_octave*nOctaves`,
+where `γ = 0` corresponds to the mother frequency. The convention is that higher
+indices `γs` mean *lower* center frequencies. Log-periods γs`, chromas `χs`, and
 octaves `js` are linked by
-    γ = j + nFilters_per_octave * χ"""
+    `γ = j + nFilters_per_octave * χ`"""
 gammas(spec::AbstractSpec) =
     collect(0:(spec.nFilters_per_octave * spec.nOctaves-1))
 
@@ -79,7 +84,8 @@ higher octave indices `js` mean *lower* center frequencies. Log-periods
 `γs`, chromas `χs`, and octaves `js` are linked by
     `γ = j + nFilters_per_octave * χ`"""
 function octaves(spec::AbstractSpec)
-    vec(repmat(transpose(collect(0:(spec.nOctaves-1))), spec.nFilters_per_octave))
+    vec(repmat(transpose(collect(0:(spec.nOctaves-1))),
+        spec.nFilters_per_octave))
 end
 
 """Returns the quality factors (ratios of center frequencies over bandwidths).
