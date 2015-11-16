@@ -11,7 +11,7 @@ immutable Asymmetric1DFilter{T<:Number} <: AbstractFilter{T,SpatialDomain{1}}
     zero::T
 end
 
-# product is commutative
+# product with scalar number is commutative
 Base.(:*)(b::Number, ψ::AbstractFilter) = ψ * b
 
 # element-wise multiplication operator ".*" with scalar falls back to "*"
