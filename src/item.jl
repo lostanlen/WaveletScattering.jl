@@ -1,4 +1,4 @@
-"""A `Item` object contains all the item-information to identify a wavelet
+"""An `Item` contains all the meta-information to identify a wavelet
 within a filter bank."""
 abstract AbstractItem{G<:AbstractPointGroup}
 
