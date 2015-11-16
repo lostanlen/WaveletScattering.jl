@@ -239,22 +239,22 @@ of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
 The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes)."""
-function renormalize!{T<:Number,D<:FourierDomain{1},G<:LineGroups}(
+function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
-        ψs::Array{AbstractFilter{T,D},3},
-        metas::Vector{Meta{G}},
-        spec::AbstractSpec{T,D,G})
+        ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
+        items::Vector{Item{FourierDomain{1}}},
+        spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
-    if metas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
-        elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
-        elbowω = round(Int, N * metas[elbowλ].centerfrequency)
-        λs = elbowλ:length(metas)
+    if items[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
+        elbowλ = 1; while (items[elbowλ].scale<spec.max_scale) elbowλ += 1 end
+        elbowω = round(Int, N * items[elbowλ].centerfrequency)
+        λs = elbowλ:length(items)
         ψmat = zeros(T, (elbowω, length(λs)))
         for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(real(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
-        isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
+        isa(items, Vector{NonOrientedItem}) && symmetrize!(lp)
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
@@ -267,7 +267,7 @@ function renormalize!{T<:Number,D<:FourierDomain{1},G<:LineGroups}(
     end
     lp = zeros(real(T), N)
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
-    isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
+    isa(items, Vector{NonOrientedItem}) && symmetrize!(lp)
     max_lp = maximum(lp)
     ψs .*= inv(sqrt(max_lp))
     return scale!(lp, inv(max_lp))
