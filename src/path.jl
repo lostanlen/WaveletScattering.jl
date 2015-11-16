@@ -48,4 +48,20 @@ immutable Path
     end
 end
 
-typealias PathRange Pair{PathKey,StepRange{Int,Int}}
+immutable PathRange
+    _dict::Dict{PathKey,StepRange{Int,Int}}
+    function PathRange(pairs...)
+        _dict = Dict{PathKey,StepRange{Int,Int}}()
+        for pair in pairs
+            rhs = pair.second
+            if isa(rhs, Int)
+                push!(_dict, PathKey(pair.first...) => rhs:1:rhs)
+            elseif isa(pair.second, UnitRange{Int})
+                push!(_dict, PathKey(pair.first...) => rhs.start:1:rhs.stop)
+            elseif isa(pair.second, StepRange{Int,Int})
+                push!(_dict, PathKey(pair.first...) => rhs)
+            end
+        end
+        new(_dict)
+    end
+end
