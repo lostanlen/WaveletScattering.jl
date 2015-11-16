@@ -9,7 +9,7 @@ using Mocha
 include("domain.jl")
 include("group.jl")
 include("spec.jl")
-include("meta.jl")
+include("item.jl")
 include("filter.jl")
 include("fourier1dfilter.jl")
 include("bank.jl")

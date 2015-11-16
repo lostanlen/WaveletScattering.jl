@@ -1,14 +1,14 @@
-"""A `Meta` object contains all the meta-information to identify a wavelet
+"""A `Item` object contains all the item-information to identify a wavelet
 within a filter bank."""
-abstract AbstractMeta{G<:AbstractPointGroup}
+abstract AbstractItem{G<:AbstractPointGroup}
 
-immutable MetaVector <: AbstractMetaVector{TrivialGroup}
-    metas::Vector{NonOrientedMeta}
+immutable ItemVector <: AbstractItemVector{TrivialGroup}
+    items::Vector{NonOrientedItem}
 end
 
 
 
-"""A `NonOrientedMeta` object contains all the meta-information to identify a
+"""A `NonOrientedItem` object contains all the item-information to identify a
 non-oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
 * `χ` chroma. `χ` is `mod(γ, nFilters_per_octave)`
@@ -17,7 +17,7 @@ non-oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] is expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable NonOrientedMeta
+immutable NonOrientedItem
     γ::Int16
     χ::Int8
     bandwidth::Float64
@@ -27,7 +27,7 @@ immutable NonOrientedMeta
     scale::Float64
 end
 
-"""An `OrientedMeta` object contains all the meta-information to identify
+"""An `OrientedItem` object contains all the item-information to identify
 an oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
 * `θ` orientation, i.e. angle (in 2d) or sign of center frequency (in 1d)
@@ -37,7 +37,7 @@ an oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable OrientedMeta{G<:Union{ReflectionGroup,RotationGroup}}
+immutable OrientedItem{G<:Union{ReflectionGroup,RotationGroup}}
     γ::Int16
     θ::Int8
     χ::Int8
