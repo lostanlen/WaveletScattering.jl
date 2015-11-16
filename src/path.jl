@@ -3,8 +3,7 @@ immutable Literal
     symbol::Symbol
     depth::Int
 end
-typealias SymbolInt Tuple{Symbol,Int}
-Literal(tup::SymbolInt) = Literal(tup[1], tup[2])
+Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
 "A `PathKey` is a double-ended queue (Deque) of `Literal`s"
@@ -13,8 +12,18 @@ type PathKey
     PathKey() = new(DataStructures.Deque{Literal}())
     function PathKey(args...)
         deque = DataStructures.Deque{Literal}()
-        for arg in args
-            DataStructures.unshift!(deque, Literal(arg))
+        idarg = 1
+        nargs = length(args)
+        while idarg <= nargs
+            if (idarg+1)<=nargs &&
+                    isa(args[idarg], Symbol) && isa(args[idarg+1], Int)
+                DataStructures.push!(deque,
+                    Literal(args[idarg], args[idarg+1]))
+                idarg += 2
+            else
+                DataStructures.push!(deque, Literal(args[idarg]))
+                idarg += 1
+            end
         end
         new(deque)
     end
@@ -30,8 +39,13 @@ pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
 integer indices"""
 immutable Path
     _dict::Dict{PathKey,Int}
+    function Path(pairs...)
+        _dict = Dict{PathKey,Int}()
+        for pair in pairs
+            push!(_dict, PathKey(pair.first...) => pair.second)
+        end
+        new(_dict)
+    end
 end
-Path(pairs::Pair{PathKey,Int}...) = Path(Dict(pairs...))
-typealias Path Dict{PathKey, Int}
 
-typealias PathRange Pair{PathKey, StepRange{Int, Int}}
+typealias PathRange Pair{PathKey,StepRange{Int,Int}}
