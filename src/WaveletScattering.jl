@@ -5,6 +5,7 @@ using DataStructures
 using JuMP
 using MathProgBase
 using Mocha
+using Wavelets
 
 include("domain.jl")
 include("group.jl")
