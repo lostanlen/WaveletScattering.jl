@@ -129,7 +129,7 @@ negative mother center frequency `(1-ξ)`. Hence the equation
 `2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ)`, of which we
 derive `ξ = 1 / (3 - 2^(1/nFilters_per_octave))`. This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
-default_motherfrequency{S<:AbstractSpec}(::Type{S}, nFilters_per_octave) =
+default_motherfrequency(class::RedundantWaveletClass, nFilters_per_octave) =
     inv(3.0 - exp2(-inv(nFilters_per_octave)))
 
 """Given a maximum quality factor and a number of filter per octaves (both of
@@ -142,15 +142,14 @@ default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 """Returns the maximal number octaves in a filter bank such that all scales are
 below `2^(log2_size)`."""
 default_nOctaves(nOctaves::Int, args...) = nOctaves
-function default_nOctaves{T}(nOctaves::Void, ::Type{T}, log2_size::Tuple,
-                             max_qualityfactor::Float64, max_scale::Real,
-                             motherfrequency::Float64, nFilters_per_octave::Int,
-                             args...)
+function default_nOctaves(nOctaves::Void, class::RedundantWaveletClass,
+        log2_size::Tuple, max_qualityfactor::Float64, max_scale::Real,
+        motherfrequency::Float64, nFilters_per_octave::Int, args...)
     siglength = 1 << minimum(log2_size)
     if max_scale > siglength
-        min_centerfrequency = uncertainty(T) / siglength * max_qualityfactor
+        min_centerfrequency = uncertainty(class) / siglength * max_qualityfactor
     else
-        min_centerfrequency = uncertainty(T) / max_scale * 1.0
+        min_centerfrequency = uncertainty(class) / max_scale * 1.0
     end
     nOctaves_a = floor(Int, log2(motherfrequency / min_centerfrequency))
     nOctaves_b = minimum(log2_size) - 1 - ceil(Int, log2(nFilters_per_octave))
