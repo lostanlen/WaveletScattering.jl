@@ -9,7 +9,9 @@ using Wavelets
 
 include("domain.jl")
 include("group.jl")
+include("waveletclass.jl")
 include("spec.jl")
+include("spec1d.jl")
 include("item.jl")
 include("filter.jl")
 include("fourier1dfilter.jl")

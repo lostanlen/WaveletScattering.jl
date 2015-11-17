@@ -1,6 +1,10 @@
 """An `AbstractSpec` object contains all the immutable specifications in a
 wavelet filter bank"""
-abstract AbstractSpec{T<:Number,D<:AbstractDomain,G<:AbstractPointGroup}
+abstract AbstractSpec{
+    T<:Number,
+    D<:AbstractDomain,
+    G<:AbstractPointGroup,
+    W<:RedundantWaveletClass}
 
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
