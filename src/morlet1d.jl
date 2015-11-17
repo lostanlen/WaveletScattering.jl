@@ -1,44 +1,10 @@
-immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
-        G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G}
-    ɛ::Float64
-    class::Type{W}
-    domain::Type{D}
-    log2_size::Tuple{Int}
-    max_qualityfactor::Float64
-    max_scale::Float64
-    motherfrequency::Float64
-    nFilters_per_octave::Int
-    nOctaves::Int
-    pointgroup::Type{G}
-    signaltype::Type{T}
-    function call{T<:FFTW.fftwReal,D<:LineDomains,G<:LineGroups}(
-            ::Type{Spec1D}, ::Type{W} = Morlet, ::Type{T} = Float32,
-            ::Type{D} = FourierDomain{1}, ::Type{G} = TrivialGroup;
-            ɛ = default_ɛ(T), log2_size = 15, max_qualityfactor = nothing,
-            max_scale = Inf, nFilters_per_octave = nothing, nOctaves = nothing,
-            tuningfrequency = nothing)
-        "Integer log2_size is automatically converted to one-element tuple"
-        isa(log2_size, Int) && (log2_size = tuple(log2_size))
-        max_qualityfactor, nFilters_per_octave =
-             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
-             default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
-        motherfrequency =
-            tune_motherfrequency(tuningfrequency, W, nFilters_per_octave)
-        nOctaves = default_nOctaves(nOctaves, W, log2_size,
-            max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
-        spec = new{T,D,G,W}(ɛ, W, D, log2_size, max_qualityfactor, max_scale,
-            motherfrequency, nFilters_per_octave, nOctaves, G, T)
-        checkspec(spec) && return spec
-    end
-end
-
 """In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`. That
 is more accurate with the Littlewood-Paley energy conservation criterion than
 the generic fallback `ξ=0.4`, which is only valid when the wavelet has a
 symmetric profile in the Fourier domain. This is no longer the case for
 nFilters_per_octave==max_qualityfactor==1 as the Morlet low-frequency corrective
 term is no longer negligible."""
-default_motherfrequency(::Type{Morlet1DSpec}, nFilters_per_octave) =
+default_motherfrequency(::Type{Morlet}, nFilters_per_octave) =
     nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
 """Computes gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den).
@@ -55,8 +21,8 @@ a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
 frequencies -N, +N, and +2N."""
-function AbstractFilter{T<:FFTW.fftwReal}(item::AbstractItem,
-        spec::Morlet1DSpec{T,FourierDomain{1}})
+function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(item::Item,
+        spec::Spec1D{T,FourierDomain{1},G,Morlet})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of
     variance `σ` is defined by the equation
