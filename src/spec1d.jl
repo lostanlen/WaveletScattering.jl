@@ -30,7 +30,7 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
              default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
         motherfrequency =
             tune_motherfrequency(tuningfrequency, class, nFilters_per_octave)
-        nOctaves = default_nOctaves(nOctaves, signaltype, log2_size,
+        nOctaves = default_nOctaves(nOctaves, class, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
         spec = new{T,D,G,W}(ɛ, class, domain, log2_size, max_qualityfactor,
             max_scale, motherfrequency, nFilters_per_octave, nOctaves,
