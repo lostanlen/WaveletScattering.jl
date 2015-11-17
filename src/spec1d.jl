@@ -1,6 +1,8 @@
 immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
         G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G}
     ɛ::Float64
+    ϕmeta::ΦMeta
+    ψmetas::Array{ΨMeta,3}
     class::W
     domain::D
     log2_size::Tuple{Int}
@@ -33,6 +35,8 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
             tune_motherfrequency(tuningfrequency, class, nFilters_per_octave)
         nOctaves = default_nOctaves(nOctaves, class, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
+        ψmetas = waveletmetas(spec)
+        ϕmeta = lowpassmeta(spec)
         spec = new{T,D,G,W}(ɛ, class, domain, log2_size, max_qualityfactor,
             max_scale, motherfrequency, nFilters_per_octave, nOctaves,
             pointgroup, signaltype)
