@@ -4,7 +4,7 @@ the generic fallback `ξ=0.4`, which is only valid when the wavelet has a
 symmetric profile in the Fourier domain. This is no longer the case for
 nFilters_per_octave==max_qualityfactor==1 as the Morlet low-frequency corrective
 term is no longer negligible."""
-default_motherfrequency(::Type{Morlet}, nFilters_per_octave) =
+default_motherfrequency(class::Morlet, nFilters_per_octave) =
     nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
 
 """Computes gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den).
@@ -71,7 +71,8 @@ function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
     y = squeeze(sum(y, 2), 2)
 end
 
-function scalingfunction{T<:Number}(spec::Morlet1DSpec{T,FourierDomain{1}})
+function scalingfunction{T<:FFTW.fftwReal,G<:LineGroups}(
+        spec::Spec1D{T,FourierDomain{1},G,Morlet})
     halfN = 1 << (spec.log2_size[1] - 1)
     bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
          uncertainty(spec) * spec.motherfrequency )
