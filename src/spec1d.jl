@@ -12,12 +12,16 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
     pointgroup::G
     signaltype::Type{T}
     function call(::Type{Spec1D},
-            class::RedundantWaveletClass = Morlet,
-            pointgroup::LineGroups = TrivialGroup,
+            class::RedundantWaveletClass = Morlet(),
+            pointgroup::LineGroups = TrivialGroup(),
             signaltype = Float32,
-            domain::LineDomains = FourierDomain{1} ;
-            ɛ = default_ɛ(T), log2_size = 15, max_qualityfactor = nothing,
-            max_scale = Inf, nFilters_per_octave = nothing, nOctaves = nothing,
+            domain::LineDomains = FourierDomain(1) ;
+            ɛ = default_ɛ(signaltype),
+            log2_size = 15,
+            max_qualityfactor = nothing,
+            max_scale = Inf,
+            nFilters_per_octave = nothing,
+            nOctaves = nothing,
             tuningfrequency = nothing)
         "Integer log2_size is automatically converted to one-element tuple"
         isa(log2_size, Int) && (log2_size = tuple(log2_size))
