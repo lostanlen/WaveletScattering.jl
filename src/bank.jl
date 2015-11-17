@@ -4,16 +4,18 @@ abstract AbstractBank{
         G<:AbstractPointGroup,
         W<:RedundantWaveletClass}
 
-immutable Bank1D{T,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass} <:
-        AbstractBank{T,D,G,W}
+immutable Bank1D{
+        T<:Number,
+        D<:LineDomains,
+        G<:LineGroups,
+        W<:RedundantWaveletClass,
+        S<:Spec1D} <: AbstractBank{T,D,G,W}
     ϕ::AbstractFilter{T,D,G,W}
     ψs::Array{AbstractFilter{T,D,G,W},2}
     behavior::Behavior{D}
-    spec::Spec1D{T,G}
-    function call{T<:FFTW.fftwNumber}(::Type{Bank1D},
-            spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
-        T == spec.signaltype ||
-            error("Type parameter must must be equal to spec.signaltype")
+    spec::S
+    function call{T,D,G,W}(
+            ::Type{Bank1D}, spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
         ψs = pmap(AbstractFilter, items, fill(spec, length(items)))
         ψs = convert(Array{AbstractFilter{T,D,G,W},2}, ψs)
         ϕ = scalingfunction(spec)
@@ -23,8 +25,6 @@ immutable Bank1D{T,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass} <:
         new{T}(ϕ, ψs, behavior, items, spec)
     end
 end
-FourierNonOriented1DBank(spec::Abstract1DSpec ; args...) =
-    FourierNonOriented1DBank{spec.signaltype}(spec ; args)
 
 """A `FourierOriented1DBank` is a one-dimensional, oriented filter bank defined
 in the Fourier domain. It is ""oriented"" insofar as its filters have negative
