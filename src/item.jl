@@ -120,6 +120,6 @@ end
 maximum (FWTM) of the squared-magnitude spatial support."""
 scales(spec::AbstractSpec) = uncertainty(spec) ./ bandwidths(spec)
 
-"""Fallback of the uncertainty constant from the spec to its type. The RHS
+"""Fallback of the uncertainty constant from the spec to its class. The RHS
 method must be specifically implemented by AbstractSpec concrete subtypes."""
-uncertainty(spec::AbstractSpec, args...) = uncertainty(typeof(spec), args...)
+uncertainty(spec::AbstractSpec) = uncertainty(spec.class)
