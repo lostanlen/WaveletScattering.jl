@@ -1,37 +1,21 @@
-"""An `AbstractBank` is a wavelet filter bank. Filter banks are of two kinds:
-* `AbstractNonOrientedBank`: no orientation variable `θ`, only a scale
-variable `γ`. One-dimensional filter banks with real inputs are non-oriented.
-* `AbstractOrientedBank`: wavelets have an orientation variable `θ` and a scale
-variable `γ`. Two-dimensional filter banks are oriented. One-dimensional filter
-banks with complex outputs are also oriented, in the sense that the sign
-of the center frequency is regarded as an orientation variable with two
-possible values."""
+abstract AbstractBank{
+        T<:Number,
+        D<:AbstractDomain,
+        G<:AbstractPointGroup,
+        W<:RedundantWaveletClass}
 
-"""A `FourierNonOriented1DBank` is a one-dimensional, non-oriented filter bank
-defined in the Fourier domain. It is ""non-oriented"" in the sense that only the
-positive frequencies are guaranteed to be covered. Indeed, assuming that the
-input signal will be real — i.e. its Fourier will be symmetric — it can be
-recovered from the ""positive half"" of its Fourier spectrum. It is
-advisable to use this type of filter bank when handling real 1d data of
-moderate to large length."""
-immutable Bank{T<:FFTW.fftwNumber,D<:AbstractDomain,G<:AbstractPointGroup}
-    ϕ::AbstractFilter{T,D,G}
-    ψs::Array{AbstractFilter{T,D,G},3}
+immutable Bank1D{T,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass} <:
+        AbstractBank{T,D,G,W}
+    ϕ::AbstractFilter{T,D,G,W}
+    ψs::Array{AbstractFilter{T,D,G,W},2}
     behavior::Behavior{D}
-    items::Vector{AbstractItem{G}}
-    spec::AbstractSpec{T,G}
-    function call{T<:FFTW.fftwNumber}(::Type{FourierNonOriented1DBank{T}},
-        spec::AbstractSpec{T,D}, behavior::Behavior{D,G})
-        T == spec.signaltype || error("""Type parameter of
-        FourierNonOriented1DBankmust must be equal to spec.signaltype""")
-        γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
-        ξs, qs = centerfrequencies(spec), qualityfactors(spec)
-        scs, bws = scales(spec), bandwidths(spec)
-        @inbounds items = [ NonOrientedItem(
-            γs[1+γ], χs[1+γ], bws[1+γ], ξs[1+γ], js[1+γ], qs[1+γ], scs[1+γ])
-            for γ in γs ]
-        ψs = pmap(fourierwavelet, items, fill(spec, length(items)))
-        ψs = convert(Array{AbstractFourierFilter{T,1}}, ψs)
+    spec::Spec1D{T,G}
+    function call{T<:FFTW.fftwNumber}(::Type{Bank1D},
+            spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
+        T == spec.signaltype ||
+            error("Type parameter must must be equal to spec.signaltype")
+        ψs = pmap(AbstractFilter, items, fill(spec, length(items)))
+        ψs = convert(Array{AbstractFilter{T,D,G,W},2}, ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, items, spec)
         behavior = Behavior(ϕ, ψs, spec,
