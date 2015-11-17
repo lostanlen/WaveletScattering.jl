@@ -2,12 +2,6 @@
 within a filter bank."""
 abstract AbstractItem{G<:AbstractPointGroup}
 
-immutable ItemVector <: AbstractItemVector{TrivialGroup}
-    items::Vector{NonOrientedItem}
-end
-
-
-
 """A `NonOrientedItem` object contains all the item-information to identify a
 non-oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
