@@ -25,10 +25,6 @@ type Behavior
     max_log2_stride::Int
 end
 
-is_ϕ_applied::Bool = false,
-j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
-log2_oversampling::Int = 0, max_log2_stride::Int = spec.nOctaves-1
-
 function Behavior{D}(ϕ::Symmetric1DFilter,
         ψs::AbstractArray{AbstractFourierFilter, spec::AbstractSpec,
         domain::D;
