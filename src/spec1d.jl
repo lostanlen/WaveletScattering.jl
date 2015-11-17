@@ -11,11 +11,11 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
     nOctaves::Int
     pointgroup::G
     signaltype::Type{T}
-    function call(::Type{Spec1D},
-            class::RedundantWaveletClass = Morlet(),
-            pointgroup::LineGroups = TrivialGroup(),
-            signaltype = Float32,
-            domain::LineDomains = FourierDomain(1) ;
+    function call{T,D,G,W}(::Type{Spec1D},
+            class::W = Morlet(),
+            pointgroup::G = TrivialGroup(),
+            signaltype::Type{T} = Float32,
+            domain::D = FourierDomain(1) ;
             ɛ = default_ɛ(signaltype),
             log2_size = 15,
             max_qualityfactor = nothing,
