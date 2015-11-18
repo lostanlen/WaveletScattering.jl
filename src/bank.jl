@@ -21,7 +21,6 @@ immutable Bank1D{
         renormalize!(ϕ, ψs, metas, spec)
         behavior = Behavior(ϕ, ψs, spec,
             is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
-        S = typeof(spec)
-        new{T,D,G,W,S}(ϕ, ψs, behavior, metas, spec)
+        new{T,D,G,W}(ϕ, ψs, behavior, metas, spec)
     end
 end
