@@ -54,13 +54,12 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
                 end
             end
         end
-        ϕresolution = 1 << (log2_size[1] - nOctaves)
-        ϕbandwidth = motherfrequency * ϕresolution
+        ϕbandwidth = motherfrequency * exp2(-nOctaves)
         ϕscale = ħ / ϕbandwidth
         ϕmeta = ΦMeta(ϕbandwidth, ϕscale)
         spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
             nOctaves, pointgroup, signaltype)
-        checkspec(spec) && return spec
+        return spec
     end
 end
