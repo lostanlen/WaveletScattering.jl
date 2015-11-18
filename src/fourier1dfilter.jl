@@ -242,7 +242,7 @@ wavelet energies (squared magnitudes)."""
 function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
-        metas::Vector{Item{FourierDomain{1}}},
+        metas::Vector{ΨMeta},
         spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
@@ -254,7 +254,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(real(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
-        isa(metas, Vector{NonOrientedItem}) && symmetrize!(lp)
+        get_nOrientations(G)>1 && symmetrize!(lp)
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
