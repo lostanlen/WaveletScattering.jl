@@ -245,7 +245,6 @@ function renormalize!{T<:Number,G<:LineGroups}(
         metas::Vector{ΨMeta},
         spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
-    T = spec.signaltype
     nOrientations = get_nOrientations(G)
     if metas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
         elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
