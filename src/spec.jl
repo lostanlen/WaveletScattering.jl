@@ -77,7 +77,7 @@ function checkspec(spec::AbstractSpec)
     end
     empirical_max_ψscale = mapreduce(m -> m.scale, max, spec.ψmetas)
     empirical_max_scale = max(empirical_max_ψscale, spec.ϕmeta.scale)
-    if empirical_max_cale > (spec.max_scale + 1e-3)
+    if empirical_max_scale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
         "`max_qualityfactor = `", spec.max_qualityfactor, "\n",
         "`max_scale = `", spec.max_scale, "\n",
