@@ -16,11 +16,9 @@ Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω
 gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))::T
 
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
-A Morlet wavelet of center frequency ξ and of variance σ looks almost like
+A Morlet wavelet of center frequency `ξ` and of variance `σ` looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
-substract a corrective term around the zeroth frequency. Since we operate over
-signals of finite length N, the corrective term must also be applied around the
-frequencies -N, +N, and +2N."""
+substract a corrective term around the zeroth frequency."""
 function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
         spec::Spec1D{T,FourierDomain{1},G,Morlet})
     """1. **Gaussian denominator `den = 2σ²`**
