@@ -1,5 +1,5 @@
 immutable Spec1D{T<:Real,D<:LineDomains,
-        G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G}
+        G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G,W}
     ɛ::Float64
     ϕmeta::ΦMeta
     ψmetas::Array{ΨMeta,3}
