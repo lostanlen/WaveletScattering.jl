@@ -75,7 +75,7 @@ function checkspec(spec::AbstractSpec)
         must be satisfied. Either increase `log2_size`, decrease `nOctaves`,
         or decrease `nFilters_per_octave`.""")
     end
-    maximumscale = maximum(scales(spec))
+    maximumscale = mapreduce(m -> m.scale, max, spec.metas)
     if maximumscale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
         "`max_qualityfactor = `", spec.max_qualityfactor, "\n",
