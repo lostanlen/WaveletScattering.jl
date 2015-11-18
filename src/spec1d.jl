@@ -37,7 +37,7 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
         nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
-        ψmetas = Array{ΨMeta,3}(nOctaves, nFilters_per_octave, nΘs)
+        ψmetas = Array{ΨMeta}(nOctaves, nFilters_per_octave, nΘs)
         for j in 0:(nOctaves-1)
             for χ in 0:(nFilters_per_octave-1)
                 γ = j * nFilters_per_octave + χ
