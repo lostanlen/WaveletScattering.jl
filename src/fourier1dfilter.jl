@@ -246,6 +246,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
     T = spec.signaltype
+    nOrientations = get_nOrientations(G)
     if metas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
         elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
         elbowω = round(Int, N * metas[elbowλ].centerfrequency)
@@ -254,7 +255,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(real(T), N)
         for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
-        get_nOrientations(G)>1 && symmetrize!(lp)
+        (nOrientations>1) && symmetrize!(lp)
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
@@ -267,7 +268,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
     end
     lp = zeros(real(T), N)
     for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
-    isa(metas, Vector{NonOrientedItem}) && symmetrize!(lp)
+    (nOrientations>1) && symmetrize!(lp)
     max_lp = maximum(lp)
     ψs .*= inv(sqrt(max_lp))
     return scale!(lp, inv(max_lp))
