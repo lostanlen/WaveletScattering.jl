@@ -1,4 +1,4 @@
-immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
+immutable Spec1D{T<:Real,D<:LineDomains,
         G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G}
     ɛ::Float64
     ϕmeta::ΦMeta

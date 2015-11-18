@@ -29,11 +29,7 @@ function Behavior{
     T<:Number,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass}(
         ϕ::AbstractFilter{T,D},
         ψs::AbstractArray{AbstractFilter{T,D},3},
-        spec::AbstractSpec{T,D,G,W};
-        is_ϕ_applied::Bool = false,
-        j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
-        log2_oversampling::Int = 0,
-        max_log2_stride::Int = spec.nOctaves-1)
+        spec::AbstractSpec{T,D,G,W})
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
