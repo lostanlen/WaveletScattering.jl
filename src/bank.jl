@@ -25,7 +25,7 @@ immutable Bank1D{
         ψs[1, :, :] = pmap(AbstractFilter, idγs, fill(spec, nΧs * nJs))
         (nΘs > 1) && spin!(ψs)
         ϕ = scalingfunction(spec)
-        renormalize!(ϕ, ψs, metas, spec)
+        renormalize!(ϕ, ψs, spec)
         behavior = Behavior(ϕ, ψs, spec,
             is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
         new{T,D,G,W}(ϕ, ψs, behavior, metas, spec)

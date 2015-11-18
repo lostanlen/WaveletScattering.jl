@@ -26,10 +26,17 @@ type Behavior
 end
 
 function Behavior{
-    T<:Number,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass}(
+    T<:Number,
+    D<:AbstractDomain,
+    G<:AbstractPointGroup,
+    W<:RedundantWaveletClass}(
         ϕ::AbstractFilter{T,D},
         ψs::AbstractArray{AbstractFilter{T,D},3},
-        spec::AbstractSpec{T,D,G,W})
+        spec::AbstractSpec{T,D,G,W} ;
+        is_ϕ_applied::Bool,
+        j_range::UnitRange{Int},
+        log2_oversampling::Int,
+        max_log2_stride::Int)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)

@@ -242,14 +242,14 @@ wavelet energies (squared magnitudes)."""
 function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
-        metas::Vector{ΨMeta},
         spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
     nOrientations = get_nOrientations(G)
-    if metas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
-        elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
-        elbowω = round(Int, N * metas[elbowλ].centerfrequency)
-        λs = elbowλ:length(metas)
+    ψmetas = spec.ψmetas
+    if ψmetas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
+        elbowλ = 1; while (ψmetas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
+        elbowω = round(Int, N * ψmetas[elbowλ].centerfrequency)
+        λs = elbowλ:length(ψmetas)
         ψmat = zeros(T, (elbowω, length(λs)))
         for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
         lp = zeros(real(T), N)

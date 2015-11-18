@@ -28,7 +28,7 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
     which leads to
         `bw² = 2 log(2) * 2σ²`.
     The denominator `den = 2σ²` of the Gaussian is thus equal to
-        `den = 2σ² = bw² / (2 log(2))."""
+        `den = 2σ² = bw² / (2 log(2))`."""
     meta = spec.ψmetas[idλ]
     @inbounds log2_length = spec.log2_size[1]
     N = 1 << log2_length
