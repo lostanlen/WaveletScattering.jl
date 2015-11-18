@@ -52,8 +52,8 @@ function waveletmetas(spec::Spec1D)
     nΘs = get_nΘs(spec.pointgroup)
     ħ = uncertainty(spec)
     ψmetas = Matrix{ΨMeta}(spec.nOctaves, spec.nFilters_per_octave, nΘs)
-    for j = 0:(spec.nOctaves-1)
-        for χ = 0:(spec.nFilters_per_octave-1)
+    for j in 0:(spec.nOctaves-1)
+        for χ in 0:(spec.nFilters_per_octave-1)
             γ = j * nFilters_per_octave + χ
             resolution = exp2(-γ / spec.nFilters_per_octave)
             centerfrequency = spec.motherfrequency * resolution
@@ -63,7 +63,7 @@ function waveletmetas(spec::Spec1D)
             qualityfactor =
                 clamp(unbounded_qualityfactor, 1.0, spec.max_qualityfactor)
             bandwidth = centerfrequency / qualityfactor
-            for θ = 0:(spec.nΘs-1)
+            for θ in 0:(spec.nΘs-1)
                 ψmetas[1+j, 1+χ, 1+θ] = ΨMeta(γ, θ, χ, bandwidth,
                     centerfrequency, j, qualityfactor, scale)
             end
@@ -71,13 +71,6 @@ function waveletmetas(spec::Spec1D)
     end
 end
 
-
-function waveletmetas(spec::Spec2D)
-    if isa(spec.pointgroup, TrivialGroup)
-        nΘs = 1
-    elseif isa(spec.pointgroup, RotationGroup)
-        nΘs = spec.pointgroup.
-end
 """Fallback of the uncertainty constant from the spec to its class. The RHS
 method must be specifically implemented by AbstractSpec concrete subtypes."""
 uncertainty(spec::AbstractSpec) = uncertainty(spec.class)
