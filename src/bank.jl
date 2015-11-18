@@ -8,12 +8,11 @@ immutable Bank1D{
         T<:Number,
         D<:LineDomains,
         G<:LineGroups,
-        W<:RedundantWaveletClass,
-        S<:Spec1D} <: AbstractBank{T,D,G,W}
-    ϕ::AbstractFilter{T,D,G,W}
-    ψs::Array{AbstractFilter{T,D,G,W},2}
+        W<:RedundantWaveletClass} <: AbstractBank{T,D,G,W}
+    ϕ::AbstractFilter{T,D}
+    ψs::Array{AbstractFilter{T,D},2}
     behavior::Behavior{D}
-    spec::S
+    spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(
             ::Type{Bank1D}, spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
         ψs = pmap(AbstractFilter, metas, fill(spec, length(metas)))
