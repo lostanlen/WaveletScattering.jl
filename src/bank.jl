@@ -14,7 +14,7 @@ immutable Bank1D{
     behavior::Behavior
     spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(
-            ::Type{Bank1D}, spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
+            ::Type{Bank1D}, spec::Spec1D{T,D,G,W}, behavior::Behavior)
         ψs = pmap(AbstractFilter, metas, fill(spec, length(metas)))
         ψs = convert(Array{AbstractFilter{T,D,G,W},2}, ψs)
         ϕ = scalingfunction(spec)
