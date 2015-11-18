@@ -244,16 +244,19 @@ function renormalize!{T<:Number,G<:LineGroups}(
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
         spec::AbstractSpec{T,FourierDomain{1},G})
     N = 1 << spec.log2_size[1]
-    nOrientations = get_nOrientations(G)
+    nOrientations = get_nOrientations(spec.pointgroup)
     ψmetas = spec.ψmetas
     if ψmetas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
-        elbowλ = 1; while (ψmetas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
-        elbowω = round(Int, N * ψmetas[elbowλ].centerfrequency)
-        λs = elbowλ:length(ψmetas)
+        elbowλ = 1
+        # Caution: partial linear indexing may be deprecated in the future
+        while (ψmetas[1, elbowλ].scale<spec.max_scale) elbowλ += 1; end
+        elbowω = round(Int, N * ψmetas[1, elbowλ].centerfrequency)
+        nΛs = size(metas, 2) * size(metas, 3)
+        λs = elbowλ:nΛs
         ψmat = zeros(T, (elbowω, length(λs)))
-        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
-        lp = zeros(real(T), N)
-        for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
+        for idλ in eachindex(λs) ψmat[:, idλ] = ψs[1, λs[idλ]][1:elbowω]; end
+        lp = zeros(T, N)
+        for idλ in 1:elbowλ littlewoodpaleyadd!(lp, ψs[idλ]); end
         (nOrientations>1) && symmetrize!(lp)
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
@@ -263,11 +266,11 @@ function renormalize!{T<:Number,G<:LineGroups}(
         JuMP.@addConstraint(model, remainder .>= ψmat * y)
         JuMP.@addConstraint(model, diff(y) .<= 0)
         JuMP.solve(model)
-        ψs[λs] .*= sqrt(2 * JuMP.getValue(y))
+        ψs[λs] .*= sqrt((1 + (nOrientations>1)) * JuMP.getValue(y))
     end
     lp = zeros(real(T), N)
-    for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
-    (nOrientations>1) && symmetrize!(lp)
+    for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
+    (nOrientations==1) && symmetrize!(lp)
     max_lp = maximum(lp)
     ψs .*= inv(sqrt(max_lp))
     return scale!(lp, inv(max_lp))
