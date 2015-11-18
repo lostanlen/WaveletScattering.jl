@@ -37,7 +37,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
         nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
-        ψmetas = Array{ΨMeta}(nOctaves, nFilters_per_octave, nΘs)
+        ψmetas = Array{ΨMeta}(nΘs, nFilters_per_octave, nOctaves)
         for j in 0:(nOctaves-1)
             for χ in 0:(nFilters_per_octave-1)
                 γ = j * nFilters_per_octave + χ
@@ -49,7 +49,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
                 qualityfactor = clamp(unbounded_q, 1.0, max_qualityfactor)
                 bandwidth = centerfrequency / qualityfactor
                 for θ in 0:(nΘs-1)
-                    ψmetas[1+j, 1+χ, 1+θ] = ΨMeta(γ, θ, χ, bandwidth,
+                    ψmetas[1+θ, 1+χ, 1+j] = ΨMeta(γ, θ, χ, bandwidth,
                         centerfrequency, j, qualityfactor, scale)
                 end
             end
