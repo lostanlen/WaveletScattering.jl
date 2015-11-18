@@ -10,7 +10,7 @@ immutable Bank1D{
         G<:LineGroups,
         W<:RedundantWaveletClass} <: AbstractBank{T,D,G,W}
     ϕ::AbstractFilter{T,D}
-    ψs::Array{AbstractFilter{T,D},2}
+    ψs::Array{AbstractFilter{T,D},3}
     behavior::Behavior
     spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(::Type{Bank1D},
@@ -19,8 +19,11 @@ immutable Bank1D{
             j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
             log2_oversampling::Int = 0,
             max_log2_stride::Int = spec.nOctaves-1)
-        ψs = pmap(AbstractFilter, metas, fill(spec, length(metas)))
-        ψs = convert(Array{AbstractFilter{T,D,G,W},2}, ψs)
+        (nΘs, nΧs, nJs) = size(spec.ψmetas)
+        ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
+        idγs = range(1, nΘs, nΘs * nΧs * nJs)
+        ψs[1, :, :] = pmap(AbstractFilter, idγs, fill(spec, nΧs * nJs))
+        (nΘs > 1) && spin!(ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, metas, spec)
         behavior = Behavior(ϕ, ψs, spec,
