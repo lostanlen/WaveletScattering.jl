@@ -49,7 +49,7 @@ max_scale, we proceed with the following steps:
 5. bound quality factors from below by `1.0`.
 """
 function waveletmetas(spec::Spec1D)
-    nΘs = 1 + (spec.pointgroup == ReflectionGroup())
+    nΘs = get_nΘs(spec.pointgroup)
     ħ = uncertainty(spec)
     ψmetas = Matrix{ΨMeta}(spec.nOctaves, spec.nFilters_per_octave, nΘs)
     for j = 0:(spec.nOctaves-1)
@@ -71,6 +71,13 @@ function waveletmetas(spec::Spec1D)
     end
 end
 
+
+function waveletmetas(spec::Spec2D)
+    if isa(spec.pointgroup, TrivialGroup)
+        nΘs = 1
+    elseif isa(spec.pointgroup, RotationGroup)
+        nΘs = spec.pointgroup.
+end
 """Fallback of the uncertainty constant from the spec to its class. The RHS
 method must be specifically implemented by AbstractSpec concrete subtypes."""
 uncertainty(spec::AbstractSpec) = uncertainty(spec.class)
