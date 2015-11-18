@@ -60,6 +60,6 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
         spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
             nOctaves, pointgroup, signaltype)
-        return spec
+        checkspec(spec) && return spec
     end
 end
