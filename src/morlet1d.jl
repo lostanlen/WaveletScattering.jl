@@ -44,7 +44,7 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
     lastω = min(center + halfsupport, 5N/2 - 1)
     nPeriods = 1 + ceil(Int, (lastω-halfN) / N)
     """3. **Call to morlet**"""
-    y = morlet(FourierDomain{1}, center, den, N, nPeriods)
+    y = morlet(FourierDomain(1), center, den, N, nPeriods)
     """4. **Trimming to true support boundaries**"""
     return AbstractFilter(y, spec)
 end
