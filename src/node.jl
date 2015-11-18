@@ -9,10 +9,6 @@ immutable RealFourierNode{K,T<:FFTW.fftwReal,N} <:
     ranges::NTuple{N,PathRange}
 end
 
-
-inverseplans::Matrix{Base.DFT.ScaledPlan{T,
-    FFTW.cFFTWPlan{Complex{T},K,true,N},T}}
-
 immutable ComplexFourierNode{K,T<:FFTW.fftwReal,N} <:
         AbstractNode{FourierDomain{K},Complex{T}}
     data::Array{Complex{T},N}

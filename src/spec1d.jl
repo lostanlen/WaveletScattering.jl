@@ -35,7 +35,7 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
             tune_motherfrequency(tuningfrequency, class, nFilters_per_octave)
         nOctaves = default_nOctaves(nOctaves, class, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
-        nΘs = get_nΘs(pointgroup)
+        nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
         ψmetas = Matrix{ΨMeta}(nOctaves, nFilters_per_octave, nΘs)
         for j in 0:(nOctaves-1)
