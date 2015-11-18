@@ -54,7 +54,10 @@ immutable Spec1D{T<:FFTW.fftwReal,D<:LineDomains,
                 end
             end
         end
-        ϕmeta = lowpassmeta(spec)
+        ϕresolution = 1 << (log2_size[1] - nOctaves)
+        ϕbandwidth = motherfrequency * ϕresolution
+        ϕscale = ħ / ϕbandwidth
+        ϕmeta = ΦMeta(ϕbandwidth, ϕscale)
         spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
             nOctaves, pointgroup, signaltype)
