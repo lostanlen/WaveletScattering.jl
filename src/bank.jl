@@ -16,13 +16,13 @@ immutable Bank1D{
     spec::S
     function call{T,D,G,W}(
             ::Type{Bank1D}, spec::Spec1D{T,D,G,W}, behavior::Behavior{G})
-        ψs = pmap(AbstractFilter, items, fill(spec, length(items)))
+        ψs = pmap(AbstractFilter, metas, fill(spec, length(metas)))
         ψs = convert(Array{AbstractFilter{T,D,G,W},2}, ψs)
         ϕ = scalingfunction(spec)
-        renormalize!(ϕ, ψs, items, spec)
+        renormalize!(ϕ, ψs, metas, spec)
         behavior = Behavior(ϕ, ψs, spec,
             is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
-        new{T}(ϕ, ψs, behavior, items, spec)
+        new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
 
@@ -35,7 +35,7 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
     ϕ::Symmetric1DFilter{T}
     ψs::Matrix{AbstractFourierFilter{T,1}}
     behavior::Behavior
-    items::Matrix{OrientedItem}
+    metas::Matrix{OrientedItem}
     spec::Abstract1DSpec{T}
     function call{T<:FFTW.fftwNumber}(
             ::Type{FourierOriented1DBank{T}}, spec::Abstract1DSpec ;
@@ -48,17 +48,17 @@ immutable FourierOriented1DBank{T<:FFTW.fftwNumber} <: AbstractOrientedBank{T}
         ξs, qs = centerfrequencies(spec), qualityfactors(spec)
         scs, bws = scales(spec), bandwidths(spec)
         θs = 0:1
-        @inbounds items = [ OrientedItem(
+        @inbounds metas = [ OrientedItem(
             γs[γ], θs[θ], χs[γ], bws[γ], ξs[γ], js[γ], qs[γ], scs[γ])
             for γ in eachindex(γs), θ in eachindex(θs) ]
-        ψs = pmap(fourierwavelet, items[:, 1], fill(spec, length(items)))
+        ψs = pmap(fourierwavelet, metas[:, 1], fill(spec, length(metas)))
         ψs = convert(Array{AbstractFourierFilter{T,1}}, ψs)
         ψs = hcat(ψs, map(spin, ψs))
         ϕ = scalingfunction(spec)
-        renormalize!(ϕ, ψs, items, spec)
+        renormalize!(ϕ, ψs, metas, spec)
         behavior = Behavior(ϕ, ψs, spec,
             is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
-        new{T}(ϕ, ψs, behavior, items, spec)
+        new{T}(ϕ, ψs, behavior, metas, spec)
     end
 end
 FourierOriented1DBank(spec::Abstract1DSpec ; args...) =

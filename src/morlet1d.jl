@@ -21,7 +21,7 @@ a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency. Since we operate over
 signals of finite length N, the corrective term must also be applied around the
 frequencies -N, +N, and +2N."""
-function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(item::Item,
+function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(meta::ΨMeta,
         spec::Spec1D{T,FourierDomain{1},G,Morlet})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of
@@ -34,8 +34,8 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(item::Item,
     @inbounds log2_length = spec.log2_size[1]
     N = 1 << log2_length
     halfN = N >> 1
-    center = N * T(item.centerfrequency)
-    bw = N * T(item.bandwidth)
+    center = N * T(meta.centerfrequency)
+    bw = N * T(meta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     """2. **Number of periods**"""
     halfsupport = sqrt(den * log(inv(spec.ɛ)))

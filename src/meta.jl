@@ -1,4 +1,4 @@
-"""A `ψMeta` object contains all the item-information to identify
+"""A `ψMeta` object contains all the meta-information to identify
 an oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
 * `θ` orientation, i.e. angle (in 2d) or sign of center frequency (in 1d)
