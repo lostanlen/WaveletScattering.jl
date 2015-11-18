@@ -32,7 +32,7 @@ function Behavior{
     W<:RedundantWaveletClass}(
         ϕ::AbstractFilter{T,D},
         ψs::AbstractArray{AbstractFilter{T,D},3},
-        spec::AbstractSpec{T,D,G,W} ;
+        spec::AbstractSpec{T,D,G,W},
         is_ϕ_applied::Bool,
         j_range::UnitRange{Int},
         log2_oversampling::Int,
