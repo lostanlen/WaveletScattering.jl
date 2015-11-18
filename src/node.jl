@@ -17,9 +17,6 @@ immutable ComplexFourierNode{K,T<:FFTW.fftwReal,N} <:
     ranges::NTuple{N,PathRange}
 end
 
-inverseplans::Matrix{Base.DFT.ScaledPlan{T,
-    FFTW.cFFTWPlan{Complex{T},K,true,N},Complex{T}}}
-
 immutable RealFourierBlob{K,T<:FFTW.fftwReal,N} <:
         AbstractScatteredBlob{T,FourierDomain{K},N}
     inverseplans::Vector{Base.DFT.ScaledPlan{T,

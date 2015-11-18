@@ -75,9 +75,9 @@ function checkspec(spec::AbstractSpec)
         must be satisfied. Either increase `log2_size`, decrease `nOctaves`,
         or decrease `nFilters_per_octave`.""")
     end
-    max_ψscale = mapreduce(m -> m.scale, max, spec.ψmetas)
-    max_scale = max(max_ψscale, spec.ϕmeta.scale)
-    if maximumscale > (spec.max_scale + 1e-3)
+    empirical_max_ψscale = mapreduce(m -> m.scale, max, spec.ψmetas)
+    empirical_max_scale = max(empirical_max_ψscale, spec.ϕmeta.scale)
+    if empirical_max_cale > (spec.max_scale + 1e-3)
         error("Required time-frequency localization is too tight.\n",
         "`max_qualityfactor = `", spec.max_qualityfactor, "\n",
         "`max_scale = `", spec.max_scale, "\n",
@@ -87,7 +87,7 @@ function checkspec(spec::AbstractSpec)
         "and a scale `<` ", spec.max_scale, ".\n",
         "Either decrease `max_qualityfactor` or decrease `max_scale`.")
     end
-    if maximumscale > (2.0^minimum(spec.log2_size) + 1e-3)
+    if empirical_max_scale > (2.0^minimum(spec.log2_size) + 1e-3)
         min_resolution = 2.0^(-spec.nOctaves/spec.nFilters_per_octave)
         min_centerfrequency = spec.motherfrequency * min_resolution
         max_bandwidth = min_centerfrequency / spec.max_qualityfactor
