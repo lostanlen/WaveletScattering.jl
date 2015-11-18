@@ -28,7 +28,7 @@ end
 function Behavior{
     T<:Number,D<:LineDomains,G<:LineGroups,W<:RedundantWaveletClass}(
         ϕ::AbstractFilter{T,D},
-        ψs::AbstractArray{AbstractFourierFilter{T,D},3},
+        ψs::AbstractArray{AbstractFilter{T,D},3},
         spec::AbstractSpec{T,D,G,W};
         is_ϕ_applied::Bool = false,
         j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
