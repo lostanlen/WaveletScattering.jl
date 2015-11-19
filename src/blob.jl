@@ -33,7 +33,7 @@ function forward!(
         blob_in::AbstractScatteredBlob)
     pathdepth(blob_in, bank.behavior.pathkey)
 
-    map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes))
+    map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes)))
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for j in bank.behavior.j_range
         for χ in 0:(bank.spec.nFilters_per_octave-1)
