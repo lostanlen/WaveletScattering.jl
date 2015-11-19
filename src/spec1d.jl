@@ -38,20 +38,18 @@ immutable Spec1D{T<:Real,D<:LineDomains,
         nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
         ψmetas = Array{ΨMeta}(nΘs, nFilters_per_octave, nOctaves)
-        for j in 0:(nOctaves-1)
-            for χ in 0:(nFilters_per_octave-1)
-                γ = j * nFilters_per_octave + χ
-                resolution = exp2(-γ / nFilters_per_octave)
-                centerfrequency = motherfrequency * resolution
-                unbounded_scale = ħ * max_qualityfactor / centerfrequency
-                scale = min(unbounded_scale, max_scale)
-                unbounded_q = scale * centerfrequency / ħ
-                qualityfactor = clamp(unbounded_q, 1.0, max_qualityfactor)
-                bandwidth = centerfrequency / qualityfactor
-                for θ in 0:(nΘs-1)
-                    ψmetas[1+θ, 1+χ, 1+j] = ΨMeta(γ, θ, χ, bandwidth,
-                        centerfrequency, j, qualityfactor, scale)
-                end
+        for j in 0:(nOctaves-1), χ in 0:(nFilters_per_octave-1)
+            γ = j * nFilters_per_octave + χ
+            resolution = exp2(-γ / nFilters_per_octave)
+            centerfrequency = motherfrequency * resolution
+            unbounded_scale = ħ * max_qualityfactor / centerfrequency
+            scale = min(unbounded_scale, max_scale)
+            unbounded_q = scale * centerfrequency / ħ
+            qualityfactor = clamp(unbounded_q, 1.0, max_qualityfactor)
+            bandwidth = centerfrequency / qualityfactor
+            for θ in 0:(nΘs-1)
+                ψmetas[1+θ, 1+χ, 1+j] = ΨMeta(γ, θ, χ, bandwidth,
+                    centerfrequency, j, qualityfactor, scale)
             end
         end
         ϕbandwidth = motherfrequency * exp2(-nOctaves)

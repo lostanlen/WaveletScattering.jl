@@ -19,9 +19,7 @@ Base.(:.*)(ψ::AbstractFilter, b::Number) = ψ * b
 
 function spin!{T,D}(ψs::Array{AbstractFilter{T,D},3})
     (nΘs, nΧs, nJs) = size(ψs)
-    for χ in 0:(nΧs-1)
-        for j in 0:(nJs-1)
-            ψs[2:end, 1+χ, 1+j] = spin(ψs[1, 1+χ, 1+j])
-        end
+    for χ in 0:(nΧs-1), j in 0:(nJs-1)
+        ψs[2:end, 1+χ, 1+j] = spin(ψs[1, 1+χ, 1+j])
     end
 end
