@@ -45,7 +45,7 @@ function Base.fft{T<:FFTW.fftwComplex,N}(
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
     ranges = ntuple(k -> PathRange(subscripts[k] => (1:1:size(data,k))),
-        ndims(data))))
+        ndims(data))
     forwardplan =
         plan_fft(data, region ; flags = flags, timelimit = timelimit)
     ComplexFourierNode(forwardplan * data, forwardplan, ranges)
@@ -74,10 +74,10 @@ function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
 
-function transform!{T<:FFTW.fftwReal}(
-        node_out::InverseFourierNode{Complex{T}},
-        node_in::ComplexFourierNode{Complex{T}},
-        ψ::FullResolution1DFilter{T})
+function transform!(
+        node_out::InverseFourierNode,
+        node_in::ComplexFourierNode,
+        ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
     N = length(node_in.forward_plan.region[1])
     # All nonzero frequencies in a single loop
