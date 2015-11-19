@@ -12,6 +12,9 @@ immutable Coanalytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     neglast::Int
 end
 
+"""A FourierSymmetric1DFilter has a real impulse respnse in the spatial domain,
+hence a symmetric response in the Fourier domain. It consists of a leg of
+nonzero frequencies and a ""zero"" coefficient."""
 immutable FourierSymmetric1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     leg::Vector{T}
     zero::T
