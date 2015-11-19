@@ -21,8 +21,8 @@ immutable Bank1D{
             max_log2_stride::Int = spec.nOctaves-1)
         (nΘs, nΧs, nJs) = size(spec.ψmetas)
         ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
-        idγs = range(1, nΘs, nΘs * nΧs * nJs)
-        ψs[1, :, :] = pmap(AbstractFilter, idγs, fill(spec, nΧs * nJs))
+        ψs[1, :, :] =
+            pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
         (nΘs > 1) && spin!(ψs)
         ϕ = scalingfunction(spec)
         renormalize!(ϕ, ψs, spec)

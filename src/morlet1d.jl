@@ -19,7 +19,7 @@ gauss{T<:Real}(ω, den::T) = @fastmath convert(T, exp(- ω*ω/den))::T
 A Morlet wavelet of center frequency `ξ` and of variance `σ` looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency."""
-function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
+function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ψmeta::ΨMeta,
         spec::Spec1D{T,FourierDomain{1},G,Morlet})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of
@@ -29,12 +29,11 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
         `bw² = 2 log(2) * 2σ²`.
     The denominator `den = 2σ²` of the Gaussian is thus equal to
         `den = 2σ² = bw² / (2 log(2))`."""
-    meta = spec.ψmetas[idλ]
     @inbounds log2_length = spec.log2_size[1]
     N = 1 << log2_length
     halfN = N >> 1
-    center = N * T(meta.centerfrequency)
-    bw = N * T(meta.bandwidth)
+    center = N * T(ψmeta.centerfrequency)
+    bw = N * T(ψmeta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     """2. **Number of periods**"""
     halfsupport = sqrt(den * log(inv(spec.ɛ)))
@@ -45,6 +44,22 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(idλ::Int,
     y = morlet(FourierDomain(1), center, den, N, nPeriods)
     """4. **Trimming to true support boundaries**"""
     return AbstractFilter(y, spec)
+end
+
+function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ϕmeta::ΦMeta,
+        spec::Spec1D{T,FourierDomain{1},G,Morlet})
+    """1. **Gaussian denominator `den = 2σ²`**"""
+    @inbounds log2_length = spec.log2_size[1]
+    N = 1 << log2_length
+    halfN = N >> 1
+    bw = N * T(ϕmeta.bandwidth)
+    den = @fastmath bw * bw / T(2.0 * log(2.0))
+    """2. **Call to morlet**"""
+    lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
+    leg = T[ gauss(ω, den) for ω in 1:lastω ]
+    """3. **Trimming to true support boundaries**"""
+    leg = leg[1:findlast(leg .> spec.ɛ)]
+    return FourierSymmetric1DFilter(leg, one(T))
 end
 
 function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
@@ -68,18 +83,6 @@ function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
     y = gauss_center - corrective_gaussians * corrective_factors
     y = reshape(y, N, nPeriods)
     y = squeeze(sum(y, 2), 2)
-end
-
-function scalingfunction{T<:FFTW.fftwReal,G<:LineGroups}(
-        spec::Spec1D{T,FourierDomain{1},G,Morlet})
-    halfN = 1 << (spec.log2_size[1] - 1)
-    bw = T( (1 << (spec.log2_size[1] - spec.nOctaves)) *
-         uncertainty(spec) * spec.motherfrequency )
-    den = @fastmath bw * bw / T(2.0 * log(2.0))
-    lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
-    leg = T[ gauss(ω, den) for ω in 1:lastω ]
-    leg = leg[1:findlast(leg .> spec.ɛ)]
-    return FourierSymmetric1DFilter(leg, one(T))
 end
 
 """
