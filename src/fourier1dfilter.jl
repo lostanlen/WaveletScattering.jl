@@ -254,7 +254,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         # Caution: partial linear indexing may be deprecated in the future
         while (ψmetas[1, elbowλ].scale<spec.max_scale) elbowλ += 1; end
         elbowω = round(Int, N * ψmetas[1, elbowλ].centerfrequency)
-        nΛs = size(metas, 2) * size(metas, 3)
+        nΛs = size(ψmetas, 2) * size(ψmetas, 3)
         λs = elbowλ:nΛs
         ψmat = zeros(T, (elbowω, length(λs)))
         for idλ in eachindex(λs) ψmat[:, idλ] = ψs[1, λs[idλ]][1:elbowω]; end
