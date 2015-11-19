@@ -18,7 +18,7 @@ immutable SpatialNode{T<:Number,N} <: AbstractNode{T,N}
     ranges::NTuple{N,PathRange}
 end
 
-immutable InverseFourierNode{K,R<:FFTW.fftwReal,T<:FFTW.fftwComplex,N} <:
+immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
         AbstractNode{T,N}
     data::Array{T,N}
     inverseplan::Base.DFT.ScaledPlan{R,FFTW.cFFTWPlan{T,1,false,N},T}
@@ -58,13 +58,6 @@ end
 setup(data, fourierdims::Int, subscripts ; args...) =
     setup(data, collect(fourierdims), subscripts ; args...)
 
-Base.fft!{D<:FourierDomain}(node::AbstractNode{D}) =
-    A_mul_B!(node.data_ft, node.forward_plan, node.data)
-
-Base.ifft!{D<:AbstractDomain,T<:FFTW.fftwComplex}(
-        node::AbstractNode{D,T}, inverse_plan::Base.DFT.ScaledPlan) =
-    A_mul_B!(node.data, inverse_plan, node.data)
-
 function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
@@ -78,7 +71,7 @@ function transform!(
     ψlast = ψ.posfirst + length(ψ.pos) - 1
     # Positive frequencies, excluding midpoint
     @inbounds for ω in ψ.posfirst:max(N>>1 - 1, ψlast)
-        inds[node_in.forward_plan.region[1]] = 1 + ω
+        inds[node_in.forwardplan.region[1]] = 1 + ω
         view_in = ArrayViews.view(node_in.data_ft, inds...)
         view_out = ArrayViews.view(node_out.data, inds...)
         @inbounds for id in eachindex(view_in)
