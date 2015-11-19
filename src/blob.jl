@@ -1,20 +1,8 @@
 # ScatteredBlob
-abstract AbstractScatteredBlob{T,D<:AbstractDomain,N} <: Mocha.Blob{T,N}
-
-immutable RealFourierBlob{T<:FFTW.fftwReal,N} <: AbstractFourierBlob{T,N}
-    nodes::Dict{Path,RealFourierNode{T,N}}
+immutable ScatteredBlob{N<:AbstractNode} <: Mocha.Blob
+    nodes::Dict{Path,N}
     subscripts::NTuple{N,PathKey}
 end
-
-function RealFourierBlob{T<:FFTW.fftwReal,N}(node::RealFourierNode{T,N},
-                                             subscripts::NTuple{N,PathKey})
-    emptypath = Dict{PathKey,Int}()
-    nodes = Dict(emptypath => node)
-    RealFourierBlob{T,N}(nodes, subscripts)
-end
-
-Base.fft!(blob::AbstractFourierBlob) = pmap(fft!, values(blob.nodes))
-Base.ifft!(blob::AbstractFourierBlob) = pmap(ifft!, values(blob.nodes))
 
 pathdepth(path::Path, refkey::PathKey) =
     mapreduce(path -> pathdepth(path, refkey), max, 1, keys(path))
