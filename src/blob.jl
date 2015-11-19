@@ -1,6 +1,6 @@
 # ScatteredBlob
-immutable ScatteredBlob{N<:AbstractNode} <: Mocha.Blob
-    nodes::Dict{Path,N}
+immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
+    nodes::Dict{Path,NODE}
     subscripts::NTuple{N,PathKey}
 end
 
@@ -19,23 +19,25 @@ function pathdepth(key::PathKey, refkey::PathKey)
     return 1
 end
 
-function pathdepth(blob::AbstractFourierBlob, refkey::PathKey)
+function pathdepth(blob::ScatteredBlob, refkey::PathKey)
     anypath = keys(blob.nodes)[1]
     pathdepth_dictlevel = pathdepth(anypath)
     pathdepth_tensorlevel = pathdepth(blob.nodes[anypath])
     return max(pathdepth_dictlevel, pathdepth_tensorlevel)
 end
 
-function forward!(backend::Mocha.CPUBackend, blob_out::AbstractScatteredBlob,
-                  bank::AbstractNonOrientedBank, blob_in::AbstractScatteredBlob)
+function forward!(
+        backend::Mocha.CPUBackend,
+        blob_out::AbstractScatteredBlob,
+        bank::Bank1D,
+        blob_in::AbstractScatteredBlob)
     pathdepth(blob_in, bank.behavior.pathkey)
 
     map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes))
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for j in bank.behavior.j_range
         for χ in 0:(bank.spec.nFilters_per_octave-1)
-            γ = j * nFilters_per_octave + χ
-            ψ = bank.ψs[1 + γ]
+            ψ = bank.ψs[1 + θ, 1 + χ, 1 + j]
             for (path_in, node_in) in input.nodes
                 path_out = copy(path_in)
                 path_out[γkey] = γ
