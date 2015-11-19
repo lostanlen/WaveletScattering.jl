@@ -7,7 +7,7 @@ Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
 "A `PathKey` is a double-ended queue (Deque) of `Literal`s."
-type PathKey
+immutable PathKey
     deque::DataStructures.Deque{Literal}
     PathKey() = new(DataStructures.Deque{Literal}())
     function PathKey(args...)
