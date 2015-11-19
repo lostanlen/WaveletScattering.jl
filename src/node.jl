@@ -33,8 +33,7 @@ function setup{T<:FFTW.fftwReal,N}(
         timelimit = Inf)
     forwardplan =
         plan_rfft(data, fourierdims ; flags = flags, timelimit = timelimit)
-    data_ft = plan * data
-    RealFourierNode(data, data_ft, plan, inverseplans, ranges)
+    RealFourierNode(plan * data, forwardplan, ranges)
 end
 function setup{T<:FFTW.fftwComplex,N}(
         data::Array{T,N},
@@ -42,9 +41,9 @@ function setup{T<:FFTW.fftwComplex,N}(
         ranges::NTuple{N,PathRange};
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
-    plan = plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
-    data_ft = plan * data
-    ComplexFourierNode(data, data_ft, plan, ranges)
+    forwardplan =
+        plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
+    ComplexFourierNode(forwardplan * data, forwardplan, ranges)
 end
 function setup{T<:FFTW.fftwComplex,N}(
         data::Array{T,N},
