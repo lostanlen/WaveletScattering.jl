@@ -28,9 +28,9 @@ end
 
 function forward!(
         backend::Mocha.CPUBackend,
-        blob_out::AbstractScatteredBlob,
+        blob_out::ScatteredBlob,
         bank::Bank1D,
-        blob_in::AbstractScatteredBlob)
+        blob_in::ScatteredBlob)
     pathdepth(blob_in, bank.behavior.pathkey)
 
     map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes)))
