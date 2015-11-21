@@ -52,8 +52,8 @@ constructor `AbstractFilter` truncates `y` according to the magnitude
 threshold `spec.ɛ` and returns the appropriate subtype of `AbstractFilter`
 to represent the truncated array. The output is cast with the supertype
 `AbstractFilter` so that the output of this function can be stored
-efficiently into an array of abstract objects."""
-"""For one-dimensional filters in the Fourier domain, the output type may be:
+efficiently into an array of abstract objects.
+For one-dimensional filters in the Fourier domain, the output type may be:
 * `Analytic1DFilter` if `y` is non-negligible only for positive frequencies
 * `Coanalytic1DFilter` if `y` is non-negligible only for negative frequencies
 * `Vanishing1DFilter` if the support of `y` encompasses a portion of
