@@ -25,6 +25,15 @@ type Behavior
     max_log2_stride::Int
 end
 
+"""Given a lowpass filter `ϕ`, an array of wavelets `ψs`, and the corresponding
+filter bank specification `spec`, the `Behavior` outer constructor computes
+the critical sampling rates of all `ψs` and `ϕ`. Then, with the inputs
+`log2_oversampling` and `max_log2_stride`, these sampling rates are bounded:
+* from below, by the inverse of the maximum stride.
+* from above, by 1; to avoid unnecessary upsampling according to the original
+  sample rate.
+NB: if `log2_oversampling` and `max_log2_stride` are left as defaults, all
+sample rates are critical."""
 function Behavior{
     T<:Number,
     D<:AbstractDomain,
