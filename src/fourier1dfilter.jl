@@ -309,6 +309,9 @@ spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(spin(ψ.coan), spin(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
     VanishingWithMidpoint1DFilter(spin(ψ.coan), spin(ψ.an), ψ.midpoint)
 
+"""Returns the symmetric part of a input vector. This function is called by
+`renormalize!` to symmetrize the Littlewood-Paley sum of a one-dimensional
+filter bank."""
 function symmetrize!(lp::Vector)
     N = length(lp)
     for ω in 1:(N>>1 - 1)
