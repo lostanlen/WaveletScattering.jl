@@ -1,23 +1,12 @@
 abstract AbstractScatteredLayerState <: Mocha.LayerState
 
 # WaveletLayerState
-immutable WaveletLayerState{W<:AbstractBank,B<:AbstractScatteredBlob} <:
+immutable WaveletLayerState{BANK<:AbstractBank,BLOB<:ScatteredBlob} <:
         AbstractScatteredLayerState
-    bank::W
-    blobs::Vector{B}
+    bank::BANK
+    blobs::Vector{BLOBS}
     blobs_diff::Any
     layer::WaveletLayer
-end
-
-function forward!{IN<:AbstractFourierBlob,OUT<:AbstractFourierBlob}(
-        backend::Mocha.CPUBackend,
-        state::WaveletLayerState{OUT},
-        inputs::Vector{IN})
-    for idblob in eachindex(inputs)
-        fft!(input[idblob])
-        forward!(backend, state.blobs[idblob], state.bank, inputs[idblob])
-        ifft!(state.blobs[idblob])
-    end
 end
 
 function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
