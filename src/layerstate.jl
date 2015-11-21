@@ -4,7 +4,7 @@ abstract AbstractScatteredLayerState <: Mocha.LayerState
 immutable WaveletLayerState{BANK<:AbstractBank,BLOB<:ScatteredBlob} <:
         AbstractScatteredLayerState
     bank::BANK
-    blobs::Vector{BLOBS}
+    blobs::Vector{BLOB}
     blobs_diff::Any
     layer::WaveletLayer
 end
@@ -22,7 +22,8 @@ function setup{T<:FFTW.fftwReal,N}(
         bank::FourierNonOriented1DBank{T},
         inputs::Vector{Mocha.CPUBlob{T,N}},
         diffs::Vector{ScatteredBlob{T,N}} ;
-        symbols::Vector{Symbol} = [:time], fourierdims::Tuple{Int} = (1,))
+        symbols::Vector{Symbol} = [:time],
+        fourierdims::Tuple{Int} = (1,))
     blobs = Array(ScatteredBlob{RealFourierNode{T,N}}, length(inputs))
     appendsymbols!(symbols, N)
     subscripts = map(PathKey, symbols)
