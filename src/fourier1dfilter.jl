@@ -127,7 +127,11 @@ nextpow2_exponent(n::Integer) = oftype(n,
     n ==0 ? 0 :
     n< 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
 
-"""Returns the base-2 logarithm of the subsampling factor """
+"""Given a narrowband filter `ψ` and its corresponding filter bank
+specification `spec`, returns the base-2 logarithm of the resampling factor
+such that the passband of `ψ` is not aliased. This resmpling factor is
+expressed in fraction of signal length ; thus, its base-2 logarithm is
+non-positive. The result does not account for manual oversampling."""
 critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
     1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size[1]
 critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
