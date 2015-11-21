@@ -1,8 +1,8 @@
 abstract AbstractBank{
-        T<:Number,
-        D<:AbstractDomain,
-        G<:AbstractPointGroup,
-        W<:RedundantWaveletClass}
+    T<:Number,
+    D<:AbstractDomain,
+    G<:AbstractPointGroup,
+    W<:RedundantWaveletClass}
 
 immutable Bank1D{
         T<:Number,
