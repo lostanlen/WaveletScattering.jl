@@ -47,6 +47,22 @@ immutable VanishingWithMidpoint1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     midpoint::T
 end
 
+"""Given an array `y` and a filter bank specification `spec`, the
+constructor `AbstractFilter` truncates `y` according to the magnitude
+threshold `spec.ɛ` and returns the appropriate subtype of `AbstractFilter`
+to represent the truncated array. The output is cast with the supertype
+`AbstractFilter` so that the output of this function can be stored
+efficiently into an array of abstract objects."""
+"""For one-dimensional filters in the Fourier domain, the output type may be:
+* `Analytic1DFilter` if `y` is non-negligible only for positive frequencies
+* `Coanalytic1DFilter` if `y` is non-negligible only for negative frequencies
+* `Vanishing1DFilter` if the support of `y` encompasses a portion of
+  positive frequencies and a portion of negative frequencies, excluding
+  midpoint.
+* `VanishingWithMidpoint1DFilter` if the support of `y` encompasses a portion
+  of positive frequencies and a portion of negative frequencies, including
+  midpoint.
+* `FullResolution1DFilter` if `y` is non-negligible along the whole spectrum"""
 function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
     supertype = AbstractFilter{T,FourierDomain{1}}
     N = 1 << spec.log2_size[1]
@@ -104,10 +120,14 @@ Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
 Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
 
+"""The exponent of the smallest power of two not less than input integer `n`.
+Returns `0` for `n==0`, and returns `-nextpow2(-n)` for negative arguments."""
 nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
 nextpow2_exponent(n::Integer) = oftype(n,
-    n < 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
+    n ==0 ? 0 :
+    n< 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
 
+"""Returns the base-2 logarithm of the subsampling factor """
 critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
     1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size[1]
 critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
