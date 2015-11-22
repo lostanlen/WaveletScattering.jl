@@ -8,10 +8,54 @@ immutable RealFourierNode{T<:FFTW.fftwReal,N} <: AbstractFourierNode{T,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
+function RealFourierNode{T<:FFTW.fftwReal,N}(
+        data::Array{T,N},
+        region::Vector{Int},
+        subscripts::NTuple{N,PathKey};
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k))), ndims(data))
+    forwardplan =
+        plan_rfft(data, region ; flags = flags, timelimit = timelimit)
+    RealFourierNode(forwardplan * data, forwardplan, ranges)
+end
+
+function RealFourierNode{T<:FFTW.fftwReal}(
+        node::AbstractNode{T},
+        region::Vector{Int};
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    forwardplan =
+        plan_rfft(data, region ; flags = flags, timelimit = timelimit)
+    RealFourierNode(forwardplan * data, forwardplan, node.ranges)
+end
+
 immutable ComplexFourierNode{T<:FFTW.fftwComplex,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     forwardplan::FFTW.cFFTWPlan{T,-1,false,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+function ComplexFourierNode{T<:FFTW.fftwComplex,N}(
+        data::Array{T,N},
+        region::Vector{Int},
+        subscripts::NTuple{N,PathKey};
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k))), ndims(data))
+    forwardplan =
+        plan_fft(data, region ; flags = flags, timelimit = timelimit)
+    ComplexFourierNode(forwardplan * data, forwardplan, ranges)
+end
+
+function ComplexFourierNode{T<:FFTW.fftwComplex}(
+        node::AbstractNode{T},
+        region::Vector{Int};
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    forwardplan =
+        plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
+    ComplexFourierNode(forwardplan * data, forwardplan, node.ranges)
 end
 
 immutable Node{T<:Number,N} <: AbstractNode{T,N}
@@ -26,54 +70,12 @@ immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
-function AbstractFourierNode{T<:FFTW.fftwReal,N}(
-        data::Array{T,N},
-        region::Vector{Int},
-        subscripts::NTuple{N,PathKey};
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf)
-    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k))), ndims(data))
-    forwardplan =
-        plan_rfft(data, region ; flags = flags, timelimit = timelimit)
-    RealFourierNode(forwardplan * data, forwardplan, ranges)
-end
-function AbstractFourierNode{T<:FFTW.fftwComplex,N}(
-        data::Array{T,N},
-        region::Vector{Int},
-        subscripts::NTuple{N,PathKey};
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf)
-    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k))), ndims(data))
-    forwardplan =
-        plan_fft(data, region ; flags = flags, timelimit = timelimit)
-    ComplexFourierNode(forwardplan * data, forwardplan, ranges)
-end
-
-function AbstractFourierNode{T<:FFTW.fftwReal}(
-        node::AbstractNode{T},
-        region::Vector{Int};
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf)
-    forwardplan =
-        plan_rfft(data, region ; flags = flags, timelimit = timelimit)
-    RealFourierNode(forwardplan * data, forwardplan, node.ranges)
-end
-function AbstractFourierNode{T<:FFTW.fftwComplex}(
-        node::AbstractNode{T},
-        region::Vector{Int};
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf)
-    forwardplan =
-        plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
-    ComplexFourierNode(forwardplan * data, forwardplan, node.ranges)
-end
-
 function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
 
 function transform!(
-        node_out::InverseFourierNode,
+        node_out::AbstractNode,
         node_in::ComplexFourierNode,
         ψ::FullResolution1DFilter)
     inds = fill!(Array(Union{Colon,Int}, ndims(node_in.data)), Colon())
