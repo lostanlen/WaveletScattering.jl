@@ -5,25 +5,25 @@ abstract AbstractFourierNode{T<:Number,N} <: AbstractNode{T,N}
 immutable RealFourierNode{T<:FFTW.fftwReal,N} <: AbstractFourierNode{T,N}
     data::Array{Complex{T},N}
     forwardplan::FFTW.rFFTWPlan{T,-1,false,N}
-    ranges::NTuple{N,PathRange}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
 immutable ComplexFourierNode{T<:FFTW.fftwComplex,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
     forwardplan::FFTW.cFFTWPlan{T,-1,false,N}
-    ranges::NTuple{N,PathRange}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}
 end
 
 immutable Node{T<:Number,N} <: AbstractNode{T,N}
     data::Array{T,N}
-    ranges::NTuple{N,PathRange}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}
 end
 
 immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
         AbstractNode{T,N}
     data::Array{T,N}
     inverseplan::Base.DFT.ScaledPlan{R,FFTW.cFFTWPlan{T,1,false,N},T}
-    ranges::NTuple{N,PathRange}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}
 end
 
 function AbstractFourierNode{T<:FFTW.fftwReal,N}(
