@@ -16,10 +16,15 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
     end
 end
 
-function setup{T<:FFTW.fftwReal,N}(
+function setup{
+    T<:Real,
+    D<:FourierDomain,
+    G<:LineGroups,
+    W<:RedundantWaveletClass,
+    N}(
         backend::Mocha.CPUBackend,
         layer::WaveletLayer,
-        bank::FourierNonOriented1DBank{T},
+        bank::Bank1D{T,D,G,W},
         inputs::Vector{Mocha.CPUBlob{T,N}},
         diffs::Vector{ScatteredBlob{T,N}} ;
         symbols::Vector{Symbol} = [:time],
@@ -28,8 +33,9 @@ function setup{T<:FFTW.fftwReal,N}(
     appendsymbols!(symbols, N)
     subscripts = map(PathKey, symbols)
     for idblob in eachindex(inputs)
-        node = AbstractFourierNode(inputs[idblob].data, fourierdims, subscripts)
-        blobs[idblob] = RealFourierBlob(inputs[idblob].data, symbols)
+
+        node = RealFourierNode(inputs[idblob].data, forwardplan, subscripts)
+        blobs[idblob] = ScatteredBlob(inputs[idblob].data, symbols)
     end
     blobs_diff = 0
     WaveletLayerState(bank, blobs, blobs_diff, layer)
