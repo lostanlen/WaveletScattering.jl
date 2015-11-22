@@ -26,7 +26,7 @@ immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
     ranges::NTuple{N,PathRange}
 end
 
-function Base.fft{T<:FFTW.fftwReal,N}(
+function AbstractFourierNode{T<:FFTW.fftwReal,N}(
         data::Array{T,N},
         region::Vector{Int},
         subscripts::NTuple{N,PathKey};
@@ -38,7 +38,7 @@ function Base.fft{T<:FFTW.fftwReal,N}(
         plan_rfft(data, region ; flags = flags, timelimit = timelimit)
     RealFourierNode(forwardplan * data, forwardplan, ranges)
 end
-function Base.fft{T<:FFTW.fftwComplex,N}(
+function AbstractFourierNode{T<:FFTW.fftwComplex,N}(
         data::Array{T,N},
         region::Vector{Int},
         subscripts::NTuple{N,PathKey};
@@ -51,7 +51,7 @@ function Base.fft{T<:FFTW.fftwComplex,N}(
     ComplexFourierNode(forwardplan * data, forwardplan, ranges)
 end
 
-function Base.fft{T<:FFTW.fftwReal}(
+function AbstractFourierNode{T<:FFTW.fftwReal}(
         node::AbstractNode{T},
         region::Vector{Int};
         flags = FFTW.ESTIMATE,
@@ -60,7 +60,7 @@ function Base.fft{T<:FFTW.fftwReal}(
         plan_rfft(data, region ; flags = flags, timelimit = timelimit)
     RealFourierNode(forwardplan * data, forwardplan, node.ranges)
 end
-function Base.fft{T<:FFTW.fftwComplex}(
+function AbstractFourierNode{T<:FFTW.fftwComplex}(
         node::AbstractNode{T},
         region::Vector{Int};
         flags = FFTW.ESTIMATE,
