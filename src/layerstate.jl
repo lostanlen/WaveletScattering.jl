@@ -3,13 +3,14 @@ abstract AbstractScatteredLayerState <: Mocha.LayerState
 # WaveletLayerState
 immutable WaveletLayerState{BANK<:AbstractBank,BLOB<:ScatteredBlob} <:
         AbstractScatteredLayerState
-    bank::BANK
+    layer::WaveletLayer
     blobs::Vector{BLOB}
     blobs_diff::Any
-    layer::WaveletLayer
+
+    bank::BANK
 end
 
-function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
+function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
                   ρ::AbstractPointwise, inputs::Vector)
     @inbounds for idblob in eachindex(inputs)
         map!(ρ, state.blobs[idblob], inputs[idblob])
@@ -17,7 +18,7 @@ function forward!(backend::Mocha.CPUBackend, state::WaveletLayerState,
 end
 
 function setup{
-    T<:Real,
+    T<:FFTW.fftwReal,
     D<:FourierDomain,
     G<:LineGroups,
     W<:RedundantWaveletClass,
@@ -33,7 +34,6 @@ function setup{
     appendsymbols!(symbols, N)
     subscripts = map(PathKey, symbols)
     for idblob in eachindex(inputs)
-
         node = RealFourierNode(inputs[idblob].data, forwardplan, subscripts)
         blobs[idblob] = ScatteredBlob(inputs[idblob].data, symbols)
     end
