@@ -1,5 +1,8 @@
 abstract AbstractPointwise
 immutable Modulus <: AbstractPointwise end
+immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
+    threshold::T
+end
 
 Mocha.@defstruct PointwiseLayer Mocha.Layer (
     name :: AbstractString = "pointwise",
@@ -24,5 +27,19 @@ function forward{B<:ScatteredBlob}(
     end
 end
 
-map!(ρ::Modulus, blob_out::AbstractNode, blob_in::AbstractNode) =
-    map!(abs, blob_out.data, blob_in.data)
+function map!(
+        ρ::AbstractPointwise,
+        blob_out::ScatteredBlob,
+        blob_in::ScatteredBlob)
+    @inbounds for id in eachindex(blob_in.nodes)
+        map!(ρ, blob_out.nodes[id].data, blob_in.nodes[id].data)
+    end
+end
+
+map!{T<:Real}(ρ::Modulus, data_out::Array{T}, data_in::Array{Complex{T}}) =
+    map!(abs, data_out, data_in)
+
+function map!{T<:Real}(ρ::Log1P{T}, data_out::Array{T}, data_in::Array{T})
+    map!(x -> x / ρ.threshold, data_out, data_in)
+    map!(log1p, data_out)
+end
