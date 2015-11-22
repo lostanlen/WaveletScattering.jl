@@ -32,7 +32,7 @@ function AbstractFourierNode{T<:FFTW.fftwReal,N}(
         subscripts::NTuple{N,PathKey};
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
-    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k)), ndims(data))
+    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k)), ndims(data)))
     forwardplan =
         plan_rfft(data, region ; flags = flags, timelimit = timelimit)
     RealFourierNode(forwardplan * data, forwardplan, ranges)
@@ -43,7 +43,7 @@ function AbstractFourierNode{T<:FFTW.fftwComplex,N}(
         subscripts::NTuple{N,PathKey};
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
-    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k)), ndims(data))
+    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k)), ndims(data)))
     forwardplan =
         plan_fft(data, region ; flags = flags, timelimit = timelimit)
     ComplexFourierNode(forwardplan * data, forwardplan, ranges)
