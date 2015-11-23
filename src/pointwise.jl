@@ -14,7 +14,6 @@ immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
     layer::PointwiseLayer
     blobs::Vector{BLOB}
     blobs_diff::Any
-
     ρ::P
 end
 

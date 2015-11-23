@@ -29,12 +29,16 @@ function setup{
         inputs::Vector{Mocha.CPUBlob{T,N}},
         diffs::Vector{ScatteredBlob{T,N}} ;
         symbols::Vector{Symbol} = [:time],
-        fourierdims::Tuple{Int} = (1,))
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
     blobs = Array(ScatteredBlob{RealFourierNode{T,N}}, length(inputs))
     appendsymbols!(symbols, N)
     subscripts = map(PathKey, symbols)
     for idblob in eachindex(inputs)
-        node = RealFourierNode(inputs[idblob].data, forwardplan, subscripts)
+        subscripts = inputs[idblob].subscripts
+        region = find(subscripts == bank.behavior.pathkey)
+        node = RealFourierNode(inputs[idblob].data, region, subscripts)
+        nodes = Dict(Path() => node)
         blobs[idblob] = ScatteredBlob(inputs[idblob].data, symbols)
     end
     blobs_diff = 0
