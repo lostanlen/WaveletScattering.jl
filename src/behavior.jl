@@ -15,7 +15,9 @@ oversampling.
 * `max_log2_stride`: base-2 logarithm of the maximum distance between
 neighboring coefficients after subsampling (also known as *hop size* or
 *stride*). Must be positive. Default is the number of octaves minus one, which
-imposes no oversampling per se."""
+imposes no oversampling per se.
+
+* `pathkey`."""
 type Behavior
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
@@ -23,6 +25,7 @@ type Behavior
     j_range::UnitRange
     log2_oversampling::Int
     max_log2_stride::Int
+    pathkey::PathKey
 end
 
 """Given a lowpass filter `ϕ`, an array of wavelets `ψs`, and the corresponding
