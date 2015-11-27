@@ -174,5 +174,5 @@ tune_motherfrequency(tuningfrequency::Void, spectype, nFilters_per_octave) =
     default_motherfrequency(spectype, nFilters_per_octave)
 
 """Fallback of the uncertainty constant from the spec to its class. The RHS
-method must be specifically implemented by AbstractSpec concrete subtypes."""
+method must be specifically implemented by `AbstractSpec` concrete subtypes."""
 uncertainty(spec::AbstractSpec) = uncertainty(spec.class)
