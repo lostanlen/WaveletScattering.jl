@@ -16,6 +16,9 @@ immutable TrivialGroup <: AbstractPointGroup end
 """The ReflectionGroup is a finite group of two elements, which represents
 the reflections of the real line."""
 immutable ReflectionGroup <: AbstractPointGroup end
+
+"""The RotationGroup is a continuous group, which represents the rotations of
+the plane."""
 immutable RotationGroup <: AbstractPointGroup
     nOrientations::Int
 end
