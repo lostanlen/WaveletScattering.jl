@@ -9,6 +9,8 @@ scalings have zero fixed points, so the transformation groups they belong are
 not point groups.
 """
 abstract AbstractPointGroup
+
+"""The TrivialGroup is a finite group of a single neutral element."""
 immutable TrivialGroup <: AbstractPointGroup end
 immutable ReflectionGroup <: AbstractPointGroup end
 immutable RotationGroup <: AbstractPointGroup
