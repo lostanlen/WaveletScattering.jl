@@ -12,6 +12,9 @@ abstract AbstractPointGroup
 
 """The TrivialGroup is a finite group of a single neutral element."""
 immutable TrivialGroup <: AbstractPointGroup end
+
+"""The ReflectionGroup is a finite group of two elements, which represents
+the reflections of the real line."""
 immutable ReflectionGroup <: AbstractPointGroup end
 immutable RotationGroup <: AbstractPointGroup
     nOrientations::Int
