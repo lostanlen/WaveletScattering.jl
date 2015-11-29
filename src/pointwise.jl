@@ -39,7 +39,7 @@ map!{T<:Real}(ρ::Modulus, data_out::Array{T}, data_in::Array{Complex{T}}) =
     map!(abs, data_out, data_in)
 
 function map!{T<:Real}(ρ::Log1P{T}, data_out::Array{T}, data_in::Array{T})
-    @inbounds @simd @fastmath for id in eachindex(data_in)
+    @inbounds @fastmath for id in eachindex(data_in)
         data_out[id] = data_in[id] * ρ.threshold
         data_out[id] = log1p(data_out[id])
     end
