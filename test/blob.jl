@@ -12,8 +12,7 @@ data = rand(Float32, 32768, 256)
 node = RealFourierNode(data, [1], subscripts)
 @test_approx_eq maximum(abs(imag(node.data[1,:]))) 0.0
 
-spec = Morlet1DSpec()
-bank = FourierNonOriented1DBank(spec)
+bank = Bank1D(Spec1D(), PathKey(:time))
 
 data_out = zeros(Complex{Float32}, 32768, 256)
 inverse_plan = plan_ifft!(data_out, 1)
