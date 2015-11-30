@@ -5,14 +5,12 @@ import WaveletScattering: Morlet1DSpec
 # path.jl
 import WaveletScattering: PathKey
 # node.jl
-import WaveletScattering: AbstractFourierNode, InverseFourierNode
+import WaveletScattering: RealFourierNode, InverseFourierNode
 
 subscripts = (PathKey(:time), PathKey(:chunk))
 data = rand(Float32, 32768, 256)
-node = AbstractFourierNode(data, 1, subscripts)
-fft!(node) # warm-up
-allocated = @allocated fft!(node)
-@test allocated == 0
+node = RealFourierNode(data, [1], subscripts)
+@test_approx_eq maximum(abs(imag(node.data[1,:]))) 0.0
 
 spec = Morlet1DSpec()
 bank = FourierNonOriented1DBank(spec)
