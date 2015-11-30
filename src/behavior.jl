@@ -48,7 +48,8 @@ function Behavior{
         is_ϕ_applied::Bool,
         j_range::UnitRange{Int},
         log2_oversampling::Int,
-        max_log2_stride::Int)
+        max_log2_stride::Int,
+        pathkey::PathKey)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
@@ -58,5 +59,5 @@ function Behavior{
         -max_log2_stride, 0)
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
     Behavior(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
-        log2_oversampling, max_log2_stride)
+        log2_oversampling, max_log2_stride, pathkey)
 end

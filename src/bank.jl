@@ -14,7 +14,8 @@ immutable Bank1D{
     behavior::Behavior
     spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(::Type{Bank1D},
-            spec::Spec1D{T,D,G,W} ;
+            spec::Spec1D{T,D,G,W},
+            pathkey::PathKey ;
             is_ϕ_applied::Bool = false,
             j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
             log2_oversampling::Int = 0,
@@ -27,7 +28,7 @@ immutable Bank1D{
         ϕ = AbstractFilter(spec.ϕmeta, spec)
         renormalize!(ϕ, ψs, spec)
         behavior = Behavior(ϕ, ψs, spec,
-            is_ϕ_applied, j_range, log2_oversampling, max_log2_stride)
+            is_ϕ_applied, j_range, log2_oversampling, max_log2_stride, pathkey)
         new{T,D,G,W}(ϕ, ψs, behavior, spec)
     end
 end
