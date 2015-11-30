@@ -2,13 +2,13 @@
 abstract AbstractNode{T<:Number,N}
 abstract AbstractFourierNode{T<:Number,N} <: AbstractNode{T,N}
 
-immutable RealFourierNode{T<:FFTW.fftwReal,N} <: AbstractFourierNode{T,N}
-    data::Array{Complex{T},N}
+immutable RealFourierNode{T<:FFTW.fftwComplex,N} <: AbstractFourierNode{T,N}
+    data::Array{T,N}
     forwardplan::FFTW.rFFTWPlan{T,-1,false,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
-function RealFourierNode{T<:FFTW.fftwReal,N}(
+function RealFourierNode{T<:FFTW.fftwComplex,N}(
         data::Array{T,N},
         region::Vector{Int},
         subscripts::NTuple{N,PathKey};
@@ -20,7 +20,7 @@ function RealFourierNode{T<:FFTW.fftwReal,N}(
     RealFourierNode(forwardplan * data, forwardplan, ranges)
 end
 
-function RealFourierNode{T<:FFTW.fftwReal}(
+function RealFourierNode{T<:FFTW.fftwComplex}(
         node::AbstractNode{T},
         region::Vector{Int};
         flags = FFTW.ESTIMATE,
@@ -63,21 +63,21 @@ immutable Node{T<:Number,N} <: AbstractNode{T,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
-immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
+immutable InvComplexFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
         AbstractNode{T,N}
     data::Array{T,N}
     inverseplan::Base.DFT.ScaledPlan{R,FFTW.cFFTWPlan{T,1,false,N},T}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
-function InverseFourierNode{T<:FFTW.fftwComplex}(
+function InvComplexFourierNode{T<:FFTW.fftwComplex}(
         node::AbstractNode{T},
         region::Vector{Int} ;
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
     inverseplan =
         plan_ifft(node.data, region ; flags = flags, timelimit = timelimit)
-    InverseFourierNode(inverseplan * data, inverseplan, node.ranges)
+    InvComplexFourierNode(inverseplan * data, inverseplan, node.ranges)
 end
 
 function pathdepth(node::AbstractNode, refkey::PathKey)
