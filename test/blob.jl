@@ -5,7 +5,7 @@ import WaveletScattering: Spec1D
 # path.jl
 import WaveletScattering: PathKey
 # node.jl
-import WaveletScattering: RealFourierNode, InverseFourierNode
+import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
 subscripts = (PathKey(:time), PathKey(:chunk))
 data = rand(Float32, 32768, 256)
@@ -13,6 +13,8 @@ node = RealFourierNode(data, [1], subscripts)
 @test_approx_eq maximum(abs(imag(node.data[1,:]))) 0.0
 
 bank = Bank1D(Spec1D(), PathKey(:time))
+
+invnode = InverseFourierNode(node, [1])
 
 data_out = zeros(Complex{Float32}, 32768, 256)
 inverse_plan = plan_ifft!(data_out, 1)
