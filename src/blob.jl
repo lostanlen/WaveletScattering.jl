@@ -5,7 +5,9 @@ immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
 end
 
 function Base.show(io::IO, blob::ScatteredBlob)
-
+    nNodes = length(blob.nodes)
+    plural = repeat("s", nNodes > 1)
+    print(io, "ScatteredBlob(", nNodes, " node", plural, ")")
 end
 
 pathdepth(path::Path, refkey::PathKey) =
