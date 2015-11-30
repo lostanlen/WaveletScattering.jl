@@ -4,6 +4,10 @@ immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
     subscripts::NTuple{N,PathKey}
 end
 
+function Base.show(io::IO, blob::ScatteredBlob)
+
+end
+
 pathdepth(path::Path, refkey::PathKey) =
     mapreduce(path -> pathdepth(path, refkey), max, 1, keys(path))
 
