@@ -1,7 +1,7 @@
 # bank.jl
-import WaveletScattering: FourierNonOriented1DBank
+import WaveletScattering: Bank1D
 # morlet1d.jl
-import WaveletScattering: Morlet1DSpec
+import WaveletScattering: Spec1D
 # path.jl
 import WaveletScattering: PathKey
 # node.jl
