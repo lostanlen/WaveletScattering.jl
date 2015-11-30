@@ -54,7 +54,7 @@ function ComplexFourierNode{T<:FFTW.fftwComplex}(
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
     forwardplan =
-        plan_fft(data, fourierdims ; flags = flags, timelimit = timelimit)
+        plan_fft(data, region ; flags = flags, timelimit = timelimit)
     ComplexFourierNode(forwardplan * data, forwardplan, node.ranges)
 end
 
@@ -68,6 +68,16 @@ immutable InverseFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
     data::Array{T,N}
     inverseplan::Base.DFT.ScaledPlan{R,FFTW.cFFTWPlan{T,1,false,N},T}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+function InverseFourierNode{T<:FFTW.fftwComplex}(
+        node::AbstractNode{T},
+        region::Vector{Int} ;
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    inverseplan =
+        plan_ifft(node.data, region ; flags = flags, timelimit = timelimit)
+    InverseFourierNode(inverseplan * data, inverseplan, node.ranges)
 end
 
 function pathdepth(node::AbstractNode, refkey::PathKey)
