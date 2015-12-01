@@ -5,7 +5,7 @@ import WaveletScattering: Bank1D
 # morlet1d.jl
 import WaveletScattering: Spec1D
 # path.jl
-import WaveletScattering: PathKey
+import WaveletScattering: Path, PathKey
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
