@@ -8,7 +8,7 @@ immutable RealFourierNode{T<:FFTW.fftwComplex,N} <: AbstractFourierNode{T,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
-function RealFourierNode{T<:FFTW.fftwComplex,N}(
+function RealFourierNode{T<:FFTW.fftwReal,N}(
         data::Array{T,N},
         region::Vector{Int},
         subscripts::NTuple{N,PathKey};
