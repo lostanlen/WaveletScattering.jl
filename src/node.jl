@@ -2,9 +2,10 @@
 abstract AbstractNode{T<:Number,N}
 abstract AbstractFourierNode{T<:Number,N} <: AbstractNode{T,N}
 
-immutable RealFourierNode{T<:FFTW.fftwComplex,N} <: AbstractFourierNode{T,N}
+immutable RealFourierNode{
+        T<:FFTW.fftwComplex,R<:FFTW.fftwReal,N} <: AbstractFourierNode{T,N}
     data::Array{T,N}
-    forwardplan::FFTW.rFFTWPlan{T,-1,false,N}
+    forwardplan::FFTW.rFFTWPlan{R,-1,false,N}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
