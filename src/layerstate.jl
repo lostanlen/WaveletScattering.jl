@@ -39,7 +39,7 @@ function setup{
         region = find(subscripts == bank.behavior.pathkey)
         node = RealFourierNode(inputs[idblob].data, region, subscripts)
         nodes = Dict(Path() => node)
-        blobs[idblob] = ScatteredBlob(inputs[idblob].data, symbols)
+        blobs[idblob] = ScatteredBlob(nodes, symbols)
     end
     blobs_diff = 0
     WaveletLayerState(bank, blobs, blobs_diff, layer)
