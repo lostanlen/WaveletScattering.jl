@@ -24,5 +24,7 @@ include("blob.jl")
 include("pointwise.jl")
 include("layer.jl")
 include("layerstate.jl")
+include("fourierlayerstate.jl")
+include("waveletlayerstate.jl")
 
 end
