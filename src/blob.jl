@@ -4,7 +4,6 @@ immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
     pathspecs::Dict{PathKey,AbstractSpec}
 end
 
-immutable NullSpec end
 
 function Base.show(io::IO, blob::ScatteredBlob)
     nNodes = length(blob.nodes)
