@@ -10,13 +10,24 @@ import WaveletScattering: Path, PathKey
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
 pathkeys = (PathKey(:time), PathKey(:chunk))
-data = rand(Float32, 32768, 256)
+signal = Array[rand(Float32, 32768, 256)]
+backend = CPUBackend()
+
+signal_layer = MemoryDataLayer(
+        name = "signal", data = x , batch_size = 1, tops = Symbol[:fourier])
+signal_state = Mocha.MemoryDataLayerState(backend, ml)
+
+layer = FourierLayer()
 node = RealFourierNode(data, [1], pathkeys)
 @test_approx_eq maximum(abs(imag(node.data[1,:]))) 0.0
 blob = ScatteredBlob(Dict(Path() => node), subscripts)
+
+
 bank = Bank1D(Spec1D(), PathKey(:time))
 
-invnode = InverseFourierNode(node, [1])
+
+
+
 
 data_out = zeros(Complex{Float32}, 32768, 256)
 inverse_plan = plan_ifft!(data_out, 1)
