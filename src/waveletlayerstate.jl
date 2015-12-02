@@ -1,9 +1,9 @@
 # WaveletLayerState
-immutable WaveletLayerState{BANK<:AbstractBank,BLOB<:ScatteredBlob} <:
+immutable WaveletLayerState{B<:ScatteredBlob,BANK<:AbstractBank} <:
         AbstractScatteredLayerState
     layer::WaveletLayer
-    blobs::Vector{BLOB}
-    blobs_diff::Any
+    blobs::Vector{B}
+    blobs_diff::Vector{B}
 
     bank::BANK
 end
