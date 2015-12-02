@@ -1,7 +1,7 @@
 # FourierLayerState
-immutable FourierLayerState{BANK<:AbstractBank,BLOB<:ScatteredBlob} <:
+immutable FourierLayerState{B<:ScatteredBlob} <:
         AbstractScatteredLayerState
     layer::FourierLayer
-    blobs::Vector{BLOB}
-    blobs_diff::Any
+    blobs::Vector{B}
+    blobs_diff::Vector{B}
 end
