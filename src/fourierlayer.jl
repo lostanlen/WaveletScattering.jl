@@ -3,8 +3,7 @@
 Mocha.@defstruct FourierLayer Mocha.Layer (
     name :: AbstractString = "fourier",
     (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
-    (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
-    variables :: Vector{PathKey},
+    (data :: Vector{Array} = Array[], length(data) == length(tops)),
 )
 
 Mocha.@characterize_layer(FourierLayer,
