@@ -4,8 +4,7 @@ Mocha.@defstruct InputLayer Mocha.Layer (
     name :: AbstractString = "scattering-input",
     top :: Symbol,
     data :: AbstractArray,
-    (symbols :: Vector{Symbol} = defaultsymbols(data),
-        length(symbols) == ndims(data))
+    (symbols :: Vector{Symbol}, length(symbols) == ndims(data))
 )
 
 Mocha.@characterize_layer(InputLayer,
