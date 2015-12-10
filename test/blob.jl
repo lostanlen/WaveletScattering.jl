@@ -15,7 +15,7 @@ signal_layer =
     InputLayer(name = "signal", data = data, symbols = [:time, :chunk])
 signal_state = InputLayerState(backend, signal_layer)
 
-layer = FourierLayer("fourier", [:signal], [:fourier],
+layer = FourierLayer("fourier", [:data], [:fourier],
     [PathKey(:time)], FFTW.ESTIMATE, Inf)
 
 
