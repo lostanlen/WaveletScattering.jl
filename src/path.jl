@@ -31,6 +31,9 @@ end
 
 back(pathkey::PathKey) = DataStructures.back(pathkey.deque)
 
+convert(PathKey, tup::Tuple) = PathKey(tup...)
+convert(PathKey, sym::Symbol) = PathKey(sym)
+
 isempty(pathkey::PathKey) = DataStructures.isempty(pathkey.deque)
 
 pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
@@ -42,7 +45,7 @@ immutable Path
     function Path(pairs...)
         _dict = Dict{PathKey,Int}()
         for pair in pairs
-            push!(_dict, PathKey(pair.first...) => pair.second)
+            push!(_dict, convert(PathKey, pair.first) => pair.second)
         end
         new(_dict)
     end
