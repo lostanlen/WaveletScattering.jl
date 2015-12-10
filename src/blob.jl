@@ -1,14 +1,11 @@
 # ScatteredBlob
 immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
     nodes::Dict{Path,NODE}
-    pathspecs::Dict{PathKey,AbstractSpec}
+    subscripts::NTuple{N,PathKey}
 end
 
-
 function Base.show(io::IO, blob::ScatteredBlob)
-    nNodes = length(blob.nodes)
-    plural = repeat("s", nNodes > 1)
-    print(io, "ScatteredBlob(", nNodes, " node", plural, ")")
+    
 end
 
 pathdepth(path::Path, refkey::PathKey) =
