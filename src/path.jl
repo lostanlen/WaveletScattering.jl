@@ -36,8 +36,7 @@ convert(PathKey, sym::Symbol) = PathKey(sym)
 
 isempty(pathkey::PathKey) = DataStructures.isempty(pathkey.deque)
 
-Base.(:(==))(x::PathKey, y::PathKey) = isequal(x, y)
-Base.isequal(x::PathKey, y::PathKey) = isequal(x.deque, y.deque)
+Base.(:(==))(x::PathKey, y::PathKey) = (x.deque == y.deque)
 
 pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
 
