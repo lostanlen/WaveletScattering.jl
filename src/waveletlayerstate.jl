@@ -19,13 +19,12 @@ function setup{
     T<:FFTW.fftwReal,
     D<:FourierDomain,
     G<:LineGroups,
-    W<:RedundantWaveletClass,
-    N}(
+    W<:RedundantWaveletClass}(
         backend::Mocha.CPUBackend,
         layer::WaveletLayer,
         bank::Bank1D{T,D,G,W},
         inputs::Vector{Mocha.CPUBlob{T,N}},
-        diffs::Vector{ScatteredBlob{T,N}} ;
+        diffs::Vector{ScatteredBlob{T}} ;
         symbols::Vector{Symbol} = [:time],
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
