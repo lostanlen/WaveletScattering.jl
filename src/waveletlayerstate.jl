@@ -19,7 +19,8 @@ function setup{
     T<:FFTW.fftwReal,
     D<:FourierDomain,
     G<:LineGroups,
-    W<:RedundantWaveletClass}(
+    W<:RedundantWaveletClass,
+    N}(
         backend::Mocha.CPUBackend,
         layer::WaveletLayer,
         bank::Bank1D{T,D,G,W},
