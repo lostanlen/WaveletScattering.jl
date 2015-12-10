@@ -9,12 +9,10 @@ import WaveletScattering: Path, PathKey
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
-pathkeys = [PathKey(:time), PathKey(:chunk)]
-signal = rand(Float32, 32768, 256)
-data = Array[signal, pathkeys]
+data = rand(Float32, 32768, 256)
 backend = CPUBackend()
-signal_layer = MemoryDataLayer(name = "signal", data = data,
-        batch_size = 1, tops = [:signal,:pathkeys])
+signal_layer =
+    InputLayer(name = "signal", data = data, symbols = [:time, :chunk])
 signal_state = Mocha.MemoryDataLayerState(backend, signal_layer)
 
 layer = FourierLayer(name = "fourier", variables = [PathKey(:time)],
