@@ -1,5 +1,5 @@
 # ScatteredBlob
-immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
+immutable ScatteredBlob{NODE<:AbstractNode} <: Mocha.Blob
     nodes::Dict{Path,NODE}
 end
 
