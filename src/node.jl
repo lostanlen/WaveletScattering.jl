@@ -40,10 +40,10 @@ end
 function ComplexFourierNode{T<:FFTW.fftwComplex,N}(
         data::Array{T,N},
         region::Vector{Int},
-        subscripts::NTuple{N,PathKey};
+        pathkeys::NTuple{N,PathKey};
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
-    ranges = ntuple(k -> (subscripts[k] => (1:1:size(data,k))), ndims(data))
+    ranges = ntuple(k -> (pathkeys[k] => (1:1:size(data,k))), ndims(data))
     forwardplan =
         plan_fft(data, region ; flags = flags, timelimit = timelimit)
     ComplexFourierNode(forwardplan * data, forwardplan, ranges)
