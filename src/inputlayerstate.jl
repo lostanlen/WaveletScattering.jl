@@ -5,7 +5,7 @@ end
 
 function InputLayerState(backend::Backend, layer::InputLayer)
     ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
-    blob = ScatteredBlob(Path() => Node(layer.data, ranges))
+    blob = ScatteredBlob(Dict(Path() => Node(layer.data, ranges)))
     return InputLayerState(layer, blob)
 end
 
