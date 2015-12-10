@@ -9,4 +9,4 @@ function InputLayerState(backend::Backend, layer::InputLayer)
 end
 
 kthrange(layer::InputLayer, k::Int) =
-    (layer.symbols[k] => (1:1:size(layer.data, k)))s
+    (PathKey(layer.symbols[k]) => (1:1:size(layer.data, k)))
