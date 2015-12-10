@@ -4,7 +4,7 @@ Mocha.@defstruct FourierLayer Mocha.Layer (
     name :: AbstractString = "fourier",
     (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
     (tops :: Vector{Symbol} = Symbol[], length(bottoms) == length(tops)),
-    (variables :: Vector{Vector{Symbol}} = Vector{Symbol}[]),
+    (pathkeys :: Vector{PathKey} = PathKey[]),
     flags :: UInt32 = FFTW.ESTIMATE,
     timelimit :: Float64 = Inf,
 )
