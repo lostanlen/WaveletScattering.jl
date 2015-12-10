@@ -6,55 +6,47 @@ end
 Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
-"A `PathKey` is a double-ended queue (Deque) of `Literal`s."
+"A `PathKey` is a Vector of `Literal`s."
 immutable PathKey
-    deque::DataStructures.Deque{Literal}
-    PathKey() = new(DataStructures.Deque{Literal}())
+    literals::Vector{Literal}
+    PathKey() = new(Literal[])
+    PathKey(p::PathKey) = p
     function PathKey(args...)
-        deque = DataStructures.Deque{Literal}()
+        literals = Literal[]
         idarg = 1
         nargs = length(args)
         while idarg <= nargs
             if (idarg+1)<=nargs &&
                     isa(args[idarg], Symbol) && isa(args[idarg+1], Int)
-                DataStructures.push!(deque,
-                    Literal(args[idarg], args[idarg+1]))
+                push!(literals, Literal(args[idarg], args[idarg+1]))
                 idarg += 2
             else
-                DataStructures.push!(deque, Literal(args[idarg]))
+                push!(literals, Literal(args[idarg]))
                 idarg += 1
             end
         end
-        new(deque)
+        new(literals)
     end
 end
 
-back(pathkey::PathKey) = DataStructures.back(pathkey.deque)
-
-convert(PathKey, tup::Tuple) = PathKey(tup...)
 convert(PathKey, sym::Symbol) = PathKey(sym)
-
-isempty(pathkey::PathKey) = DataStructures.isempty(pathkey.deque)
-
-Base.(:(==))(x::PathKey, y::PathKey) = (x.deque == y.deque)
-
-pop!(pathkey::PathKey) = PathKey(DataStructures.pop!(pathkey.deque))
+convert(PathKey, tup::Tuple) = PathKey(tup...)
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices."""
 immutable Path
-    _dict::Dict{PathKey,Int}
+    dict::Dict{PathKey,Int}
     function Path(pairs...)
-        _dict = Dict{PathKey,Int}()
+        dict = Dict{PathKey,Int}()
         for pair in pairs
-            push!(_dict, convert(PathKey, pair.first) => pair.second)
+            push!(dict, convert(PathKey, pair.first) => pair.second)
         end
-        new(_dict)
+        new(dict)
     end
 end
 
 Base.(:(==))(x::Path, y::Path) = isequal(x, y)
-Base.isequal(x::Path, y::Path) = (x._dict == y._dict)
+Base.isequal(x::Path, y::Path) = (x.dict == y.dict)
 
 """A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
 integer ranges."""
