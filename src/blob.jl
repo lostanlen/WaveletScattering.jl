@@ -1,33 +1,10 @@
 # ScatteredBlob
 immutable ScatteredBlob{NODE<:AbstractNode,N} <: Mocha.Blob
     nodes::Dict{Path,NODE}
-    subscripts::NTuple{N,PathKey}
 end
 
 function Base.show(io::IO, blob::ScatteredBlob)
-    
-end
 
-pathdepth(path::Path, refkey::PathKey) =
-    mapreduce(path -> pathdepth(path, refkey), max, 1, keys(path))
-
-function pathdepth(key::PathKey, refkey::PathKey)
-    while ~isempty(key) && ~isempty(refkey) && (back(key) == back(refkey))
-        pop!(key)
-        pop!(refkey)
-    end
-    if isempty(refkey) && ~isempty(key)
-        keyback = pop!(key)
-        isempty(key) && (keyback.symbol == :γ) && return (1 + keyback.level)
-    end
-    return 1
-end
-
-function pathdepth(blob::ScatteredBlob, refkey::PathKey)
-    anypath = keys(blob.nodes)[1]
-    pathdepth_dictlevel = pathdepth(anypath)
-    pathdepth_tensorlevel = pathdepth(blob.nodes[anypath])
-    return max(pathdepth_dictlevel, pathdepth_tensorlevel)
 end
 
 function forward!(
