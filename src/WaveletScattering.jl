@@ -10,6 +10,7 @@ using Wavelets
 include("domain.jl")
 include("group.jl")
 include("waveletclass.jl")
+include("deque.jl")
 include("path.jl")
 include("meta.jl")
 include("spec.jl")
