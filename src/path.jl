@@ -45,7 +45,7 @@ immutable Path
     end
 end
 
-Base.(:(==))(x::Path, y::Path) = isequal(x, y)
+Base.(:(==))(x::Path, y::Path) = (x.dict == y.dict)
 
 Base.hash(x::Path) = hash(x.dict)
 
