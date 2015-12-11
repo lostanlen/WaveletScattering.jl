@@ -1,12 +1,12 @@
 immutable InputLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
     layer::InputLayer
-    blob::B
+    blobs::Vector{B}
 end
 
 function InputLayerState(backend::Backend, layer::InputLayer)
     ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
-    blob = ScatteredBlob(Dict(Path() => Node(layer.data, ranges)))
-    return InputLayerState(layer, blob)
+    blobs = [ ScatteredBlob(Dict(Path() => Node(layer.data, ranges))) ]
+    return InputLayerState(layer, blobs)
 end
 
 kthrange(layer::InputLayer, k::Int) =
