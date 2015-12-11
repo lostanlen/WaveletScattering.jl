@@ -51,19 +51,19 @@ Base.isequal(x::Path, y::Path) = (x.dict == y.dict)
 """A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
 integer ranges."""
 immutable PathRange
-    _dict::Dict{PathKey,StepRange{Int,Int}}
+    dict::Dict{PathKey,StepRange{Int,Int}}
     function PathRange(pairs...)
-        _dict = Dict{PathKey,StepRange{Int,Int}}()
+        dict = Dict{PathKey,StepRange{Int,Int}}()
         for pair in pairs
             rhs = pair.second
             if isa(rhs, Int)
-                push!(_dict, PathKey(pair.first...) => rhs:1:rhs)
+                push!(dict, PathKey(pair.first...) => rhs:1:rhs)
             elseif isa(pair.second, UnitRange{Int})
-                push!(_dict, PathKey(pair.first...) => rhs.start:1:rhs.stop)
+                push!(dict, PathKey(pair.first...) => rhs.start:1:rhs.stop)
             elseif isa(pair.second, StepRange{Int,Int})
-                push!(_dict, PathKey(pair.first...) => rhs)
+                push!(dict, PathKey(pair.first...) => rhs)
             end
         end
-        new(_dict)
+        new(dict)
     end
 end
