@@ -46,7 +46,8 @@ immutable Path
 end
 
 Base.(:(==))(x::Path, y::Path) = isequal(x, y)
-Base.isequal(x::Path, y::Path) = (x.dict == y.dict)
+
+Base.hash(x::Path) = hash(x.dict)
 
 """A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
 integer ranges."""
