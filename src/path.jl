@@ -29,6 +29,8 @@ immutable PathKey
     end
 end
 
+Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
+
 convert(PathKey, sym::Symbol) = PathKey(sym)
 convert(PathKey, tup::Tuple) = PathKey(tup...)
 
