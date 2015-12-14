@@ -1,7 +1,6 @@
 module WaveletScattering
 
 # using Clp
-using DataStructures
 using JuMP
 using MathProgBase
 using Mocha
@@ -10,7 +9,6 @@ using Wavelets
 include("domain.jl")
 include("group.jl")
 include("waveletclass.jl")
-include("deque.jl")
 include("path.jl")
 include("meta.jl")
 include("spec.jl")
