@@ -4,6 +4,11 @@ function call{T,N}(ρ::AbstractPointwise, node::AbstractNode{T,N})
     return Node(ρ(node.data), node.ranges)
 end
 
+immutable Identity <: AbstractPointwise
+end
+
+call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
+
 immutable Modulus <: AbstractPointwise
 end
 
@@ -31,14 +36,14 @@ function PointwiseLayer( ;
         name::AbstractString = "pointwise",
         bottoms::Vector{Symbols} = Symbol[],
         tops::Vector{Symbol} = Symbol[],
-        ρ :: AbstractPointwise)
+        ρ :: AbstractPointwise = Identity())
     @assert length(bottoms) > 0
     @assert length(tops) == length(bottoms)
     PointwiseLayer(name, bottoms, tops, ρ)
 end
 
 immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
-    layer::PointwiseLayer
+    layer::PointwiseLayer{P}
     blobs::Vector{BLOB}
     blobs_diff::Vector{BLOB}
 end
