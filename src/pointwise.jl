@@ -9,6 +9,8 @@ end
 
 call{T,N}(ρ::Modulus, data::AbstractArray{T,N}) = abs(data)
 
+immutable SquaredModulus <: AbstractPointwise
+end
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
 end
