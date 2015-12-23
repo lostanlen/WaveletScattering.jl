@@ -20,11 +20,22 @@ end
 
 call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
 
-Mocha.@defstruct PointwiseLayer Mocha.Layer (
-    name :: AbstractString = "pointwise",
-    (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
-    (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
-)
+immutable PointwiseLayer{P<:AbstractPointwise} <: Mocha.Layer
+    name::AbstractString
+    bottoms::Vector{Symbol}
+    tops::Vector{Symbol}
+    ρ::P
+end
+
+function PointwiseLayer( ;
+        name::AbstractString = "pointwise",
+        bottoms::Vector{Symbols} = Symbol[],
+        tops::Vector{Symbol} = Symbol[],
+        ρ :: AbstractPointwise)
+    @assert length(bottoms) > 0
+    @assert length(tops) == length(bottoms)
+    PointwiseLayer(name, bottoms, tops, ρ)
+end
 
 immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
     layer::PointwiseLayer
