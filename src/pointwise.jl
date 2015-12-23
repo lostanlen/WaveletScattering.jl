@@ -1,5 +1,9 @@
 abstract AbstractPointwise
-immutable Modulus <: AbstractPointwise end
+
+function call{T,N}(ρ::AbstractPointwise, node::AbstractNode{T,N})
+    return Node(ρ(node.data), node.ranges)
+end
+
 immutable Modulus <: AbstractPointwise
 end
 
