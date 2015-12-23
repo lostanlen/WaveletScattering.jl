@@ -29,8 +29,7 @@ Mocha.@defstruct PointwiseLayer Mocha.Layer (
 immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
     layer::PointwiseLayer
     blobs::Vector{BLOB}
-    blobs_diff::Any
-    ρ::P
+    blobs_diff::Vector{BLOB}
 end
 
 function PointwiseLayerState{B<:ScatteredBlob}(
