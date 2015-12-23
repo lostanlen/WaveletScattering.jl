@@ -15,7 +15,7 @@ function FourierLayerState{B<:ScatteredBlob}(
         for path in keys(innodes)
             outnodes[path] = RealFourierNode(
                 inputs[idblob].nodes[path],
-                findin(innode.ranges, layer.pathkeys),
+                findin(inputs[idblob].nodes[path].ranges, layer.pathkeys),
                 layer.flags,
                 layer.timelimit)
         end
