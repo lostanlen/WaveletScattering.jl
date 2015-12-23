@@ -21,4 +21,4 @@ signal_state = InputLayerState(backend, signal_layer)
 
 fourier_layer = FourierLayer("fourier", [:data], [:fourier],
     [PathKey(:time)], FFTW.ESTIMATE, Inf)
-fourier_state = FourierLayerState(backend, signal_layer, [signal_state])
+fourier_state = FourierLayerState(backend, fourier_layer, signal_state.blobs)
