@@ -18,6 +18,8 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
 end
 
+call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(data)
+
 Mocha.@defstruct PointwiseLayer Mocha.Layer (
     name :: AbstractString = "pointwise",
     (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
