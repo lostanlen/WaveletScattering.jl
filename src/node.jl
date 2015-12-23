@@ -14,7 +14,8 @@ function RealFourierNode{T<:FFTW.fftwReal}(
         region::Vector{Int},
         flags::UInt32,
         timelimit = Inf)
-    forwardplan = plan_rfft(node.data, region, flags, timelimit)
+    forwardplan = plan_rfft(
+            node.data, region, flags = flags, timelimit = timelimit)
     RealFourierNode(forwardplan * data, forwardplan, node.ranges)
 end
 
