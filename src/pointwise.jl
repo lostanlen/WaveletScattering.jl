@@ -68,6 +68,10 @@ function forward{B<:ScatteredBlob}(
     end
 end
 
+function map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
+    blob_out = map(pair -> (pair.first => ρ(pair.second), blob_in)
+end
+
 function map!(
         ρ::AbstractPointwise,
         blob_out::ScatteredBlob,
