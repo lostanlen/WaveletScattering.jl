@@ -7,7 +7,7 @@ immutable FourierLayer <: Mocha.Layer
     timelimit::Float64
 end
 
-function FourierLayer(
+function FourierLayer( ;
         name::AbstractString = "fourier",
         bottoms::Vector{Symbol} = Symbol[],
         tops::Vector{Symbol} = Symbol[],
