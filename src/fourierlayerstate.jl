@@ -9,7 +9,7 @@ function FourierLayerState{B<:ScatteredBlob}(
         backend::Mocha.CPUBackend,
         layer::FourierLayer,
         inputs::Vector{B})
-    blobs = Vector{B}(length(inputs))
+    blobs = Vector{ScatteredBlob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
         outnodes = Dict{Path, AbstractFourierNode}()
