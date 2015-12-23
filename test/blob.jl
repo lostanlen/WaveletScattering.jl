@@ -18,9 +18,9 @@ import WaveletScattering: RealFourierNode, InvComplexFourierNode
 data = rand(Float32, 32768, 256)
 backend = Mocha.CPUBackend()
 signal_layer = InputLayer(
-        data = data,
         top = :signal,
-        symbols = [:time, :chunk])
+        symbols = [:time, :chunk],
+        data = data)
 signal_state = InputLayerState(backend, signal_layer)
 
 fourier_layer = FourierLayer(
@@ -31,5 +31,6 @@ fourier_state = FourierLayerState(backend, fourier_layer, signal_state.blobs)
 
 abs_layer = PointwiseLayer(
         bottoms = [:fourier],
-        tops = [:modulus])
+        tops = [:modulus],
+        ρ = Modulus())
 abs_state = PointwiseLayerState(backend, abs_layer, fourier_state.blobs)
