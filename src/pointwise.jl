@@ -26,6 +26,17 @@ immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
     ρ::P
 end
 
+function PointwiseLayerState{B<:ScatteredBlob}(
+        backend::Mocha.CPUBackend,
+        layer::FourierLayer,
+        inputs::Vector{B})
+    blobs = Vector{ScatteredBlob}(length(inputs))
+    for idblob in eachindex(inputs)
+        blobs[idblob] = ScatteredBlob(map(layer.ρ, inputs[idblob].nodes))
+    end
+    return PointwiseLayerState(layer, blobs, ScatteredBlob[])
+end
+
 function forward{B<:ScatteredBlob}(
         backend::Mocha.CPUBackend,
         layerstate::PointwiseLayerState,
