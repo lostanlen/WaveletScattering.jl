@@ -16,7 +16,7 @@ function RealFourierNode{T<:FFTW.fftwReal}(
         timelimit = Inf)
     forwardplan = plan_rfft(
             node.data, region, flags = flags, timelimit = timelimit)
-    RealFourierNode(forwardplan * data, forwardplan, node.ranges)
+    RealFourierNode(forwardplan * node.data, forwardplan, node.ranges)
 end
 
 immutable ComplexFourierNode{T<:FFTW.fftwComplex,N} <:
@@ -32,8 +32,8 @@ function ComplexFourierNode{T<:FFTW.fftwComplex}(
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
     forwardplan =
-        plan_fft(data, region ; flags = flags, timelimit = timelimit)
-    ComplexFourierNode(forwardplan * data, forwardplan, node.ranges)
+        plan_fft(node.data, region ; flags = flags, timelimit = timelimit)
+    ComplexFourierNode(forwardplan * node.data, forwardplan, node.ranges)
 end
 
 immutable Node{T<:Number,N} <: AbstractNode{T,N}
@@ -55,7 +55,7 @@ function InvComplexFourierNode{T<:FFTW.fftwComplex}(
         timelimit = Inf)
     inverseplan =
         plan_ifft(node.data, region ; flags = flags, timelimit = timelimit)
-    InvComplexFourierNode(inverseplan * data, inverseplan, node.ranges)
+    InvComplexFourierNode(inverseplan * node.data, inverseplan, node.ranges)
 end
 
 function pathdepth(node::AbstractNode, refkey::PathKey)
