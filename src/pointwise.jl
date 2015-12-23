@@ -28,7 +28,7 @@ end
 
 function PointwiseLayerState{B<:ScatteredBlob}(
         backend::Mocha.CPUBackend,
-        layer::FourierLayer,
+        layer::PointwiseLayer,
         inputs::Vector{B})
     blobs = Vector{ScatteredBlob}(length(inputs))
     for idblob in eachindex(inputs)
