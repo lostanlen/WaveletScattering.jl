@@ -1,5 +1,10 @@
 abstract AbstractPointwise
 immutable Modulus <: AbstractPointwise end
+immutable Modulus <: AbstractPointwise
+end
+
+call{T,N}(ρ::Modulus, data::AbstractArray{T,N}) = abs(data)
+
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
 end
