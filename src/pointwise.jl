@@ -34,7 +34,7 @@ end
 
 function PointwiseLayer( ;
         name::AbstractString = "pointwise",
-        bottoms::Vector{Symbols} = Symbol[],
+        bottoms::Vector{Symbol} = Symbol[],
         tops::Vector{Symbol} = Symbol[],
         ρ :: AbstractPointwise = Identity())
     @assert length(bottoms) > 0
