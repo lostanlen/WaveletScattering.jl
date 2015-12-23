@@ -13,7 +13,7 @@ function FourierLayer(
         tops::Vector{Symbol} = Symbol[],
         pathkeys::Vector{PathKey} = PathKey[],
         flags::UInt32 = FFTW.ESTIMATE,
-        timelimite::Float64 = Inf)
+        timelimit::Float64 = Inf)
     @assert length(bottoms) > 0
     @assert length(bottoms) == length(tops)
     FourierLayer(name, bottoms, tops, pathkeys, flags, timelimit)
