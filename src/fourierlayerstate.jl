@@ -9,22 +9,19 @@ function FourierLayerState{B<:ScatteredBlob}(
         backend::Mocha.CPUBackend,
         layer::FourierLayer,
         inputs::Vector{B})
-    nblobs = length(inputs)
-    fourierkeys = layer.pathkeys
+    blobs = Vector{B}(length(inputs))
     for idblob in eachindex(inputs)
-        input = inputs[idblob]
-        innodes = input.nodes
         outnodes = Dict{Path, AbstractFourierNode}()
-        for nodekey in keys(innodes)
-            innode = innodes[nodekey]
-            region = findin(innode.ranges, fourierkeys)
-            outnode = RealFourierNode(
-                innodes[nodekey],
-                findin(innode.ranges, fourierkeys),
+        for path in keys(innodes)
+            outnodes[path] = RealFourierNode(
+                inputs[idblob].nodes[path],
+                findin(innode.ranges, layer.pathkeys),
                 layer.flags,
                 layer.timelimit)
         end
+        blobs[idblob] = ScatteredBlob(outnodes)
     end
+    return FourierLayerState(layer, blobs, ScatteredBlob[])
 end
 
 function Base.findin{N}(
