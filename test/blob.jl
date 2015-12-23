@@ -11,7 +11,7 @@ import WaveletScattering: Spec1D
 # path.jl
 import WaveletScattering: Path, PathKey
 # pointwise.jl
-import WaveletScattering: PointwiseLayer, PointwiseLayerState
+import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
