@@ -68,11 +68,11 @@ function forward{B<:ScatteredBlob}(
     end
 end
 
-function map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
+function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = map(pair -> (pair.first => ρ(pair.second), blob_in))
 end
 
-function map!(
+function Base.map!(
         ρ::AbstractPointwise,
         blob_out::ScatteredBlob,
         blob_in::ScatteredBlob)
@@ -81,10 +81,17 @@ function map!(
     end
 end
 
-map!{T<:Real}(ρ::Modulus, data_out::Array{T}, data_in::Array{Complex{T}}) =
+function Base.map!{T<:Real}(
+        ρ::Modulus,
+        data_out::Array{T},
+        data_in::Array{Complex{T}})
     map!(abs, data_out, data_in)
+end
 
-function map!{T<:Real}(ρ::Log1P{T}, data_out::Array{T}, data_in::Array{T})
+function Base.map!{T<:Real}(
+        ρ::Log1P{T},
+        data_out::Array{T},
+        data_in::Array{T})
     @inbounds @fastmath for id in eachindex(data_in)
         data_out[id] = data_in[id] * ρ.threshold
         data_out[id] = log1p(data_out[id])
