@@ -56,7 +56,8 @@ function PointwiseLayerState{B<:ScatteredBlob}(
         inputs::Vector{B})
     blobs = Vector{ScatteredBlob}(length(inputs))
     for idblob in eachindex(inputs)
-        blobs[idblob] = ScatteredBlob(map(layer.ρ, inputs[idblob].nodes))
+        pairs = collect(inputs[idblob].nodes)
+        blobs[idblob] = ScatteredBlob(Dict(map(layer.ρ, pairs)))
     end
     return PointwiseLayerState(layer, blobs, ScatteredBlob[])
 end
