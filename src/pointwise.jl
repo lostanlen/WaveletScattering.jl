@@ -1,7 +1,9 @@
 abstract AbstractPointwise
 
-function call{T,N}(ρ::AbstractPointwise, node::AbstractNode{T,N})
-    return Node(ρ(node.data), node.ranges)
+function call{NODE<:AbstractNode}(
+        ρ::AbstractPointwise,
+        pair::Pair{WaveletScattering.Path,NODE})
+    return pair.first => Node(ρ(pair.second.data), pair.second.ranges)
 end
 
 immutable Identity <: AbstractPointwise
