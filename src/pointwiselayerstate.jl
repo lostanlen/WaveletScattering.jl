@@ -22,7 +22,7 @@ function Mocha.setup(
         backend::Mocha.Backend,
         layer::PointwiseLayer,
         inputs::Vector{Mocha.Blob},
-        diffs:Vector{Mocha.Blob})
+        diffs::Vector{Mocha.Blob})
     return PointwiseLayerState(backend, layer, inputs, diffs)
 end
 
