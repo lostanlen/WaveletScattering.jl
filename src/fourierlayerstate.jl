@@ -23,7 +23,7 @@ function FourierLayerState(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    return FourierLayerState(layer, blobs, Mocha.Blob[])
+    return FourierLayerState(layer, blobs, diffs)
 end
 
 function Base.findin{N}(
