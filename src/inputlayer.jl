@@ -7,7 +7,7 @@ Mocha.@defstruct InputLayer Mocha.Layer (
     (symbols :: Vector{Symbol} = Symbol[], length(symbols) == ndims(data))
 )
 
-Mocha.can_do_bp(::InputLayer) = true
+Mocha.can_do_bp(::InputLayer) = false
 Mocha.has_neuron(::InputLayer) = false
 Mocha.has_param(::InputLayer) = false
 Mocha.is_source(::InputLayer) = true
