@@ -1,4 +1,5 @@
-immutable PointwiseLayerState{P<:AbstractPointwise}
+immutable PointwiseLayerState{P<:AbstractPointwise} <:
+        AbstractScatteredLayerState
     layer::PointwiseLayer{P}
     blobs::Vector{Mocha.Blob}
     blobs_diff::Vector{Mocha.Blob}
