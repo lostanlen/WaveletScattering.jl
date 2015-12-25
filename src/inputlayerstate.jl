@@ -9,5 +9,13 @@ function InputLayerState(backend::Backend, layer::InputLayer)
     return InputLayerState(layer, blobs)
 end
 
+function Mocha.setup(
+        backend::Backend,
+        layer::InputLayer,
+        inputs::Vector{Blob},
+        diffs::Vector{Blob})
+    return InputLayerState(backend, layer)
+end
+
 kthrange(layer::InputLayer, k::Int) =
     (PathKey(layer.symbols[k]) => (1:1:size(layer.data, k)))
