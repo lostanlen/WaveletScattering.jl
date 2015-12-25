@@ -7,13 +7,23 @@ end
 function PointwiseLayerState(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
-        inputs::Vector{Mocha.Blob})
+        inputs::Vector{Mocha.Blob},
+        diffs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         pairs = collect(inputs[idblob].nodes)
         blobs[idblob] = ScatteredBlob(Dict(map(layer.ρ, pairs)))
     end
+    # TODO: build diffs
     return PointwiseLayerState(layer, blobs, ScatteredBlob[])
+end
+
+function Mocha.setup(
+        backend::Mocha.Backend,
+        layer::PointwiseLayer,
+        inputs::Vector{Mocha.Blob},
+        diffs:Vector{Mocha.Blob})
+    return PointwiseLayerState(backend, layer, inputs, diffs)
 end
 
 function forward(
