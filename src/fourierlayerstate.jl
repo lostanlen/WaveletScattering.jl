@@ -8,7 +8,8 @@ end
 function FourierLayerState(
         backend::Mocha.CPUBackend,
         layer::FourierLayer,
-        inputs::Vector{Mocha.Blob})
+        inputs::Vector{Mocha.Blob},
+        diffs:Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
@@ -29,4 +30,12 @@ function Base.findin{N}(
         ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}},
         fourierkeys::Vector{PathKey})
     return find([any(r.first.==fourierkeys) for r in ranges])
+end
+
+function Mocha.setup(
+        backend::Mocha.Backend,
+        layer::FourierLayer,
+        inputs::Vector{Mocha.Blob},
+        diffs::Vector{Mocha.Blob})
+    return FourierLayerState(backend, layer, inputs, diffs)
 end
