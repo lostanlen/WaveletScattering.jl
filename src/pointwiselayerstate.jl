@@ -1,3 +1,9 @@
+immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
+    layer::PointwiseLayer{P}
+    blobs::Vector{BLOB}
+    blobs_diff::Vector{BLOB}
+end
+
 function PointwiseLayerState{B<:ScatteredBlob}(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,

@@ -17,12 +17,6 @@ end
 
 call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
 
-immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
-    layer::PointwiseLayer{P}
-    blobs::Vector{BLOB}
-    blobs_diff::Vector{BLOB}
-end
-
 function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = map(pair -> (pair.first => ρ(pair.second), blob_in))
 end
