@@ -1,6 +1,6 @@
-immutable InputLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
+immutable InputLayerState <: AbstractScatteredLayerState
     layer::InputLayer
-    blobs::Vector{B}
+    blobs::Vector{Mocha.Blob}
 end
 
 function InputLayerState(backend::Backend, layer::InputLayer)

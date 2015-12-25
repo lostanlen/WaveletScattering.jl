@@ -1,14 +1,14 @@
-immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
+immutable PointwiseLayerState{P<:AbstractPointwise}
     layer::PointwiseLayer{P}
-    blobs::Vector{BLOB}
-    blobs_diff::Vector{BLOB}
+    blobs::Vector{Mocha.Blob}
+    blobs_diff::Vector{Mocha.Blob}
 end
 
-function PointwiseLayerState{B<:ScatteredBlob}(
+function PointwiseLayerState(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
-        inputs::Vector{B})
-    blobs = Vector{ScatteredBlob}(length(inputs))
+        inputs::Vector{Mocha.Blob})
+    blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         pairs = collect(inputs[idblob].nodes)
         blobs[idblob] = ScatteredBlob(Dict(map(layer.ρ, pairs)))
@@ -16,10 +16,10 @@ function PointwiseLayerState{B<:ScatteredBlob}(
     return PointwiseLayerState(layer, blobs, ScatteredBlob[])
 end
 
-function forward{B<:ScatteredBlob}(
+function forward(
         backend::Mocha.CPUBackend,
         layerstate::PointwiseLayerState,
-        inputs::Vector{B})
+        inputs::Vector{Mocha.Blob})
     for id in eachindex(inputs)
         map!(layerstate.ρ, layerstate.blobs[id], inputs[id])
     end

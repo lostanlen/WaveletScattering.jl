@@ -1,15 +1,15 @@
 # FourierLayerState
-immutable FourierLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
+immutable FourierLayerState <: AbstractScatteredLayerState
     layer::FourierLayer
-    blobs::Vector{B}
-    blobs_diff::Vector{B}
+    blobs::Vector{Mocha.Blob}
+    blobs_diff::Vector{Mocha.Blob}
 end
 
-function FourierLayerState{B<:ScatteredBlob}(
+function FourierLayerState(
         backend::Mocha.CPUBackend,
         layer::FourierLayer,
-        inputs::Vector{B})
-    blobs = Vector{ScatteredBlob}(length(inputs))
+        inputs::Vector{Mocha.Blob})
+    blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
         outnodes = Dict{Path, AbstractFourierNode}()
@@ -22,7 +22,7 @@ function FourierLayerState{B<:ScatteredBlob}(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    return FourierLayerState(layer, blobs, ScatteredBlob[])
+    return FourierLayerState(layer, blobs, Mocha.Blob[])
 end
 
 function Base.findin{N}(
