@@ -10,7 +10,7 @@ function InputLayerState(backend::Backend, layer::InputLayer)
 end
 
 function Mocha.setup(
-        backend::Backend,
+        backend::Mocha.Backend,
         layer::InputLayer,
         inputs::Vector{Blob},
         diffs::Vector{Blob})
