@@ -11,38 +11,11 @@ end
 
 call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
 
-immutable Modulus <: AbstractPointwise
-end
-
-call{T,N}(ρ::Modulus, data::AbstractArray{T,N}) = abs(data)
-
-immutable SquaredModulus <: AbstractPointwise
-end
-
-call{T,N}(ρ::SquaredModulus, data::AbstractArray{T,N}) = abs2(data)
-
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
 end
 
 call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
-
-immutable PointwiseLayer{P<:AbstractPointwise} <: Mocha.Layer
-    name::AbstractString
-    bottoms::Vector{Symbol}
-    tops::Vector{Symbol}
-    ρ::P
-end
-
-function PointwiseLayer( ;
-        name::AbstractString = "pointwise",
-        bottoms::Vector{Symbol} = Symbol[],
-        tops::Vector{Symbol} = Symbol[],
-        ρ :: AbstractPointwise = Identity())
-    @assert length(bottoms) > 0
-    @assert length(tops) == length(bottoms)
-    PointwiseLayer(name, bottoms, tops, ρ)
-end
 
 immutable PointwiseLayerState{BLOB<:ScatteredBlob,P<:AbstractPointwise}
     layer::PointwiseLayer{P}
@@ -82,13 +55,6 @@ function Base.map!(
     @inbounds for id in eachindex(blob_in.nodes)
         map!(ρ, blob_out.nodes[id].data, blob_in.nodes[id].data)
     end
-end
-
-function Base.map!{T<:Real}(
-        ρ::Modulus,
-        data_out::Array{T},
-        data_in::Array{Complex{T}})
-    map!(abs, data_out, data_in)
 end
 
 function Base.map!{T<:Real}(
