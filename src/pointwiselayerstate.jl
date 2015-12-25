@@ -15,7 +15,7 @@ function PointwiseLayerState(
         blobs[idblob] = ScatteredBlob(Dict(map(layer.ρ, pairs)))
     end
     # TODO: build diffs
-    return PointwiseLayerState(layer, blobs, ScatteredBlob[])
+    return PointwiseLayerState(layer, blobs, diffs)
 end
 
 function Mocha.setup(
