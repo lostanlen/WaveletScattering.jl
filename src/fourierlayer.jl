@@ -19,8 +19,6 @@ function FourierLayer( ;
     FourierLayer(name, bottoms, tops, pathkeys, flags, timelimit)
 end
 
-Mocha.@characterize_layer(FourierLayer,
-    has_neuron => false,
-    has_param => false,
-    can_do_bp => true
-)
+Mocha.can_do_bp(::FourierLayer) = true
+Mocha.has_neuron(::FourierLayer) = false
+Mocha.has_param(::FourierLayer) = false
