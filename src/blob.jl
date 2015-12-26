@@ -5,7 +5,7 @@ end
 
 function Base.show(io::IO, blob::ScatteredBlob)
     nnodes = length(blob.nodes)
-    plural = nnodes > 1 ? "s" : ""
+    plural = n_nodes > 1 ? "s" : ""
     print(io, "ScatteredBlob(", n_nodes, " node", plural, ")")
 end
 
