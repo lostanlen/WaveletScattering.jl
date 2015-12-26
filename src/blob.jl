@@ -4,7 +4,7 @@ immutable ScatteredBlob{NODE<:AbstractNode} <: Mocha.Blob
 end
 
 function Base.show(io::IO, blob::ScatteredBlob)
-    nnodes = length(blob.nodes)
+    n_nodes = length(blob.nodes)
     plural = n_nodes > 1 ? "s" : ""
     print(io, "ScatteredBlob(", n_nodes, " node", plural, ")")
 end
