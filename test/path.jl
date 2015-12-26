@@ -1,9 +1,7 @@
 import WaveletScattering: Literal, PathKey
 
 # Literal
-time_literal = Literal(:time)
-gamma2_literal = Literal((:γ, 2))
-@test time_literal.depth == 1
-@test gamma2_literal.depth == 2
-@test isimmutable(time_literal)
-@test isimmutable(gamma2_literal)
+@test isimmutable(Literal(:time))
+@test Literal(:time).depth == 1
+@test isimmutable(Literal((:γ, 2)))
+@test Literal((:γ, 2)).depth == 2
