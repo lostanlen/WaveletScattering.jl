@@ -12,7 +12,7 @@ immutable FourierDomain{K} <: AbstractDomain
     function FourierDomain{K}(dim::Val{K})
         @assert (K > 0)
         @assert isa(K, Int)
-        new(FourierDomain{K}(dim))
+        new(dim)
     end
 end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
@@ -23,7 +23,7 @@ immutable SpatialDomain{K} <: AbstractDomain
     function SpatialDomain{K}(dim::Val{K})
         @assert (K > 0)
         @assert isa(K, Int)
-        new(SpatialDomain{K}(dim))
+        new(dim)
     end
 end
 SpatialDomain(dim::Int) = SpatialDomain{dim}(Val{dim}())
