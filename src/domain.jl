@@ -7,8 +7,12 @@ subscripts over which the convolution operates.
 """
 abstract AbstractDomain
 
-immutable FourierDomain{K} <: AbstractDomain
+immutable FourierDomain{K<:Int} <: AbstractDomain
     dim::Val{K}
+    function FourierDomain{K<:Int}(dim::Val{K})
+        @assert (K > 0)
+        new(FourierDomain(dim))
+    end
 end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
 
