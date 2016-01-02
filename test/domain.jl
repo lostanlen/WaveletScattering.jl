@@ -16,3 +16,8 @@ import WaveletScattering: AbstractDomain, FourierDomain, LineDomains,
 @test_throws AssertionError SpatialDomain(0)
 @test_throws AssertionError SpatialDomain(-1)
 @test_throws MethodError FourierDomain(0.5)
+
+# LineDomains
+@test issubtype(FourierDomain{1}, LineDomains)
+@test issubtype(SpatialDomain{1}, LineDomains)
+
