@@ -17,8 +17,12 @@ end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
 
 
-immutable SpatialDomain{K} <: AbstractDomain
+immutable SpatialDomain{K<:Int} <: AbstractDomain
     dim::Val{K}
+    function SpatialDomain{K<:Int}(dim::Val{K})
+        @assert (K > 0)
+        new(SpatialDomain(dim))
+    end
 end
 SpatialDomain(dim::Int) = SpatialDomain{dim}(Val{dim}())
 
