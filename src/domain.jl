@@ -7,21 +7,23 @@ subscripts over which the convolution operates.
 """
 abstract AbstractDomain
 
-immutable FourierDomain{K<:Int} <: AbstractDomain
+immutable FourierDomain{K} <: AbstractDomain
     dim::Val{K}
-    function FourierDomain{D<:Int}(dim::Val{D})
-        @assert (D > 0)
-        new(FourierDomain{D}(dim))
+    function FourierDomain{K}(dim::Val{K})
+        @assert (K > 0)
+        @assert isa(K, Int)
+        new(FourierDomain{K}(dim))
     end
 end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
 
 
-immutable SpatialDomain{K<:Int} <: AbstractDomain
+immutable SpatialDomain{K} <: AbstractDomain
     dim::Val{K}
-    function SpatialDomain{D<:Int}(dim::Val{D})
-        @assert (D > 0)
-        new(SpatialDomain{D}(dim))
+    function SpatialDomain{K}(dim::Val{K})
+        @assert (K > 0)
+        @assert isa(K, Int)
+        new(SpatialDomain{K}(dim))
     end
 end
 SpatialDomain(dim::Int) = SpatialDomain{dim}(Val{dim}())
