@@ -9,9 +9,9 @@ abstract AbstractDomain
 
 immutable FourierDomain{K<:Int} <: AbstractDomain
     dim::Val{K}
-    function FourierDomain{K<:Int}(dim::Val{K})
-        @assert (K > 0)
-        new(FourierDomain(dim))
+    function FourierDomain{D<:Int}(dim::Val{D})
+        @assert (D > 0)
+        new(FourierDomain{D}(dim))
     end
 end
 FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
@@ -19,9 +19,9 @@ FourierDomain(dim::Int) = FourierDomain{dim}(Val{dim}())
 
 immutable SpatialDomain{K<:Int} <: AbstractDomain
     dim::Val{K}
-    function SpatialDomain{K<:Int}(dim::Val{K})
-        @assert (K > 0)
-        new(SpatialDomain(dim))
+    function SpatialDomain{D<:Int}(dim::Val{D})
+        @assert (D > 0)
+        new(SpatialDomain{D}(dim))
     end
 end
 SpatialDomain(dim::Int) = SpatialDomain{dim}(Val{dim}())
