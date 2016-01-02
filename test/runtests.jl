@@ -6,6 +6,7 @@ using JuMP
 using MathProgBase
 
 tests = [
+    "domain",
     "spec",
     "meta",
     "filter",
