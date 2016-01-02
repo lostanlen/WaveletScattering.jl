@@ -21,3 +21,6 @@ import WaveletScattering: AbstractDomain, FourierDomain, LineDomains,
 @test issubtype(FourierDomain{1}, LineDomains)
 @test issubtype(SpatialDomain{1}, LineDomains)
 
+# PlaneDomains
+@test issubtype(FourierDomain{2}, PlaneDomains)
+@test issubtype(SpatialDomain{2}, PlaneDomains)
