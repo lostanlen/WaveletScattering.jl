@@ -54,11 +54,14 @@ nFilters_per_octave = 16
 nOctaves = 8
 scales(::UncheckedSpec) = [1e3]
 @test_throws ErrorException checkspec(UncheckedSpec(-0.1, log2_size,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
+    nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(1.0, log2_size,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
+    nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, (1,),
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
+    nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
     0.9, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
