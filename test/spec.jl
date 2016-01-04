@@ -28,7 +28,8 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
         min_centerfrequency = uncertainty(Morlet1DSpec) / max_s * 1.0
     end
     nOctaves = default_nOctaves(nothing, Morlet1DSpec, tuple(log2_s),
-                                Float64(max_q), max_s, spec.motherfrequency, nfo)
+                                Float64(max_q), max_s, spec.motherfrequency,
+                                nfo)
     ξs = centerfrequencies(spec)
     nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
     nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
