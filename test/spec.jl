@@ -5,8 +5,12 @@ import WaveletScattering: checkspec, default_ɛ, default_max_qualityfactor,
     tune_motherfrequency
 # morlet1d.jl
 import WaveletScattering: uncertainty
+# spec.jl
+import WaveletScattering: AbstractSpec
 # spec1d.jl
 import WaveletScattering: Spec1D
+# waveletclass.jl
+import WaveletScattering: RedundantWaveletClass
 
 # default_nOctaves
 numerictypes = [Float16, Float32, Float64]
@@ -107,20 +111,16 @@ type WhateverType end
 @test default_nOctaves(5, WhateverType) == 5
 
 # tune_motherfrequency
-immutable TestSpec <: AbstractSpec
-    nFilters_per_octave::Int
-    nOctaves::Int
-end
 nfos = [1, 2, 4, 8, 12, 16, 24]
 pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
 for nfo in nfos, pitchfork in pitchforks
     tuningfrequency = pitchfork / 44100.0
-    ξ = tune_motherfrequency(tuningfrequency, TestSpec, nfo)
-    spec = TestSpec(nfo, 15)
-    γs = gammas(spec)
+    spec = Spec1D()
+    ξ = tune_motherfrequency(tuningfrequency, spec.class, nfo)
+    γs = Int[ meta.γ for meta in spec.ψmetas ]
     ωs = ξ * exp2(-γs / nfo)
     @test any(abs(ωs - ξ) .< 1e-4)
-    max_ξ = default_motherfrequency(TestSpec, nfo)
+    max_ξ = default_motherfrequency(spec.class, nfo)
     @test ξ < max_ξ
     @test ξ * exp2(inv(nfo)) > max_ξ
 end
