@@ -3,12 +3,10 @@ using Base.Test
 import WaveletScattering: checkspec, default_ɛ, default_max_qualityfactor,
     default_motherfrequency, default_nFilters_per_octave, default_nOctaves,
     tune_motherfrequency
-# meta.jl
-import WaveletScattering: centerfrequencies, gammas
 # morlet1d.jl
 import WaveletScattering: uncertainty
 # spec1d.jl
-import WaveletScattering : Spec1D
+import WaveletScattering: Spec1D
 
 # default_nOctaves
 numerictypes = [Float16, Float32, Float64]
