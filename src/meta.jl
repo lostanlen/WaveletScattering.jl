@@ -27,3 +27,6 @@ immutable ΦMeta
     bandwidth::Float64
     scale::Float64
 end
+
+get_γ(meta::ψMeta) = meta.γ
+get_γ(spec::AbstractSpec) = map(get_γ, spec.ψmetas)
