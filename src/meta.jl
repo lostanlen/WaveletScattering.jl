@@ -29,4 +29,3 @@ immutable ΦMeta
 end
 
 get_γ(meta::ΨMeta) = meta.γ
-get_γ(spec::AbstractSpec) = map(get_γ, spec.ψmetas)
