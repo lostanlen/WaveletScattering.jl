@@ -28,5 +28,5 @@ immutable ΦMeta
     scale::Float64
 end
 
-get_γ(meta::ψMeta) = meta.γ
+get_γ(meta::ΨMeta) = meta.γ
 get_γ(spec::AbstractSpec) = map(get_γ, spec.ψmetas)
