@@ -14,21 +14,21 @@ nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
     spec = Spec1D(
-        signaltype = T,
         log2_size = log2_s,
         max_qualityfactor = max_q,
-        max_scale = max_s
-        nFilters_per_octave = nfo,)
+        max_scale = max_s,
+        nFilters_per_octave = nfo,
+        signaltype = T)
     siglength = 1 << log2_s
     if max_s > siglength
-        min_centerfrequency = uncertainty(Morlet1DSpec) / siglength * max_q
+        min_centerfrequency = uncertainty(spec) / siglength * max_q
     else
-        min_centerfrequency = uncertainty(Morlet1DSpec) / max_s * 1.0
+        min_centerfrequency = uncertainty(spec) / max_s * 1.0
     end
-    nOctaves = default_nOctaves(nothing, Morlet1DSpec, tuple(log2_s),
+    nOctaves = default_nOctaves(nothing, spec.class, tuple(log2_s),
                                 Float64(max_q), max_s, spec.motherfrequency,
                                 nfo)
-    ξs = centerfrequencies(spec)
+    ξs = [ meta.centerfrequency for meta in spec.ψmetas ]
     nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
     nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
     @test nOctaves == min(nOctaves_a, nOctaves_b)
