@@ -3,6 +3,8 @@ using Base.Test
 import WaveletScattering: checkspec, default_ɛ, default_max_qualityfactor,
     default_motherfrequency, default_nFilters_per_octave, default_nOctaves,
     tune_motherfrequency
+# meta.jl
+import WaveletScattering: get_γ
 # morlet1d.jl
 import WaveletScattering: uncertainty
 # spec.jl
@@ -117,7 +119,7 @@ for nfo in nfos, pitchfork in pitchforks
     tuningfrequency = pitchfork / 44100.0
     spec = Spec1D()
     ξ = tune_motherfrequency(tuningfrequency, spec.class, nfo)
-    γs = Int[ meta.γ for meta in spec.ψmetas ]
+    γs = map(get_γ, spec.ψmetas)
     ωs = ξ * exp2(-γs / nfo)
     @test any(abs(ωs - ξ) .< 1e-4)
     max_ξ = default_motherfrequency(spec.class, nfo)
