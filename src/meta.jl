@@ -34,8 +34,8 @@ get_bandwidth(meta::AbstractMeta) = meta.bandwidth
 get_scale(meta::AbstractMeta) = meta.scale
 
 get_γ(meta::ΨMeta) = meta.γ
-get_θ(meta::ψMeta) = meta.θ
-get_χ(meta::ψMeta) = meta.χ
-get_centerfrequency(meta::ψMeta) = meta.centerfrequency
-get_j(meta::ψMeta) = meta.j
-get_qualityfactor(meta::ψMeta) = meta.qualityfactor
+get_θ(meta::ΨMeta) = meta.θ
+get_χ(meta::ΨMeta) = meta.χ
+get_centerfrequency(meta::ΨMeta) = meta.centerfrequency
+get_j(meta::ΨMeta) = meta.j
+get_qualityfactor(meta::ΨMeta) = meta.qualityfactor
