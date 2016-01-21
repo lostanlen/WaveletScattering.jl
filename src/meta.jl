@@ -1,8 +1,5 @@
 abstract AbstractMeta
 
-get_bandwidth(meta::AbstractMeta) = meta.bandwidth
-get_scale(meta::AbstractMeta) = meta.scale
-
 """A `ψMeta` object contains all the meta-information to identify
 an oriented wavelet within a filter bank. Fields:
 * `γ` log-scale. `2^(-γ)` is proportional to center frequency
@@ -24,13 +21,6 @@ immutable ΨMeta <: AbstractMeta
     scale::Float64
 end
 
-get_γ(meta::ΨMeta) = meta.γ
-get_θ(meta::ψMeta) = meta.θ
-get_χ(meta::ψMeta) = meta.χ
-get_centerfrequency(meta::ψMeta) = meta.centerfrequency
-get_j(meta::ψMeta) = meta.j
-get_qualityfactor(meta::ψMeta) = meta.qualityfactor
-
 """A `ΦMeta` object contains all the meta-information to identify a low-pass
 filter within a wavelet filter bank. Fields:
 * `bandwidth` ∈]0,1] the width at -3dB, expressed in fraction of signal length
@@ -39,3 +29,13 @@ immutable ΦMeta <: AbstractMeta
     bandwidth::Float64
     scale::Float64
 end
+
+get_bandwidth(meta::AbstractMeta) = meta.bandwidth
+get_scale(meta::AbstractMeta) = meta.scale
+
+get_γ(meta::ΨMeta) = meta.γ
+get_θ(meta::ψMeta) = meta.θ
+get_χ(meta::ψMeta) = meta.χ
+get_centerfrequency(meta::ψMeta) = meta.centerfrequency
+get_j(meta::ψMeta) = meta.j
+get_qualityfactor(meta::ψMeta) = meta.qualityfactor
