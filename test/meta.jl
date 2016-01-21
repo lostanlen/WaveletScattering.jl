@@ -1,42 +1,17 @@
 using Base.Test
 
-# meta.jl
-import WaveletScattering: bandwidths, centerfrequencies, chromas, gammas,
-    octaves, qualityfactors, scales, uncertainty
-# spec.jl
-import WaveletScattering: default_ɛ, AbstractSpec
-
-# gammas, chromas, octaves
-immutable TestSpec <: AbstractSpec
-    nFilters_per_octave::Int
-    nOctaves::Int
-end
-spec = TestSpec(1, 1)
-@test gammas(spec) == [0]
-@test chromas(spec) == [0]
-@test octaves(spec) == [0]
-spec = TestSpec(2, 1)
-@test gammas(spec) == [0, 1]
-@test chromas(spec) == [0, 1]
-@test octaves(spec) == [0, 0]
-spec = TestSpec(1, 2)
-@test gammas(spec) == [0, 1]
-@test chromas(spec) == [0, 0]
-@test octaves(spec) == [0, 1]
-spec = TestSpec(12, 8)
-nWavelets = spec.nFilters_per_octave * spec.nOctaves
-@test length(gammas(spec)) == nWavelets
-@test length(chromas(spec)) == nWavelets
-@test length(octaves(spec)) == nWavelets
-
 # bandwidths, centerfrequencies, qualityfactors, scales, uncertainty
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
     machine_precision = max(1e-10, default_ɛ(T))
-    spec = Morlet1DSpec(T, nFilters_per_octave=nfo, max_qualityfactor=max_q,
-                        log2_size=log2_s, max_scale=max_s)
+    spec = Spec1D(
+            signaltype=T,
+            nFilters_per_octave=nfo,
+            max_qualityfactor=max_q,
+            log2_size=log2_s,
+            max_scale=max_s)
     bws = bandwidths(spec)
     ξs = centerfrequencies(spec)
     qs = qualityfactors(spec)
