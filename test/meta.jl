@@ -1,5 +1,7 @@
 using Base.Test
 
+import WaveletScattering: default_ɛ
+
 # bandwidths, centerfrequencies, qualityfactors, scales, uncertainty
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
