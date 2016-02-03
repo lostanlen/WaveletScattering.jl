@@ -1,15 +1,15 @@
 # FourierLayerState
 immutable FourierLayerState <: AbstractScatteredLayerState
-    layer::FourierLayer
     blobs::Vector{Mocha.Blob}
     blobs_diff::Vector{Mocha.Blob}
+    layer::FourierLayer
 end
 
 function FourierLayerState(
         backend::Mocha.CPUBackend,
-        layer::FourierLayer,
+        diffs::Vector{Mocha.Blob},
         inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
+        layer::FourierLayer)
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
@@ -24,7 +24,7 @@ function FourierLayerState(
         blobs[idblob] = ScatteredBlob(outnodes)
     end
     # TODO: build diffs
-    return FourierLayerState(layer, blobs, diffs)
+    return FourierLayerState(blobs, diffs, layer)
 end
 
 function Base.findin{N}(
@@ -35,8 +35,8 @@ end
 
 function Mocha.setup(
         backend::Mocha.Backend,
-        layer::FourierLayer,
+        diffs::Vector{Mocha.Blob},
         inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
-    return FourierLayerState(backend, layer, inputs, diffs)
+        layer::FourierLayer)
+    return FourierLayerState(backend, diffs, inputs, layer)
 end
