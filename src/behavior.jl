@@ -17,7 +17,7 @@ neighboring coefficients after subsampling (also known as *hop size* or
 *stride*). Must be positive. Default is the number of octaves minus one, which
 imposes no oversampling per se.
 
-* `pathkey`."""
+* `pathkey`: key of the variable over which the filter bank is applied."""
 type Behavior
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
