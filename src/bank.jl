@@ -11,9 +11,18 @@ abstract AbstractBank{
 * `W`: wavelet class, e.g. `Morlet` or `Gammatone`.
 Its fields are
 * `ϕ`: low-pass filter, also called scaling function.
-* `ψs`: 3d array of wavelets, indexed by spin, chroma, and octave
-* `behavior`: mutable behavior, e.g. oversampling
-* `spec`: immutable specifications, e.g. number of filters per octave."""
+* `ψs`: 3d array of wavelets, indexed by spin, chroma, and octave.
+* `behavior`: mutable behavior, e.g. oversampling.
+* `spec`: immutable specifications, e.g. number of filters per octave.
+To create a `Bank1D`
+1. define a `Spec1D`,
+2. define a `PathKey` on which to apply the wavelet filterbank,
+3. if needed, provide behavior characteristics as keyword arguments.
+Example:
+spec = Spec1D(nFilters_per_octave = 12, nOctaves = 10)
+pathkey = PathKey(:time)
+bank = Bank1D(spec, pathkey, j_range = 2:9)
+"""
 immutable Bank1D{
         T<:Number,
         D<:LineDomains,
