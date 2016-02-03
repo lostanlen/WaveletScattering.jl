@@ -1,13 +1,21 @@
-# WaveletLayer
-# We adopt the same whitespace convention as in the Mocha code base
-Mocha.@defstruct WaveletLayer Mocha.Layer (
-    name :: AbstractString = "wavelets",
-    (bottoms :: Vector{Symbol} = Symbol[], length(bottoms) > 0),
-    (tops :: Vector{Symbol} = Symbol[], length(tops) == length(bottoms)),
-)
+immutable WaveletLayer <: Mocha.Layer
+    bank::AbstractBank
+    bottoms::Vector{Symbol}
+    name::AbstractString
+    tops::Vector{Symbol}
+end
 
-Mocha.@characterize_layer(WaveletLayer,
-    has_neuron => false,
-    has_param => false,
-    can_do_bp => true
-)
+function WaveletLayer( ;
+        bank::AbstractBank = NullBank(),
+        bottoms::Vector{Symbol} = Symbol[],
+        name::AbstractString = "wavelets",
+        tops::Vector{Symbol} = Symbol[])
+    @assert !isa(bank, NullBank())
+    @assert length(bottoms) > 0
+    @assert length(bottoms) == length(tops)
+    return WaveletLayer(bank, bottoms, name, tops)
+end
+
+Mocha.can_do_bp(::WaveletLayer) = true
+Mocha.has_neuron(::WaveletLayer) = false
+Mocha.has_param(::WaveletLayer) = false
