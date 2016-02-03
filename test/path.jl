@@ -1,3 +1,6 @@
+using Base.Test
+
+# path.jl
 import WaveletScattering: Literal, PathKey
 
 # Literal
@@ -9,8 +12,8 @@ import WaveletScattering: Literal, PathKey
 # PathKey
 @test isimmutable(PathKey())
 @test isempty(PathKey().literals)
-@test isimmutable PathKey(:time)
+@test isimmutable(PathKey(:time))
 @test PathKey(:time).literals == [Literal(:time)]
 @test PathKey(PathKey(:time)) == PathKey(:time)
-@test isimmurabl(PathKey(:γ, 2, :time))
-@test PathKey(:γ, 2, :time) == [Literal(:γ,2), Literal(:time)]
+@test isimmutable(PathKey(:γ, 2, :time))
+@test PathKey(:γ, 2, :time).literals == [Literal(:γ,2), Literal(:time)]
