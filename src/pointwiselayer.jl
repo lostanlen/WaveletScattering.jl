@@ -1,9 +1,8 @@
-
 immutable PointwiseLayer{P<:AbstractPointwise} <: Mocha.Layer
-    name::AbstractString
-    bottoms::Vector{Symbol}
-    tops::Vector{Symbol}
     ρ::P
+    bottoms::Vector{Symbol}
+    name::AbstractString
+    tops::Vector{Symbol}
 end
 
 Mocha.can_do_bp(::PointwiseLayer) = true
@@ -11,11 +10,11 @@ Mocha.has_neuron(::PointwiseLayer) = false
 Mocha.has_param(::PointwiseLayer) = false
 
 function PointwiseLayer( ;
-        name::AbstractString = "pointwise",
+        ρ :: AbstractPointwise = Identity(),
         bottoms::Vector{Symbol} = Symbol[],
-        tops::Vector{Symbol} = Symbol[],
-        ρ :: AbstractPointwise = Identity())
+        name::AbstractString = "pointwise",
+        tops::Vector{Symbol} = Symbol[])
     @assert length(bottoms) > 0
     @assert length(tops) == length(bottoms)
-    PointwiseLayer(name, bottoms, tops, ρ)
+    PointwiseLayer(ρ, bottoms, name, tops)
 end

@@ -1,20 +1,20 @@
 immutable InputLayerState <: AbstractScatteredLayerState
-    layer::InputLayer
     blobs::Vector{Mocha.Blob}
+    layer::InputLayer
 end
 
 function InputLayerState(backend::Backend, layer::InputLayer)
     ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
     blob = ScatteredBlob(Dict(Path() => Node(layer.data, ranges)))
     blobs = Mocha.Blob[blob]
-    return InputLayerState(layer, blobs)
+    return InputLayerState(blobs, layer)
 end
 
 function Mocha.setup(
         backend::Mocha.Backend,
-        layer::InputLayer,
+        diffs::Vector{Blob},
         inputs::Vector{Blob},
-        diffs::Vector{Blob})
+        layer::InputLayer)
     @assert length(inputs) == 0
     return InputLayerState(backend, layer)
 end

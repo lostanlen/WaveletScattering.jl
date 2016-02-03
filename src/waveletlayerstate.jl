@@ -1,11 +1,8 @@
 # WaveletLayerState
-immutable WaveletLayerState{B<:ScatteredBlob,BANK<:AbstractBank} <:
-        AbstractScatteredLayerState
+immutable WaveletLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
     layer::WaveletLayer
     blobs::Vector{B}
     blobs_diff::Vector{B}
-
-    bank::BANK
 end
 
 function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
@@ -15,7 +12,7 @@ function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
     end
 end
 
-function setup{
+function Mocha.setup{
     T<:FFTW.fftwReal,
     D<:FourierDomain,
     G<:LineGroups,
