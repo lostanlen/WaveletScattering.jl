@@ -4,6 +4,8 @@ abstract AbstractBank{
     G<:AbstractPointGroup,
     W<:RedundantWaveletClass}
 
+immutable NullBank <: AbstractBank
+
 """A `Bank1D` is a one-dimensional wavelet filter bank, parametrized by
 * `T`: numeric type of input, e.g. Float32, Float64.
 * `D`: transform domain. Either `FourierDomain{1}` or `SpatialDomain{1}`.
