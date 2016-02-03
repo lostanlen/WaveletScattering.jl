@@ -1,22 +1,22 @@
 immutable FourierLayer <: Mocha.Layer
-    name::AbstractString
     bottoms::Vector{Symbol}
-    tops::Vector{Symbol}
-    pathkeys::Vector{PathKey}
     flags::UInt32
+    name::AbstractString
+    pathkeys::Vector{PathKey}
     timelimit::Float64
+    tops::Vector{Symbol}
 end
 
 function FourierLayer( ;
-        name::AbstractString = "fourier",
         bottoms::Vector{Symbol} = Symbol[],
-        tops::Vector{Symbol} = Symbol[],
-        pathkeys::Vector{PathKey} = PathKey[],
         flags::UInt32 = FFTW.ESTIMATE,
-        timelimit::Float64 = Inf)
+        name::AbstractString = "fourier",
+        pathkeys::Vector{PathKey} = PathKey[]
+        timelimit::Float64 = Inf,
+        tops::Vector{Symbol} = Symbol[])
     @assert length(bottoms) > 0
     @assert length(bottoms) == length(tops)
-    FourierLayer(name, bottoms, tops, pathkeys, flags, timelimit)
+    FourierLayer(bottoms, flags, name, pathkeys, timelimit, tops)
 end
 
 Mocha.can_do_bp(::FourierLayer) = true
