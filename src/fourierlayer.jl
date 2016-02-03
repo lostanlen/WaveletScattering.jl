@@ -11,7 +11,7 @@ function FourierLayer( ;
         bottoms::Vector{Symbol} = Symbol[],
         flags::UInt32 = FFTW.ESTIMATE,
         name::AbstractString = "fourier",
-        pathkeys::Vector{PathKey} = PathKey[]
+        pathkeys::Vector{PathKey} = PathKey[],
         timelimit::Float64 = Inf,
         tops::Vector{Symbol} = Symbol[])
     @assert length(bottoms) > 0
