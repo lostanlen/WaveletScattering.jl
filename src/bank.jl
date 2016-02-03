@@ -5,6 +5,7 @@ abstract AbstractBank{
     W<:RedundantWaveletClass}
 
 immutable NullBank <: AbstractBank
+end
 
 """A `Bank1D` is a one-dimensional wavelet filter bank, parametrized by
 * `T`: numeric type of input, e.g. Float32, Float64.
