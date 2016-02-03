@@ -8,6 +8,6 @@ Scattering coefficients are powerful features for signal-based machine learning 
 while discarding non-informative variability, such as rigid motions, frequency transpositions, and elastic deformations.
 
 Its design is inspired from the [scattering.m](https://github.com/lostanlen/scattering.m) toolbox, while taking advantage of
-Julia's multiple dispatch and in-place operations. 
+Julia's multiple dispatch and in-place operations.
 
-The package is under ongoing development and is planned to be released in the fall 2015.
+The package is under ongoing development and is planned to be released in 2016.

@@ -1,7 +1,7 @@
 """There are two subtypes of `AbstractDomain`:
 * `FourierDomain{K}`: filtering is implemented as a product in the Fourier
 domain. `K` is the dimension of the Fourier transform.
-* `SpatialDomain`: filtering is implemented as a convolution in the spatial
+* `SpatialDomain{K}`: filtering is implemented as a convolution in the spatial
 domain, or as a wavelet lifting scheme when it is possible. `K` is the number of
 subscripts over which the convolution operates.
 """

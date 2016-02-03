@@ -4,6 +4,16 @@ abstract AbstractBank{
     G<:AbstractPointGroup,
     W<:RedundantWaveletClass}
 
+"""A `Bank1D` is a one-dimensional wavelet filter bank, parametrized by
+* `T`: numeric type of input, e.g. Float32, Float64.
+* `D`: transform domain. Either `FourierDomain{1}` or `SpatialDomain{1}`.
+* `G`: point group. Either `TrivialGroup` or `ReflectionGroup`.
+* `W`: wavelet class, e.g. `Morlet` or `Gammatone`.
+Its fields are
+* `ϕ`: low-pass filter, also called scaling function.
+* `ψs`: 3d array of wavelets, indexed by spin, chroma, and octave
+* `behavior`: mutable behavior, e.g. oversampling
+* `spec`: immutable specifications, e.g. number of filters per octave."""
 immutable Bank1D{
         T<:Number,
         D<:LineDomains,
