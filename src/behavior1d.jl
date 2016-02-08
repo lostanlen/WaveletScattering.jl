@@ -20,9 +20,13 @@ imposes no oversampling per se.
 * `pathkey`: key of the variable over which the filter bank is applied.
 
 * `weighting`: scalar weighting of each wavelet frequency band. Default is
-EqualWeighting(), i.e. all weights are one. Can be set to
-LoudnessWeighting(samplerate) to model the relative loudness perceived by the
-human ear, as defined by the international standard 61672:2003."""
+`EqualWeighting()`, i.e. all weights are one. Can be set to
+`LoudnessWeighting(samplerate)` to model the relative loudness perceived by the
+human ear, as defined by the international standard 61672:2003.
+
+* `weights`: vector of floating-point weights corresponding to the
+frequencies of `ψ`'s. The weight assigned to `ϕ` is the same as the weight
+of the `ψ` with the lowest center frequency."""
 type Behavior1D{T<:Real}
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
