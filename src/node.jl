@@ -2,6 +2,11 @@
 abstract AbstractNode{T<:Number,N}
 abstract AbstractFourierNode{T<:Number,N} <: AbstractNode{T,N}
 
+AbstractFourierNode{T<:FFTW.fftwReal}(node::AbstractNode{T}, args...) =
+    RealFourierNode(node, args...)
+AbstractFourierNode{T<:FFTW.fftwComplex}(node::AbstractNode{T}, args...) =
+    ComplexFourierNode(node, args...)
+
 immutable RealFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,N} <:
         AbstractFourierNode{T,N}
     data::Array{T,N}
