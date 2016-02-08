@@ -34,6 +34,10 @@ Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
 convert(PathKey, sym::Symbol) = PathKey(sym)
 convert(PathKey, tup::Tuple) = PathKey(tup...)
 
+function Base.string(pathkey::PathKey)
+    return join([literal.symbol for literal in pathkey.literals], "_")
+end
+
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices."""
 immutable Path
