@@ -71,7 +71,7 @@ function Behavior1D{
         -max_log2_stride, 0)
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
     ξs = map(get_centerfrequency, spec.ψmetas)
-    weights = convert(Array{T, 3}, weight_frequencies(weighting, ξs))
+    weights = map(T, weight_frequencies(weighting, ξs)))
     Behavior1D(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
         log2_oversampling, max_log2_stride, pathkey, weighting, weights)
 end
