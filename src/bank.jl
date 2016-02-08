@@ -50,7 +50,7 @@ immutable Bank1D{
         (nΘs > 1) && spin!(ψs)
         ϕ = AbstractFilter(spec.ϕmeta, spec)
         renormalize!(ϕ, ψs, spec)
-        behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
+        behavior = Behavior1D(ϕ, ψs, spec, is_ϕ_applied, j_range,
             log2_oversampling, max_log2_stride, pathkey, weighting)
         new{T,D,G,W}(ϕ, ψs, behavior, spec)
     end
