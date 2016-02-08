@@ -18,5 +18,5 @@ function weight_frequencies(weighting::LoudnessWeighting, ξs)
     den2 = sqrt((freqs2 + 107.7 * 107.7) * (freqs2 + 737.9 * 737.9))
     den3 = (freqs2 + 12200.0 * 12200.0)
     denominator = den1 .* den2 .* den3
-    return convert(numerator ./ denominator
+    return numerator ./ denominator
 end
