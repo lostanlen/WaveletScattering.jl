@@ -33,7 +33,7 @@ immutable Bank1D{
         W<:RedundantWaveletClass} <: AbstractBank{T,D,G,W}
     ϕ::AbstractFilter{T,D}
     ψs::Array{AbstractFilter{T,D},3}
-    behavior::Behavior
+    behavior::Behavior1D{T}
     spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(::Type{Bank1D},
             spec::Spec1D{T,D,G,W},
@@ -41,7 +41,8 @@ immutable Bank1D{
             is_ϕ_applied::Bool = false,
             j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
             log2_oversampling::Int = 0,
-            max_log2_stride::Int = spec.nOctaves-1)
+            max_log2_stride::Int = spec.nOctaves-1,
+            weighting = EqualWeighting())
         (nΘs, nΧs, nJs) = size(spec.ψmetas)
         ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
         ψs[1, :, :] =

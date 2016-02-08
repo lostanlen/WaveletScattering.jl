@@ -17,8 +17,13 @@ neighboring coefficients after subsampling (also known as *hop size* or
 *stride*). Must be positive. Default is the number of octaves minus one, which
 imposes no oversampling per se.
 
-* `pathkey`: key of the variable over which the filter bank is applied."""
-type Behavior
+* `pathkey`: key of the variable over which the filter bank is applied.
+
+* `weighting`: scalar weighting of each wavelet frequency band. Default is
+EqualWeighting(), i.e. all weights are one. Can be set to
+LoudnessWeighting(samplerate) to model the relative loudness perceived by the
+human ear, as defined by the international standard 61672:2003."""
+type Behavior1D{T<:Real}
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
     is_ϕ_applied::Bool
@@ -26,6 +31,8 @@ type Behavior
     log2_oversampling::Int
     max_log2_stride::Int
     pathkey::PathKey
+    weighting::AbstractWeighting
+    weights::Vector{T}
 end
 
 """Given a lowpass filter `ϕ`, an array of wavelets `ψs`, and the corresponding
@@ -37,7 +44,7 @@ the critical sampling rates of all `ψs` and `ϕ`. Then, with the inputs
   sample rate.
 NB: if `log2_oversampling` and `max_log2_stride` are left as defaults, all
 sample rates are critical."""
-function Behavior{
+function Behavior1D{
     T<:Number,
     D<:AbstractDomain,
     G<:AbstractPointGroup,
@@ -49,7 +56,8 @@ function Behavior{
         j_range::UnitRange{Int},
         log2_oversampling::Int,
         max_log2_stride::Int,
-        pathkey::PathKey)
+        pathkey::PathKey,
+        weighting::AbstractWeighting)
     ϕ_critical_log2_sampling = critical_log2_sampling(ϕ, spec)
     ϕ_log2_sampling =
         clamp(ϕ_critical_log2_sampling + log2_oversampling, -max_log2_stride, 0)
@@ -58,6 +66,8 @@ function Behavior{
     ψ_log2_samplings = clamp(ψ_critical_log2_samplings + log2_oversampling,
         -max_log2_stride, 0)
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
-    Behavior(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
-        log2_oversampling, max_log2_stride, pathkey)
+    ξs = [ get_centerfrequency(meta) for meta in ψmetas[1, :, :] ]
+    weights = convert(T, weight_frequencies(weighting, ξs))
+    Behavior1D(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
+        log2_oversampling, max_log2_stride, pathkey, weighting, weights)
 end
