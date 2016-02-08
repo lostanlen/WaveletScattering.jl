@@ -3,7 +3,7 @@ abstract AbstractWeighting
 immutable EqualWeighting <: AbstractWeighting end
 weight_frequencies(::EqualWeighting, ξs) = ones(ξs)
 
-immutable LoudnessWeighting
+immutable LoudnessWeighting <: AbstractWeighting
     samplerate::Int
 end
 
