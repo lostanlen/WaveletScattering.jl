@@ -1,9 +1,7 @@
 abstract AbstractWeighting
 
 immutable EqualWeighting <: AbstractWeighting
-weight_frequencies(::AbstractWeighting, ξs) = ones(ξs)
-
-function weight_frequencies(weighting::EqualWeighting)
+weight_frequencies(::EqualWeighting, ξs) = ones(ξs)
 
 immutable LoudnessWeighting
     samplerate::Int
