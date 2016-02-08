@@ -37,6 +37,7 @@ convert(PathKey, tup::Tuple) = PathKey(tup...)
 function Base.string(pathkey::PathKey)
     return join([literal.symbol for literal in pathkey.literals], "_")
 end
+Base.symbol(pathkey::Pathkey) = symbol(string(pathkey))
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices."""
