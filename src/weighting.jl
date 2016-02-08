@@ -1,6 +1,6 @@
 abstract AbstractWeighting
 
-immutable EqualWeighting <: AbstractWeighting
+immutable EqualWeighting <: AbstractWeighting end
 weight_frequencies(::EqualWeighting, ξs) = ones(ξs)
 
 immutable LoudnessWeighting
