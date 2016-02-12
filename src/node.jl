@@ -76,7 +76,7 @@ function transform!(
     # All nonzero frequencies in a single loop
     @inbounds for ω in 1:(N-1)
         inds[node_in.forward_plan.region[1]] = 1 + ω
-        view_in = ArrayViews.view(node_in.data_ft, inds...)
+        view_in = ArrayViews.view(node_in.data, inds...)
         view_out = ArrayViews.view(node_out.data, inds...)
         @inbounds for id in eachindex(view_in)
             view_out[id] = view_in[id] * ψ[1 + ω]
