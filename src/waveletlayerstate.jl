@@ -1,8 +1,8 @@
 # WaveletLayerState
 immutable WaveletLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
-    layer::WaveletLayer
     blobs::Vector{B}
     blobs_diff::Vector{B}
+    layer::WaveletLayer
 end
 
 function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
@@ -12,30 +12,20 @@ function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
     end
 end
 
-function Mocha.setup{
-    T<:FFTW.fftwReal,
-    D<:FourierDomain,
-    G<:LineGroups,
-    W<:RedundantWaveletClass,
-    N}(
+function Mocha.setup(
         backend::Mocha.CPUBackend,
-        layer::WaveletLayer,
-        bank::Bank1D{T,D,G,W},
+        diffs:Vector{ScatteredBlob{T}},
         inputs::Vector{Mocha.CPUBlob{T,N}},
-        diffs::Vector{ScatteredBlob{T}} ;
-        symbols::Vector{Symbol} = [:time],
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf)
-    blobs = Array(ScatteredBlob{RealFourierNode{T,N}}, length(inputs))
-    appendsymbols!(symbols, N)
-    subscripts = map(PathKey, symbols)
+        layer::WaveletLayer)
+    blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
-        subscripts = inputs[idblob].subscripts
-        region = find(subscripts == bank.behavior.pathkey)
-        node = RealFourierNode(inputs[idblob].data, region, subscripts)
-        nodes = Dict(Path() => node)
-        blobs[idblob] = ScatteredBlob(nodes, symbols)
+        innodes = inputs[idblob].nodes
+        outnodes = Dict{Path, AbstractFourierNode}()
+        for path in keys(innodes)
+
+        end
+        blobs[idblob] = ScatteredBlob(outnodes)
     end
     blobs_diff = 0
-    WaveletLayerState(bank, blobs, blobs_diff, layer)
+    WaveletLayerState(blobs, blobs_diff, layer)
 end
