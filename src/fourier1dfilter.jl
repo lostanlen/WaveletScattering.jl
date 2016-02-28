@@ -124,8 +124,8 @@ Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
 Returns `0` for `n==0`, and returns `-nextpow2(-n)` for negative arguments."""
 nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
 nextpow2_exponent(n::Integer) = oftype(n,
-    n ==0 ? 0 :
-    n< 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
+    n == 0 ? 0 :
+    n < 0 ? -nextpow2_exponent(unsigned(-n)) : nextpow2_exponent(unsigned(n)))
 
 """Given a narrowband filter `ψ` and its corresponding filter bank
 specification `spec`, returns the base-2 logarithm of the resampling factor
