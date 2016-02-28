@@ -12,7 +12,7 @@ function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
     end
 end
 
-function Mocha.setup(
+function Mocha.setup{T,N}(
         backend::Mocha.CPUBackend,
         diffs:Vector{ScatteredBlob{T}},
         inputs::Vector{Mocha.CPUBlob{T,N}},
