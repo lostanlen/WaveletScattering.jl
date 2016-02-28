@@ -55,3 +55,5 @@ immutable Bank1D{
         new{T,D,G,W}(ϕ, ψs, behavior, spec)
     end
 end
+
+ndims(::Bank1D) = 1
