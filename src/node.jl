@@ -100,7 +100,7 @@ function transform!{T}(
         ψ::VanishingWithMidpoint1DFilter,
         node::AbstractNode{T},
         dim::Int)
-    inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1]
+    inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
         inds[dim] = 1 + ω
         input = sub(node.data, inds)
