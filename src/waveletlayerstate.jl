@@ -14,7 +14,7 @@ end
 
 function Mocha.setup{T,N}(
         backend::Mocha.CPUBackend,
-        diffs:Vector{ScatteredBlob{T}},
+        diffs::Vector{ScatteredBlob{T}},
         inputs::Vector{Mocha.CPUBlob{T,N}},
         layer::WaveletLayer)
     blobs = Vector{Mocha.Blob}(length(inputs))
