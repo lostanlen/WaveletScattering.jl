@@ -71,7 +71,7 @@ function call{T<:Real,DIM}(
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
         downsampled_length = size(x, 1) << (-ψ_log2_sampling)
         octave_size =
-            [downsampled_length, size(x, 2:end), bank.spec.nFilters_per_octave]
+            [downsampled_length, size(x)[2:end], bank.spec.nFilters_per_octave]
         octave_ft = zeros(Complex{T}, octave_size)
         inds = [fill(Colon(), ndims(x)-1) ; 0]
         for χ in 0:(bank.spec.nFilters_per_octave-1)
