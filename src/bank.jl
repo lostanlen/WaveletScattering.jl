@@ -109,3 +109,24 @@ function transform!{T}(
         broadcast!(*, output, ψ.pos[1+ω], input)
     end
 end
+
+function transform!{T}(
+        destination::SubArray{T},
+        ψ::VanishingWithMidpoint1DFilter,
+        node::AbstractNode{T},
+        dim::Int)
+    inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1]
+    @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
+        inds[dim] = 1 + ω
+        input = sub(node.data, inds)
+        output = sub(destination, inds)
+        broadcast!(*, output, ψ.pos[1+ω], input)
+    end
+    @inbounds for ω in ψ.coan.neglast+(0:(length(ψ.coan.neg)-1))
+        inds[dim] = 1 + size(node.data, dim) + ω
+        input = sub(node.data, inds)
+        inds[dim] = 1 + size(destination, inds) + ω
+        output = sub(destination, inds)
+        broadcast!(*, output, ψ.neg[1+end+ω], input)
+    end
+end
