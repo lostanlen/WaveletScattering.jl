@@ -118,10 +118,12 @@ Base.(:*){T}(ψ::FourierSymmetric1DFilter{T}, b::Number) =
 Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter{T}(b * ψ.an, b * ψ.coan)
 Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
-    VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
+    VanishingWithMidpoint1DFilter{T}(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
+
 
 """The exponent of the smallest power of two not less than input integer `n`.
-Returns `0` for `n==0`, and returns `-nextpow2(-n)` for negative arguments."""
+Returns `0` for `n==0`, and returns `-nextpow2_exponent(-n)` for negative
+arguments."""
 nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
 nextpow2_exponent(n::Integer) = oftype(n,
     n == 0 ? 0 :
