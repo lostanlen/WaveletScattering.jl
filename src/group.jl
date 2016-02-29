@@ -1,4 +1,4 @@
-"""Three variables come into play in a wavelet filterbank :
+"""Three variables come into play in a wavelet filterbank:
 * the spatial variable `V`, which may be multi-dimensional ;
 * the scale variable `γ::V`, which is one-dimensional and non-negative ;
 * the isometric variable `θ::V`, which belongs to a ""point group"".
