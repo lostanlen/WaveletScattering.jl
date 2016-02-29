@@ -56,7 +56,7 @@ immutable Bank1D{
     end
 end
 
-ndims(::Bank1D) = 1
+Base.ndims(::Bank1D) = 1
 
 function call{T<:Real,DIM}(
         bank::AbstractBank{T,FourierDomain{1},TrivialGroup},
