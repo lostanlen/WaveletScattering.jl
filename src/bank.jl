@@ -64,20 +64,20 @@ function call{T<:Real,DIM}(
         flags = FFTW.ESTIMATE,
         timelimit = Inf,
         verbose = 0)
-    syms = appendsymbols(fill(symbol(bank.behavior.pathkey), DIM), ndims(x))
-    inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), ndims(x)))
-    fouriernode = AbstractFourierNode(inputnode, 1, flags, timelimit)
+    syms = appendsymbols(fill(symbol(bank.behavior.pathkey), 1), DIM)
+    inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), DIM))
+    fouriernode = AbstractFourierNode(inputnode, [1], flags, timelimit)
     for j in bank.behavior.j_range
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
         downsampled_length = size(x, 1) << (-ψ_log2_sampling)
-        octave_size =
-            [downsampled_length, size(x)[2:end], bank.spec.nFilters_per_octave]
+        octave_size = (downsampled_length,
+            size(x)[2:end]..., bank.spec.nFilters_per_octave)
         octave_ft = zeros(Complex{T}, octave_size)
-        inds = [fill(Colon(), ndims(x)-1) ; 0]
+        inds = [fill(Colon(), DIM) ; 0]
         for χ in 0:(bank.spec.nFilters_per_octave-1)
             ψ = bank.ψs[1, 1+χ, 1+j]
-            inds[end] = χ
-            transform!(sub(octave_ft, inds), ψ, fouriernode, 1)
+            inds[end] = 1 + χ
+            transform!(sub(octave_ft, inds...), ψ, fouriernode, 1)
         end
     end
 end
