@@ -67,24 +67,24 @@ function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
 
-function transform!{T}(
-        destination::SubArray{T},
-        ψ::FullResolution1DFilter{T},
-        node::AbstractNode{T},
+function transform!(
+        destination::SubArray,
+        ψ::FullResolution1DFilter,
+        node::AbstractNode,
         dim::Int)
     inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in 0:(size(node.data, dim)-1)
         inds[dim] = 1 + ω
-        input = sub(node.data, inds)
-        output = sub(destination, inds)
+        input = sub(node.data, inds...)
+        output = sub(destination, inds...)
         broadcast!(*, output, ψ.coeff[1+ω], input)
     end
 end
 
-function transform!{T}(
-        destination::SubArray{T},
-        ψ::Analytic1DFilter{T},
-        node::AbstractNode{T},
+function transform!(
+        destination::SubArray,
+        ψ::Analytic1DFilter,
+        node::AbstractNode,
         dim::Int)
     inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in (ψ.posfirst):(ψ.posfirst+length(ψ.pos)-1)
@@ -95,10 +95,10 @@ function transform!{T}(
     end
 end
 
-function transform!{T}(
-        destination::SubArray{T},
+function transform!(
+        destination::SubArray,
         ψ::VanishingWithMidpoint1DFilter,
-        node::AbstractNode{T},
+        node::AbstractNode,
         dim::Int)
     inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
