@@ -1,3 +1,3 @@
-abstract RedundantWaveletClass <: WT.WaveletClass
+abstract RedundantWaveletClass
 
 immutable Morlet <: RedundantWaveletClass end
