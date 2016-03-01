@@ -86,7 +86,7 @@ function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
 end
 
 """
-By neglecting the low-frequency corective term, we write the Morlet wavelet as a
+By neglecting the low-frequency corrective term, we write the Morlet wavelet as a
 Gaussian of variance σ in the Fourier domain. Its 3 dB bandwidth, defined as the
 full width at half maximum (FWHM) of the squared magnitude in the Fourier
 domain, is then equal to b = 2σ*sqrt(log(2)).
