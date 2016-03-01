@@ -59,7 +59,7 @@ end
 Base.ndims(::Bank1D) = 1
 
 function call{T<:Real,DIM}(
-        bank::AbstractBank{T,FourierDomain{1},TrivialGroup},
+        bank::Bank1D{T,FourierDomain{1},TrivialGroup},
         x::AbstractArray{T,DIM};
         flags = FFTW.ESTIMATE,
         timelimit = Inf,
