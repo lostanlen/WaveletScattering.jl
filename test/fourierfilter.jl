@@ -1,60 +1,62 @@
 using Base.Test
 # fourierfilter.jl
-import WaveletScattering: AbstractFourierFilter, Analytic1DFilter,
-    Coanalytic1DFilter, FullResolution1DFilter, Symmetric1DFilter,
+import WaveletScattering: AbstractFilter, Analytic1DFilter,
+    Coanalytic1DFilter, FourierSymmetric1DFilter,
+    FullResolution1DFilter, Symmetric1DFilter,
     Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    getindex, littlewoodpaleyadd!, renormalize!, scalingfunction,
-    spin
+    getindex, littlewoodpaleyadd!, renormalize!, spin
 # meta.jl
-import WaveletScattering: NonOrientedMeta, bandwidths, centerfrequencies,
-    chromas, gammas, octaves, qualityfactors, scales
+import WaveletScattering: ΨMeta, ΦMeta, get_bandwidth,
+    get_centerfrequency, get_j, get_nOrientations,
+    get_qualityfactor, get_scale, get_γ, get_θ, get_χ
 # morlet1d.jl
 import WaveletScattering: Morlet1DSpec, fourierwavelet
+# sped1d.jl
+import WaveletScattering: Spec1D
 
 # AbstractFourierFilter 1D constructor
-spec = Morlet1DSpec(log2_size = 4)
+spec = Spec1D(log2_size = 4)
 N = 16
 y = zeros(Float32, N); y[15] = 1.0
-@test isa(AbstractFourierFilter(y, spec), Analytic1DFilter{Float32})
+@test isa(AbstractFilter(y, spec), Analytic1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0
-@test isa(AbstractFourierFilter(y, spec), Coanalytic1DFilter{Float32})
+@test isa(AbstractFilter(y, spec), Coanalytic1DFilter{Float32})
 y = ones(Float32, N)
-@test isa(AbstractFourierFilter(y, spec), FullResolution1DFilter{Float32})
+@test isa(AbstractFilter(y, spec), FullResolution1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0; y[15] = 1.0
-@test isa(AbstractFourierFilter(y, spec), Vanishing1DFilter{Float32})
+@test isa(AbstractFilter(y, spec), Vanishing1DFilter{Float32})
 y = zeros(Float32, N); y[1] = 1.0;
-@test isa(AbstractFourierFilter(y, spec),
-    VanishingWithMidpoint1DFilter{Float32})
+@test isa(AbstractFilter(y, spec), VanishingWithMidpoint1DFilter{Float32})
 
 # multiplication operator with scalar
 # Base.(:*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
-ψ2 = ψ * 2.0
+ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Analytic1DFilter{Float32})
 @test_approx_eq ψ2.pos Float32[0.2, 0.6]
 @test ψ2.posfirst == 2
 # Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
-ψ2 = ψ * 2.0
+ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Coanalytic1DFilter{Float32})
 @test_approx_eq ψ2.neg Float32[0.2, 0.6, 0.8]
 @test ψ2.neglast == -3
 # Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
-ψ2 = ψ * 2.0
+ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, FullResolution1DFilter{Float32})
 @test_approx_eq ψ2.coeff Float32[0.02, 0.2, 0.4, 0.6]
 # Base.(:*){T<:Number}(ψ::Symmetric1DFilter{T}, b::Number)
-ψ = Symmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
-ψ2 = ψ * 2.0
-@test isa(ψ2, Symmetric1DFilter{Float32})
+ψ = FourierSymmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
+ψ2 = ψ * Float32(2.0)
+@test isa(ψ2, FourierSymmetric1DFilter{Float32})
 @test_approx_eq ψ2.leg Float32[1.6, 0.6, 0.2]
 @test_approx_eq ψ2.zero Float32(2.0)
 # Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
-ψ2 = ψ * 2.0
+ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Vanishing1DFilter{Float32})
 @test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
 @test ψ2.an.posfirst == 2
@@ -65,7 +67,7 @@ an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
-ψ2 = ψ * 2.0
+ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, VanishingWithMidpoint1DFilter{Float32})
 @test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
 @test ψ2.an.posfirst == 2
@@ -173,8 +175,8 @@ allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test_approx_eq maximum(Coanalytic1DFilter([0.1, 0.3, 0.4*im], -3)) 0.4
 # Base.maximum(ψ::FullResolution1DFilter)
 @test_approx_eq maximum(FullResolution1DFilter([0.01, 0.1*im, 0.2, -0.3])) 0.3
-# Base.maximum(ψ::Symmetric1DFilter)
-@test_approx_eq maximum(Symmetric1DFilter([0.2, 0.1], 1.0)) 1.0
+# Base.maximum(ψ::FourierSymmetric1DFilter)
+@test_approx_eq maximum(FourierSymmetric1DFilter([0.2, 0.1], 1.0)) 1.0
 # Base.maximum(ψ::Vanishing1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
@@ -188,14 +190,21 @@ midpoint = Float32(0.5)
 
 # renormalize!
 # case Q=1
-spec = Morlet1DSpec()
-γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
-ξs, qs = centerfrequencies(spec), qualityfactors(spec)
-scs, bws = scales(spec), bandwidths(spec)
+spec = Spec1D()
+γs = map(get_γ, spec.ψmetas)
+χs = map(get_χ, spec.ψmetas)
+js = map(get_j, spec.ψmetas)
+ξs = map(get_centerfrequency, spec.ψmetas)
+qs = map(get_qualityfactor, spec.ψmetas)
+scs = map(get_scale, spec.ψmetas)
+bws = map(get_bandwidth, spec.ψmetas)
 @inbounds metas = [
-    NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
+    ΨMeta(γs[i], 1, χs[i], bws[i], ξs[i], js[i], qs[i],
+    scs[i])
     for i in eachindex(γs) ]
-@inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
+
+        
+@inbounds ψs = AbstractFilter{spec.signaltype,1}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
 lp = renormalize!(ψs, ϕ, metas, spec)
@@ -205,7 +214,7 @@ firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
 # case Q>1, max_s = Inf
-spec = Morlet1DSpec(nFilters_per_octave=8)
+spec = Spec1D(nFilters_per_octave=8)
 γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
 ξs, qs = centerfrequencies(spec), qualityfactors(spec)
 scs, bws = scales(spec), bandwidths(spec)
