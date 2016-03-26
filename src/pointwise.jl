@@ -2,7 +2,7 @@ abstract AbstractPointwise
 
 function call{NODE<:AbstractNode}(
         ρ::AbstractPointwise,
-        pair::Pair{WaveletScattering.Path,NODE})
+        pair::Pair{Path,NODE})
     return pair.first => Node(ρ(pair.second.data), pair.second.ranges)
 end
 
@@ -13,6 +13,7 @@ call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
 
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
+    Log1P(threshold) = (threshold>=0 || throw(DomainError)) && new(threshold)
 end
 
 call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
