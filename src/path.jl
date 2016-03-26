@@ -56,8 +56,8 @@ Base.(:(==))(x::Path, y::Path) = (x.dict == y.dict)
 
 Base.hash(x::Path) = hash(x.dict)
 
-"""A `PathRange` is a dictionary whose keys are `PathKey`s are whose values are
-integer ranges."""
+"""A `PathRange` is a dictionary whose keys are `PathKey`'s
+and whose values are integer ranges."""
 immutable PathRange
     dict::Dict{PathKey,StepRange{Int,Int}}
     function PathRange(pairs...)
