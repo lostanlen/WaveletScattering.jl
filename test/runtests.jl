@@ -7,6 +7,7 @@ using MathProgBase
 
 tests = [
     "domain",
+    "group",
     "path",
     "meta",
     "spec",
