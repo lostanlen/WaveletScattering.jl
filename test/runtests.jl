@@ -7,14 +7,15 @@ using MathProgBase
 
 tests = [
     "domain",
-    "spec",
+    "path",
     "meta",
+    "spec",
     "filter",
 #    "fourierfilter",
     "bank",
     "morlet1d",
-    "layer",
-    "path"
+    "symbols",
+    "layer"
 ]
 
 println("Running tests:")
