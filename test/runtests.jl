@@ -15,6 +15,7 @@ tests = [
 #    "fourierfilter",
     "bank",
     "morlet1d",
+    "modulus",
     "symbols",
     "layer"
 ]
