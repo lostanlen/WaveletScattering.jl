@@ -38,8 +38,8 @@ end
 for T in subtypes(AbstractPointwise)
     @eval begin
         function call{NODE<:AbstractNode}(
-                ρ::T,
-                pair::Pair{Path,Node})
+                ρ::$T,
+                pair::Pair{Path,NODE})
             return pair.first => Node(ρ(pair.second.data), pair.second.ranges)
         end
     end
