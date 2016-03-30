@@ -1,13 +1,13 @@
 abstract AbstractFilter{T<:Number,D<:AbstractDomain}
 
-immutable Symmetric1DFilter{T<:Number} <: AbstractFilter{T,SpatialDomain{1}}
-    leg::Vector{T}
-    zero::T
-end
-
 immutable Asymmetric1DFilter{T<:Number} <: AbstractFilter{T,SpatialDomain{1}}
     neg::Vector{T}
     pos::Vector{T}
+    zero::T
+end
+
+immutable Symmetric1DFilter{T<:Number} <: AbstractFilter{T,SpatialDomain{1}}
+    leg::Vector{T}
     zero::T
 end
 
