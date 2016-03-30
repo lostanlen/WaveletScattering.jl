@@ -1,8 +1,8 @@
 using Base.Test
 
 # meta.jl
-import WaveletScattering: get_bandwidth, get_centerfrequency, get_qualityfactor,
-    get_scale
+import WaveletScattering: get_γ, get_θ, get_χ, get_j,
+    get_bandwidth, get_centerfrequency, get_qualityfactor, get_scale
 
 # spec.jl
 import WaveletScattering: default_ɛ, uncertainty
