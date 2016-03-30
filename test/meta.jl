@@ -22,10 +22,18 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
             max_qualityfactor=max_q,
             log2_size=log2_s,
             max_scale=max_s)
+    γs = map(get_γ, spec.ψmetas)
+    θs = map(get_θ, spec.ψmetas)
+    χs = map(get_χ, spec.ψmetas)
+    js = map(get_j , spec.ψmetas)
     bws = map(get_bandwidth, spec.ψmetas)
     ξs = map(get_centerfrequency, spec.ψmetas)
     qs = map(get_qualityfactor, spec.ψmetas)
     scs = map(get_scale, spec.ψmetas)
+    # gammas
+    @test_approx_eq γs 0:(nfo * pow2(log2_s))
+    # thetas
+    @test_approx_eq θs [0]
     # bandwidths
     @test_approx_eq bws ξs./qs
     # centerfrequencies
