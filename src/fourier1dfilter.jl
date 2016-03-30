@@ -290,7 +290,8 @@ function renormalize!{T<:Number,G<:LineGroups}(
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
-        JuMP.@defVar(model, y[1:length(λs)] >= 0)
+        wavelet_range = 1:length(λs)
+        JuMP.@defVar(model, y[wavelet_range] >= 0)
         JuMP.@setObjective(model, Min, sum(remainder - ψmat * y))
         JuMP.@addConstraint(model, remainder .>= ψmat * y)
         JuMP.@addConstraint(model, diff(y) .<= 0)
