@@ -2,7 +2,7 @@ language: julia
 os:
     - linux
 julia:
-    - nightly
+    - release
 notifications:
     - email: false
 script:
