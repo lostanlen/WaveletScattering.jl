@@ -1,11 +1,5 @@
 abstract AbstractPointwise
 
-function call{NODE<:AbstractNode}(
-        ρ::AbstractPointwise,
-        pair::Pair{Path,NODE})
-    return pair.first => Node(ρ(pair.second.data), pair.second.ranges)
-end
-
 immutable Identity <: AbstractPointwise
 end
 
@@ -38,5 +32,15 @@ function Base.map!{T<:Real}(
     @inbounds @fastmath for id in eachindex(data_in)
         data_out[id] = data_in[id] * ρ.threshold
         data_out[id] = log1p(data_out[id])
+    end
+end
+
+for T in subtypes(AbstractPointwise)
+    @eval begin
+        function call{NODE<:AbstractNode}(
+                ρ::T,
+                pair::Pair{Path,Node})
+            return pair.first => Node(ρ(pair.second.data), pair.second.ranges)
+        end
     end
 end
