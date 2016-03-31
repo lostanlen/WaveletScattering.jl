@@ -30,8 +30,16 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     ξs = map(get_centerfrequency, spec.ψmetas)
     qs = map(get_qualityfactor, spec.ψmetas)
     scs = map(get_scale, spec.ψmetas)
+    # gammas
+    @test eltype(γs) <: Int16
+    # chis
+    @test eltype(χs) <: Int8
+    # js
+    @test eltype(js) <: Int8
+    @test map(Int16, χs) + nfo * map(Int16, js) == γs
     # thetas
-    @test_approx_eq θs [0]
+    @test all(θs .== 0)
+    @test eltype(θs) <: Int8
     # bandwidths
     @test_approx_eq bws ξs./qs
     # centerfrequencies
