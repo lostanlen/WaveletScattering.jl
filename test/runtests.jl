@@ -17,7 +17,8 @@ tests = [
     "morlet1d",
     "modulus",
     "symbols",
-    "layer"
+    "layer",
+    "fourierlayer"
 ]
 
 println("Running tests:")
