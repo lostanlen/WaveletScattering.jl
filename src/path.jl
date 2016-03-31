@@ -6,6 +6,15 @@ end
 Literal(tup::Tuple{Symbol,Int}) = Literal(tup[1], tup[2])
 Literal(sym::Symbol) = Literal(sym, 1)
 
+function Base.string(literal::Literal)
+    if literal.depth == 1
+        return string(literal.symbol)
+    else
+        return string(literal.symbol) * string(literal.depth)
+    end
+end
+
+
 "A `PathKey` is a Vector of `Literal`s."
 immutable PathKey
     literals::Vector{Literal}
