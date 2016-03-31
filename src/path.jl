@@ -40,13 +40,14 @@ end
 
 Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
 
-convert(PathKey, sym::Symbol) = PathKey(sym)
-convert(PathKey, tup::Tuple) = PathKey(tup...)
+Base.convert(PathKey, sym::Symbol) = PathKey(sym)
+Base.convert(PathKey, tup::Tuple) = PathKey(tup...)
 
 function Base.string(pathkey::PathKey)
-    return join([literal.symbol for literal in pathkey.literals], "_")
+    return join([string(literal) for literal in pathkey.literals], "_")
 end
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
+
 
 """A `Path` is a dictionary whose keys are `PathKey`s and whose values are
 integer indices."""
@@ -64,6 +65,7 @@ end
 Base.(:(==))(x::Path, y::Path) = (x.dict == y.dict)
 
 Base.hash(x::Path) = hash(x.dict)
+
 
 """A `PathRange` is a dictionary whose keys are `PathKey`'s
 and whose values are integer ranges."""
