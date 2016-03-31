@@ -13,6 +13,7 @@ tests = [
     "spec",
     "filter",
 #    "fourierfilter",
+    "weighting",
     "bank",
     "morlet1d",
     "modulus",
