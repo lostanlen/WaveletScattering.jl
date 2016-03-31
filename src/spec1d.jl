@@ -45,7 +45,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
         nOctaves = default_nOctaves(nOctaves, class, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
         """The number of orientations of a one-dimensional filter bank is
-        equal to 1 for real input (`poingroup::TrivialGroup`), equal to 2 for
+        equal to 1 for real input (`pointgroup::TrivialGroup`), equal to 2 for
         complex input (`pointgroup::ReflectionGroup`)."""
         nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
