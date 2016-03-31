@@ -40,8 +40,8 @@ end
 
 Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
 
-Base.convert(PathKey, sym::Symbol) = PathKey(sym)
-Base.convert(PathKey, tup::Tuple) = PathKey(tup...)
+Base.convert(::Type{PathKey}, sym::Symbol) = PathKey(sym)
+Base.convert(::Type{PathKey}, tup::Tuple) = PathKey(tup...)
 
 function Base.string(pathkey::PathKey)
     return join([string(literal) for literal in pathkey.literals], "_")

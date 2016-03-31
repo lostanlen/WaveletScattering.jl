@@ -11,7 +11,7 @@ import WaveletScattering: Literal, PathKey
 
 # Conversion to String
 @test string(Literal(:time)) == "time"
-@test string(Literal(:γ, 2)) == "γ"
+@test string(Literal(:γ, 2)) == "γ2"
 
 # PathKey
 @test isimmutable(PathKey())
