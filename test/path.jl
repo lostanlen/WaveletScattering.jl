@@ -9,6 +9,10 @@ import WaveletScattering: Literal, PathKey
 @test isimmutable(Literal((:γ, 2)))
 @test Literal((:γ, 2)).depth == 2
 
+# Conversion to String
+@test string(Literal(:time)) == "time"
+@test string(Literal(:γ, 2)) == "γ"
+
 # PathKey
 @test isimmutable(PathKey())
 @test isempty(PathKey().literals)
@@ -17,3 +21,19 @@ import WaveletScattering: Literal, PathKey
 @test PathKey(PathKey(:time)) == PathKey(:time)
 @test isimmutable(PathKey(:γ, 2, :time))
 @test PathKey(:γ, 2, :time).literals == [Literal(:γ,2), Literal(:time)]
+
+# Conversion from Symbol
+@test convert(Pathkey, :time).literals = PathKey(:time)
+
+# Conversion from Tuple
+@test convert(PathKey, (:γ, 2, :time)) == PathKey(:γ, 2, :time)
+
+# Conversion to string
+@test string(PathKey(:time)) == "time"
+@test string(PathKey(:γ, 1, :time)) == "γ_time"
+@test string(PathKey(:γ, 2, :time)) == "γ2_time"
+
+# Conversion to symbol
+@test symbol(PathKey(:time)) == :time
+@test symbol(PathKey(:γ, 1, :time)) == :γ_time
+@test symbol(PathKey(:γ, 2, :time)) == :γ2_time
