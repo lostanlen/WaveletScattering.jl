@@ -23,7 +23,7 @@ import WaveletScattering: Literal, PathKey
 @test PathKey(:γ, 2, :time).literals == [Literal(:γ,2), Literal(:time)]
 
 # Conversion from Symbol
-@test convert(Pathkey, :time).literals = PathKey(:time)
+@test convert(PathKey, :time)== PathKey(:time)
 
 # Conversion from Tuple
 @test convert(PathKey, (:γ, 2, :time)) == PathKey(:γ, 2, :time)
