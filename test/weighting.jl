@@ -1,6 +1,6 @@
 using Base.Test
 # weighting.jl
-import WaveletScattering: EqualWeighting
+import WaveletScattering: EqualWeighting, weight_frequencies
 
 # EqualWeighting
 weighting = EqualWeighting()
