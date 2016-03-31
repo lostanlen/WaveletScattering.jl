@@ -1,6 +1,6 @@
 using Base.Test
 # filter.jl
-import WaveletScattering: Asymmetric1DFilter, Symmetric1DFilter
+import WaveletScattering: FullResolution1DFilter
 
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
 ψ2 = Float32(2.0) * ψ
