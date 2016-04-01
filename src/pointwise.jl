@@ -1,16 +1,18 @@
 abstract AbstractPointwise
 
-immutable Identity <: AbstractPointwise
-end
+immutable Identity <: AbstractPointwise end
 
 call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
 
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
-    Log1P(threshold) = (threshold>=0 || throw(DomainError)) && new(threshold)
+    function call{T}(::Type{Log1P}, threshold::T)
+        (threshold<0) && throw(DomainError)
+        new{T}(threshold)
+    end
 end
 
-call{T,N}(ρ::Log1P, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
+call{T,N}(ρ::Log1P{T}, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
 
 function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = map(pair -> (pair.first => ρ(pair.second), blob_in))
