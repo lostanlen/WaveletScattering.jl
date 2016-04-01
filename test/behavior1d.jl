@@ -33,3 +33,5 @@ for log2_oversamping = 0:5
         @test all(behavior.ψ_log2_samplings .>= -max_log2_stride)
     end
 end
+
+@test all(behavior.weights .== 1.0)
