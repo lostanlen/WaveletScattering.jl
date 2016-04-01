@@ -14,6 +14,14 @@ import WaveletScattering: Spec1D
 # waveletclass.jl
 import WaveletScattering: RedundantWaveletClass
 
+# default_motherfrequency
+immutable NullWaveletClass <: RedundantWaveletClass end
+class = NullWaveletClass()
+for nfo in [1, 2, 4, 8, 12, 24, 32]
+    ξ = default_motherfrequency(class, nfo)
+    @test_approx_eq 2ξ (ξ*2^(-1/nfo) + (1-ξ))
+end
+
 # default_nOctaves
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
