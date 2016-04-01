@@ -14,7 +14,7 @@ tests = [
     "filter",
 #    "fourierfilter",
     "weighting",
-    "bank",
+    "bank1d",
     "morlet1d",
     "modulus",
     "symbols",
