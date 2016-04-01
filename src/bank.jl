@@ -42,7 +42,7 @@ immutable Bank1D{
             j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
             log2_oversampling::Int = 0,
             max_log2_stride::Int = spec.nOctaves-1,
-            weighting = EqualWeighting())
+            weighting::AbstractWeighting = EqualWeighting())
         (nΘs, nΧs, nJs) = size(spec.ψmetas)
         ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
         ψs[1, :, :] =
