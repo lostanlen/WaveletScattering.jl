@@ -17,6 +17,7 @@ tests = [
     "behavior1d",
     "bank1d",
     "morlet1d",
+    "pointwise",
     "modulus",
     "symbols",
     "layer",
