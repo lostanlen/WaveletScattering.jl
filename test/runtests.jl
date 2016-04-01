@@ -22,8 +22,9 @@ tests = [
     "symbols",
     "layer",
     "inputlayer",
+    "pointwiselayer",
     "fourierlayer",
-    "pointwiselayer"
+    "waveletlayer"
 ]
 
 println("Running tests:")
