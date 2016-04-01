@@ -1,7 +1,7 @@
 using Base.Test
 
 # path.jl
-import WaveletScattering: Literal, PathKey
+import WaveletScattering: Literal, PathKey, Path
 
 # Literal
 @test isimmutable(Literal(:time))
@@ -37,3 +37,18 @@ import WaveletScattering: Literal, PathKey
 @test symbol(PathKey(:time)) == :time
 @test symbol(PathKey(:γ, 1, :time)) == :γ_time
 @test symbol(PathKey(:γ, 2, :time)) == :γ2_time
+
+
+# Path
+@test Path().dict == Dict{PathKey,Int}()
+@test collect(Path(:γ => 3).dict) == collect(Dict(PathKey(:γ) => 3))
+@test collect(Path(:γ => 2, (:γ, 2) => 3).dict) ==
+    collect(Dict(PathKey(:γ) => 2, PathKey(:γ, 2) => 3))
+
+# Path equality
+p1 = Path(:γ => 2, (:γ, 2) => 3)
+p2 = Path((:γ, 2) => 3, :γ => 2)
+
+# Path hashing
+p = Path(:γ => 2, (:γ, 2) => 3)
+@test hash(p) === hash(p.dict)
