@@ -42,8 +42,6 @@ import WaveletScattering: Literal, PathKey, Path
 # Path
 @test Path().dict == Dict{PathKey,Int}()
 @test collect(Path(:γ => 3).dict) == collect(Dict(PathKey(:γ) => 3))
-@test collect(Path(:γ => 2, (:γ, 2) => 3).dict) ==
-    collect(Dict(PathKey(:γ) => 2, PathKey(:γ, 2) => 3))
 
 # Path equality
 p1 = Path(:γ => 2, (:γ, 2) => 3)
