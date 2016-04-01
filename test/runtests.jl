@@ -19,6 +19,7 @@ tests = [
     "modulus",
     "symbols",
     "layer",
+    "inputlayer",
     "fourierlayer"
 ]
 
