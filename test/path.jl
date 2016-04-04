@@ -40,6 +40,7 @@ import WaveletScattering: Literal, PathKey, Path, PathRange
 @test PathKey(:a) < PathKey(:b)
 @test PathKey(:a) < PathKey(:a, :b)
 @test PathKey(:a) < PathKey((:a, 2))
+@test !(PathKey(:a, :b) < PathKey(:a))
 
 # Conversion to string
 @test string(PathKey(:time)) == "time"
