@@ -17,11 +17,12 @@ end
 Base.isless(a::Literal, b::Literal) =
     (a.symbol<b.symbol) || ((a.symbol==b.symbol) && (a.depth<b.depth))
 
-"A `PathKey` is a Vector of `Literal`s."
+
+"A `PathKey` is a `Vector` of `Literal`s."
 immutable PathKey
     literals::Vector{Literal}
     PathKey() = new(Literal[])
-    PathKey(p::PathKey) = p
+    PathKey(pathkey::PathKey) = pathkey
     function PathKey(args...)
         literals = Literal[]
         idarg = 1
@@ -64,9 +65,9 @@ immutable Path
     end
 end
 
-Base.(:(==))(x::Path, y::Path) = (x.dict == y.dict)
+Base.(:(==))(x::Path, y::Path) = (x.sdict == y.sdict)
 
-Base.hash(x::Path) = hash(x.dict)
+Base.hash(x::Path) = hash(x.sdict)
 
 
 """A `PathRange` is a dictionary whose keys are `PathKey`'s
