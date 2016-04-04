@@ -46,9 +46,15 @@ Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
 Base.convert(::Type{PathKey}, sym::Symbol) = PathKey(sym)
 Base.convert(::Type{PathKey}, tup::Tuple) = PathKey(tup...)
 
+Base.isless(x::PathKey, y::PathKey) = map(isless, x.literals, y.literals)
+
+Base.isless(a::PathKey, b::PathKey) =
+    reduce(&, [ isless(x, y) for (x, y) in zip(a.literals, b.literals) ])
+
 function Base.string(pathkey::PathKey)
     return join([string(literal) for literal in pathkey.literals], "_")
 end
+
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
 
 
