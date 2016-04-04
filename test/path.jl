@@ -37,3 +37,11 @@ import WaveletScattering: Literal, PathKey, Path
 @test symbol(PathKey(:time)) == :time
 @test symbol(PathKey(:γ, 1, :time)) == :γ_time
 @test symbol(PathKey(:γ, 2, :time)) == :γ2_time
+
+# Path
+@test Path((:a, 2) => 2, :b => 3, :a => 1) ==
+    Path(:a => 1, (:a, 2) => 2, :b => 3)
+
+# PathRange
+@test PathRange((:a, 2) => 2:4, :b => 3, :a => 1:1:3) ==
+    PathRange(:a => 1:3, (:a, 2) => 2:1:4, :b => 3:3)
