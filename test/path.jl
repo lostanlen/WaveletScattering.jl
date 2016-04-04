@@ -36,6 +36,11 @@ import WaveletScattering: Literal, PathKey, Path
 # Conversion from Tuple
 @test convert(PathKey, (:γ, 2, :time)) == PathKey(:γ, 2, :time)
 
+# isless for PathKey's
+@test PathKey(:a) < PathKey(:b)
+@test PathKey(:a) < PathKey(:a, :b)
+@test PathKey(:a) < PathKey((:a, 2))
+
 # Conversion to string
 @test string(PathKey(:time)) == "time"
 @test string(PathKey(:γ, 1, :time)) == "γ_time"
