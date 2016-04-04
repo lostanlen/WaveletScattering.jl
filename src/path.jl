@@ -93,3 +93,5 @@ immutable PathRange
         new(sdict)
     end
 end
+
+Base.(:(==))(x::PathRange, y::PathRange) = (x.sdict == y.sdict)
