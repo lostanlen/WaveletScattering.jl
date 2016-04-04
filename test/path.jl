@@ -13,6 +13,14 @@ import WaveletScattering: Literal, PathKey, Path
 @test string(Literal(:time)) == "time"
 @test string(Literal(:γ, 2)) == "γ2"
 
+# isless for Literal's
+@test Literal(:a) < Literal(:b)
+@test Literal(:a, 1) < Literal(:b)
+@test Literal(:a, 1) < Literal(:a, 2)
+@test !(Literal(:a) < Literal(:a))
+@test !(Literal(:a, 2) < Literal(:a, 1))
+@test !(Literal(:b) < Literal(:a))
+
 # PathKey
 @test isimmutable(PathKey())
 @test isempty(PathKey().literals)
