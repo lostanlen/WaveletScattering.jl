@@ -78,7 +78,7 @@ immutable Path
     end
 end
 
-Base.(:(==))(x::Path, y::Path) = (x.sdict == y.sdict)
+Base.(:(==))(x::Path, y::Path) = reduce(&, map(==, x.sdict, y.sdict))
 
 
 """A `PathRange` is a sorted dictionary whose keys are `PathKey`'s
