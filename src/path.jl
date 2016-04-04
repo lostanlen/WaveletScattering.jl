@@ -73,8 +73,6 @@ end
 
 Base.(:(==))(x::Path, y::Path) = (x.sdict == y.sdict)
 
-Base.hash(x::Path) = hash(x.sdict)
-
 
 """A `PathRange` is a sorted dictionary whose keys are `PathKey`'s
 and whose values are integer ranges."""
