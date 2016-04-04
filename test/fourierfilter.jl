@@ -78,7 +78,7 @@ midpoint = Float32(0.5)
 # getindex
 # getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
-@test Float32[ψ[ω] for ω in 1:4] == Float32[0.0, 0.1, 0.3, 0.0]
+@test Float32[ ψ[ω] for ω in 1:4 ] == Float32[0.0, 0.1, 0.3, 0.0]
 # getindex{T}(ψ::Analytic1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-1:1] == Float32[0.0 ; 0.0 ; 0.0]
 @test ψ[1:4] == Float32[0.0 ; 0.1 ; 0.3; 0.0]
@@ -203,7 +203,7 @@ bws = map(get_bandwidth, spec.ψmetas)
     scs[i])
     for i in eachindex(γs) ]
 
-        
+
 @inbounds ψs = AbstractFilter{spec.signaltype,1}[
     fourierwavelet(meta, spec) for meta in metas]
 ϕ = scalingfunction(spec)
