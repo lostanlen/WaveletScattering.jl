@@ -12,7 +12,7 @@ tests = [
     "meta",
     "spec",
     "filter",
-#    "fourierfilter",
+    "fourierfilter",
     "weighting",
     "behavior1d",
     "bank1d",
