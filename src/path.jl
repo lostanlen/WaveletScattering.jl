@@ -14,6 +14,8 @@ function Base.string(literal::Literal)
     end
 end
 
+Base.isless(a::Literal, b::Literal) =
+    (a.symbol<b.symbol) || ((a.symbol==b.symbol) && (a.depth<b.depth))
 
 "A `PathKey` is a Vector of `Literal`s."
 immutable PathKey
