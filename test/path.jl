@@ -1,7 +1,7 @@
 using Base.Test
 
 # path.jl
-import WaveletScattering: Literal, PathKey, Path
+import WaveletScattering: Literal, PathKey, Path, PathRange
 
 # Literal
 @test isimmutable(Literal(:time))
