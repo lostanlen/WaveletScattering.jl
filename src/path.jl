@@ -76,22 +76,22 @@ Base.(:(==))(x::Path, y::Path) = (x.sdict == y.sdict)
 Base.hash(x::Path) = hash(x.sdict)
 
 
-"""A `PathRange` is a dictionary whose keys are `PathKey`'s
+"""A `PathRange` is a sorted dictionary whose keys are `PathKey`'s
 and whose values are integer ranges."""
 immutable PathRange
-    dict::Dict{PathKey,StepRange{Int,Int}}
+    sdict::DataStructures.SortedDict{PathKey,StepRange{Int,Int}}
     function PathRange(pairs...)
-        dict = Dict{PathKey,StepRange{Int,Int}}()
+        sdict = DataStructures.SortedDict(Pair{PathKey,StepRange{Int,Int}}[])
         for pair in pairs
             rhs = pair.second
             if isa(rhs, Int)
-                push!(dict, PathKey(pair.first...) => rhs:1:rhs)
+                push!(sdict, PathKey(pair.first) => rhs:1:rhs)
             elseif isa(pair.second, UnitRange{Int})
-                push!(dict, PathKey(pair.first...) => rhs.start:1:rhs.stop)
+                push!(sdict, PathKey(pair.first) => rhs.start:1:rhs.stop)
             elseif isa(pair.second, StepRange{Int,Int})
-                push!(dict, PathKey(pair.first...) => rhs)
+                push!(sdict, PathKey(pair.first) => rhs)
             end
         end
-        new(dict)
+        new(sdict)
     end
 end
