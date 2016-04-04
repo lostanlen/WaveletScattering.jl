@@ -58,16 +58,16 @@ end
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
 
 
-"""A `Path` is a dictionary whose keys are `PathKey`s and whose values are
-integer indices."""
+"""A `Path` is a sorted dictionary whose keys are `PathKey`s and whose
+values are integer indices."""
 immutable Path
-    dict::Dict{PathKey,Int}
+    sdict::DataStructures.SortedDict{PathKey,Int}
     function Path(pairs...)
-        dict = Dict{PathKey,Int}()
+        sdict = DataStructures.SortedDict(Pair{PathKey,Int}[])
         for pair in pairs
-            push!(dict, convert(PathKey, pair.first) => pair.second)
+            push!(sdict, PathKey(pair.first) => pair.second)
         end
-        new(dict)
+        new(sdict)
     end
 end
 
