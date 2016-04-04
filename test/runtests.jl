@@ -24,7 +24,8 @@ tests = [
     "inputlayer",
     "pointwiselayer",
     "fourierlayer",
-    "waveletlayer"
+    "waveletlayer",
+    "inputlayerstate"
 ]
 
 println("Running tests:")

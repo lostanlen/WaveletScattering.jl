@@ -2,7 +2,7 @@ using Base.Test
 # fourierlayer.jl
 import WaveletScattering: InputLayer
 
-signal = InputLayer(
+inputlayer = InputLayer(
         tops = [:signal],
         symbols = [:time, :chunk],
         data = rand(Float32, 256, 2))
