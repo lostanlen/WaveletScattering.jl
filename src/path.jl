@@ -101,4 +101,4 @@ immutable PathRange
     end
 end
 
-Base.(:(==))(x::PathRange, y::PathRange) = (x.sdict == y.sdict)
+Base.(:(==))(x::PathRange, y::PathRange) = reduce(&, map(==, x.sdict, y.sdict))
