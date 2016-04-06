@@ -15,8 +15,7 @@ To create a `Bank1D`
 Example:
 spec = Spec1D(nFilters_per_octave = 12, nOctaves = 10)
 pathkey = PathKey(:time)
-bank = Bank1D(spec, pathkey, j_range = 2:9)
-"""
+bank = Bank1D(spec, pathkey, j_range = 2:9)"""
 immutable Bank1D{
         T<:Number,
         D<:LineDomains,
@@ -58,6 +57,12 @@ function call{T<:Real,DIM}(
     syms = appendsymbols(fill(symbol(bank.behavior.pathkey), 1), DIM)
     inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), DIM))
     fouriernode = AbstractFourierNode(inputnode, [1], flags, timelimit)
+    chromakey = prepend(:χ, bank.behavior.pathkey)
+    chromarange =
+        PathRange(chromakey => 0:(bank.spec.nFilters_per_octave-1))
+    waveletranges = (inputnode.ranges..., chromarange)
+    waveletnodes = Dict{Path,Node{T,DIM+1}}()
+    octavekey = prepend(:j, bank.behavior.pathkey)
     for j in bank.behavior.j_range
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
         downsampled_length = size(x, 1) << (-ψ_log2_sampling)
@@ -70,5 +75,10 @@ function call{T<:Real,DIM}(
             inds[end] = 1 + χ
             transform!(sub(octave_ft, inds...), ψ, fouriernode, 1)
         end
+        waveletnode = Node(octave_ft, waveletranges)
+        waveletpath = Path(octavekey => j)
+        waveletnodes[waveletpath] = waveletnode
     end
+    waveletblob = ScatteredBob(waveletnodes)
+    return waveletblob
 end
