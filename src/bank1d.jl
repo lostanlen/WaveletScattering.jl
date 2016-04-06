@@ -78,6 +78,6 @@ function call{T<:Real,DIM}(
         waveletpath = Path(octavekey => j)
         waveletnodes[waveletpath] = waveletnode
     end
-    waveletblob = ScatteredBob(waveletnodes)
+    waveletblob = ScatteredBlob(waveletnodes)
     return waveletblob
 end
