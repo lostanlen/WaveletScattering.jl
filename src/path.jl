@@ -65,6 +65,9 @@ end
 
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
 
+function Base.unshift!(pathkey::PathKey, prefix)
+end
+
 
 """A `Path` is a sorted dictionary whose keys are `PathKey`s and whose
 values are integer indices."""
