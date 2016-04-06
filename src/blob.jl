@@ -1,6 +1,6 @@
 # ScatteredBlob
 immutable ScatteredBlob{NODE<:AbstractNode} <: Mocha.Blob
-    nodes::Dict{Path,NODE}
+    nodes::DataStructures.SortedDict{Path,NODE}
 end
 
 function Base.show(io::IO, blob::ScatteredBlob)
