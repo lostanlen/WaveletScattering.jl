@@ -60,7 +60,7 @@ function call{T<:Real,DIM}(
     chromakey = prepend(:χ, bank.behavior.pathkey)
     chromarange = chromakey => 0:1:(bank.spec.nFilters_per_octave-1)
     waveletranges = (collect(inputnode.ranges)..., chromarange)
-    waveletnodes = Dict{Path,Node{Complex{T},DIM+1}}()
+    waveletnodes = SortedDict{Path,Node{Complex{T},DIM+1}}()
     octavekey = prepend(:j, bank.behavior.pathkey)
     for j in bank.behavior.j_range
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
