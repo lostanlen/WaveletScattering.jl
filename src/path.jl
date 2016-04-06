@@ -65,10 +65,8 @@ end
 
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
 
-function Base.unshift!(pathkey::PathKey, prefix)
-    return PathKey(unshift!(pathkey.literals, Literal(prefix)))
-end
-
+prepend(prefix, pathkey::PathKey) =
+    PathKey(vcat(Literal(prefix), pathkey.literals))
 
 """A `Path` is a sorted dictionary whose keys are `PathKey`s and whose
 values are integer indices."""
