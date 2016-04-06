@@ -15,7 +15,6 @@ function forward!(
         bank::Bank1D,
         blob_in::ScatteredBlob)
     pathdepth(blob_in, bank.behavior.pathkey)
-
     map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes)))
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for j in bank.behavior.j_range
