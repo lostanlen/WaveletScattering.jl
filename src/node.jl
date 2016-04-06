@@ -132,7 +132,7 @@ function transform!(
         output = sub(destination, inds)
         broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
     end
-    inds_in, inds_out = inds, copy(inds)
+    inds_in, inds_out = inds, Base.copy(inds)
     @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
         inds_in[dim] = 1 - ω
         input = sub(node.data, inds_in)
