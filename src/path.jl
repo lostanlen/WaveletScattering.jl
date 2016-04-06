@@ -66,6 +66,7 @@ end
 Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
 
 function Base.unshift!(pathkey::PathKey, prefix)
+    return PathKey(unshift!(pathkey.literals, Literal(prefix)))
 end
 
 
