@@ -23,6 +23,7 @@ immutable PathKey
     literals::Vector{Literal}
     PathKey() = new(Literal[])
     PathKey(pathkey::PathKey) = pathkey
+    PathKey(tuple_args::Tuple) = PathKey(tuple_args...)
     PathKey(literals::Vector{Literal}) = new(literals)
     function PathKey(args...)
         literals = Literal[]
@@ -75,7 +76,7 @@ immutable Path
     function Path(pairs...)
         sdict = DataStructures.SortedDict(Pair{PathKey,Int}[])
         for pair in pairs
-            push!(sdict, PathKey(pair.first...) => pair.second)
+            push!(sdict, PathKey(pair.first) => pair.second)
         end
         new(sdict)
     end
