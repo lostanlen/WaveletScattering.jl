@@ -69,20 +69,6 @@ end
 
 function transform!(
         destination::SubArray,
-        ψ::FullResolution1DFilter,
-        node::AbstractNode,
-        dim::Int)
-    inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
-    @inbounds for ω in 0:(size(node.data, dim)-1)
-        inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
-        broadcast!(*, output, ψ.coeff[1+ω], input)
-    end
-end
-
-function transform!(
-        destination::SubArray,
         ψ::Analytic1DFilter,
         node::AbstractNode,
         dim::Int)
@@ -97,7 +83,21 @@ end
 
 function transform!(
         destination::SubArray,
-        ψ::VanishingWithMidpoint1DFilter,
+        ψ::FullResolution1DFilter,
+        node::AbstractNode,
+        dim::Int)
+    inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in 0:(size(node.data, dim)-1)
+        inds[dim] = 1 + ω
+        input = sub(node.data, inds...)
+        output = sub(destination, inds...)
+        broadcast!(*, output, ψ.coeff[1+ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::Vanishing1DFilter,
         node::AbstractNode,
         dim::Int)
     inds = [fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
