@@ -86,14 +86,19 @@ Base.(:(==))(x::Path, y::Path) = reduce(&, map(==, x.sdict, y.sdict))
 
 function Base.isless(a::Path, b::Path)
     for (x, y) in zip(a.sdict, b.sdict)
-        if (x.first > y.first) || (x.second > y.second)
+        if (x.first < y.first)
+            return true
+        elseif (x.first > y.first)
             return false
+        else
+            if (x.second < y.second)
+                return true
+            elseif (x.second > y.second)
+                return false
+            end
         end
     end
-    if length(a.sdict) > length(b.sdict)
-        return false
-    end
-    return (a != b)
+    return length(a.sdict) < length(b.sdict)
 end
 
 
