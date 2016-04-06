@@ -23,6 +23,7 @@ immutable PathKey
     literals::Vector{Literal}
     PathKey() = new(Literal[])
     PathKey(pathkey::PathKey) = pathkey
+    PathKey(literals::Vector{Literal}) = new(literals)
     function PathKey(args...)
         literals = Literal[]
         idarg = 1
