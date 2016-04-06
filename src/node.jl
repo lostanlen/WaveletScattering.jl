@@ -105,13 +105,13 @@ function transform!(
         inds[dim] = 1 + ω
         input = sub(node.data, inds)
         output = sub(destination, inds)
-        broadcast!(*, output, ψ.an.pos[1+ω], input)
+        broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
     end
     @inbounds for ω in ψ.coan.neglast+(0:(length(ψ.coan.neg)-1))
         inds[dim] = 1 + size(node.data, dim) + ω
         input = sub(node.data, inds)
         inds[dim] = 1 + size(destination, inds) + ω
         output = sub(destination, inds)
-        broadcast!(*, output, ψ.coan.neg[1+end+ω], input)
+        broadcast!(*, output, ψ.coan.neg[1 + end + ω], input)
     end
 end
