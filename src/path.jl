@@ -75,7 +75,7 @@ immutable Path
     function Path(pairs...)
         sdict = DataStructures.SortedDict(Pair{PathKey,Int}[])
         for pair in pairs
-            push!(sdict, PathKey(pair.first) => pair.second)
+            push!(sdict, PathKey(pair.first...) => pair.second)
         end
         new(sdict)
     end
