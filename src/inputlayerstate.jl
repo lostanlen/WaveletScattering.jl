@@ -5,7 +5,8 @@ end
 
 function InputLayerState(backend::Backend, layer::InputLayer)
     ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
-    blob = ScatteredBlob(Dict(Path() => Node(layer.data, ranges)))
+    blob = ScatteredBlob(
+        DataStructures.SortedDict(Path() => Node(layer.data, ranges)))
     blobs = Mocha.Blob[blob]
     return InputLayerState(blobs, layer)
 end

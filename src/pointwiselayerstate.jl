@@ -13,7 +13,8 @@ function PointwiseLayerState(
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         pairs = collect(inputs[idblob].nodes)
-        blobs[idblob] = ScatteredBlob(Dict(map(layer.ρ, pairs)))
+        blobs[idblob] = ScatteredBlob(
+            DataStructures.SortedDict(map(layer.ρ, pairs)))
     end
     # TODO: build diffs
     return PointwiseLayerState(layer, blobs, diffs)
