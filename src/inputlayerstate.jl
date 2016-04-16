@@ -13,9 +13,9 @@ end
 
 function Mocha.setup(
         backend::Mocha.Backend,
-        diffs::Vector{Blob},
+        layer::InputLayer,
         inputs::Vector{Blob},
-        layer::InputLayer)
+        diffs::Vector{Blob})
     @assert length(diffs) == 0
     @assert length(inputs) == 0
     return InputLayerState(backend, layer)
