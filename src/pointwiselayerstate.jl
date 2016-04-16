@@ -5,7 +5,7 @@ immutable PointwiseLayerState{P<:AbstractPointwise} <:
     blobs_diff::Vector{Mocha.Blob}
 end
 
-function Mocha.setup(
+function PointwiseLayerState(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
         inputs::Vector{Mocha.Blob},
@@ -17,6 +17,15 @@ function Mocha.setup(
             DataStructures.SortedDict(map(layer.ρ, pairs)))
     end
     return PointwiseLayerState(layer, blobs, diffs)
+end
+
+function Mocha.setup(
+        backend::Mocha.CPUBackend,
+        layer::PointwiseLayer,
+        inputs::Vector{Mocha.Blob},
+        diffs::Vector{Mocha.Blob})
+    @assert length(inputs) == length(diffs)
+    return PointwiseLayerState(backend, layer, inputs, diffs)
 end
 
 function forward(
