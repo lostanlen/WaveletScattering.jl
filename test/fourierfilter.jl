@@ -9,8 +9,6 @@ import WaveletScattering: AbstractFilter, Analytic1DFilter,
 import WaveletScattering: ΨMeta, ΦMeta, get_bandwidth,
     get_centerfrequency, get_j, get_nOrientations,
     get_qualityfactor, get_scale, get_γ, get_θ, get_χ
-# morlet1d.jl
-import WaveletScattering: Morlet1DSpec, fourierwavelet
 # sped1d.jl
 import WaveletScattering: Spec1D
 
