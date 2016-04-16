@@ -7,9 +7,9 @@ end
 
 function FourierLayerState(
         backend::Mocha.CPUBackend,
-        diffs::Vector{Mocha.Blob},
+        layer::FourierLayer,
         inputs::Vector{Mocha.Blob},
-        layer::FourierLayer)
+        diffs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
@@ -35,8 +35,8 @@ end
 
 function Mocha.setup(
         backend::Mocha.Backend,
-        diffs::Vector{Mocha.Blob},
+        layer::FourierLayer
         inputs::Vector{Mocha.Blob},
-        layer::FourierLayer)
+        diffs::Vector{Mocha.Blob})
     return FourierLayerState(backend, diffs, inputs, layer)
 end
