@@ -21,8 +21,8 @@ inputlayerstate = InputLayerState(backend, inputlayer)
 bottoms = [:signal]
 tops = [:identity]
 pointwiselayer = PointwiseLayer(bottoms = bottoms, tops = tops)
-pointwiselayerstate =
-    Mocha.setup(backend, pointwiselayer, inputlayerstate.blobs, Mocha.Blob[])
+pointwiselayerstate = Mocha.setup(backend, pointwiselayer,
+    inputlayerstate.blobs, Mocha.Blob[Mocha.NullBlob()])
 
 @test length(pointwiselayerstate.blobs) == 1
 pointwisedata = pointwiselayerstate.blobs[1].nodes[Path()].data
