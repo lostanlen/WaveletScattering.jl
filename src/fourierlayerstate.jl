@@ -35,7 +35,7 @@ end
 
 function Mocha.setup(
         backend::Mocha.Backend,
-        layer::FourierLayer
+        layer::FourierLayer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
     return FourierLayerState(backend, diffs, inputs, layer)
