@@ -5,7 +5,7 @@ immutable PointwiseLayerState{P<:AbstractPointwise} <:
     blobs_diff::Vector{Mocha.Blob}
 end
 
-function PointwiseLayerState(
+function Mocha.setup(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
         inputs::Vector{Mocha.Blob},
@@ -16,16 +16,7 @@ function PointwiseLayerState(
         blobs[idblob] = ScatteredBlob(
             DataStructures.SortedDict(map(layer.ρ, pairs)))
     end
-    # TODO: build diffs
     return PointwiseLayerState(layer, blobs, diffs)
-end
-
-function Mocha.setup(
-        backend::Mocha.Backend,
-        layer::PointwiseLayer,
-        inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
-    return PointwiseLayerState(backend, layer, inputs, diffs)
 end
 
 function forward(

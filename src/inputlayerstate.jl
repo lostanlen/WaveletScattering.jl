@@ -3,7 +3,7 @@ immutable InputLayerState <: AbstractScatteredLayerState
     layer::InputLayer
 end
 
-function InputLayerState(backend::Backend, layer::InputLayer)
+function InputLayerState(backend::Mocha.Backend, layer::InputLayer)
     ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
     blob = ScatteredBlob(
         DataStructures.SortedDict((Path() => Node(layer.data, ranges),)))
