@@ -15,7 +15,7 @@ import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
-data = rand(Float32, 32768, 256)
+data = map(Float32, randn(256, 2))
 backend = Mocha.CPUBackend()
 signal = InputLayer(
         tops = [:signal],
