@@ -6,7 +6,7 @@ import WaveletScattering: InputLayer
 # inputlayerstate.jl
 import WaveletScattering: InputLayerState
 # path.jl
-import WaveletScatttering: Path
+import WaveletScattering: Path
 # pointwiselayer.jl
 import WaveletScattering: PointwiseLayer
 
