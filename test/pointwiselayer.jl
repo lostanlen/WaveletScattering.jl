@@ -1,11 +1,7 @@
 using Base.Test
-import WaveletScattering: PointwiseLayer, Modulus
+import WaveletScattering: PointwiseLayer
 
-modulus = PointwiseLayer(
-        bottoms = [:fourier],
-        tops = [:modulus],
-        ρ = Modulus())
-
+modulus = PointwiseLayer(bottoms = [:bottom], tops = [:top])
 
 @test Mocha.can_do_bp(modulus)
 @test !Mocha.has_neuron(modulus)
