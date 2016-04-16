@@ -5,22 +5,25 @@ import WaveletScattering: PointwiseLayerState
 import WaveletScattering: InputLayer
 # inputlayerstate.jl
 import WaveletScattering: InputLayerState
+# path.jl
+import WaveletScatttering: Path
 # pointwiselayer.jl
 import WaveletScattering: PointwiseLayer
 
 backend = Mocha.CPUBackend()
+data = map(Float32, randn(256, 2))
 inputlayer = InputLayer(
         tops = [:signal],
         symbols = [:time, :chunk],
-        data = map(Float32, randn(256, 2)))
+        data = data)
 inputlayerstate = InputLayerState(backend, inputlayer)
 
 bottoms = [:signal]
 tops = [:identity]
 pointwiselayer = PointwiseLayer(bottoms=bottoms, tops=tops)
-
-
-
-diffs = Mocha.Blob[]
 pointwiselayerstate =
-    PointwiseLayerState(backend, layer, inputs, diffs)
+    Mocha.setup(backend, pointwiselayer, inputlayerstate.blobs, Mocha.Blob[])
+
+@test length(pointwiselayerstate.blobs) == 1
+pointwisedata = pointwiselayerstate.blobs[1].nodes[Path()].data
+@test_approx_eq pointwisedata data
