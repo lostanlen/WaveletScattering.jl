@@ -13,5 +13,5 @@ inputlayerstate_constructor =
     InputLayerState(backend, inputlayer)
 @test inputlayerstate_constructor.layer == inputlayer
 inputlayerstate_setup = Mocha.setup(backend,
-    Mocha.Blob[], Mocha.Blob[], inputlayer)
+    inputlayer, Mocha.Blob[], Mocha.Blob[])
 @test inputlayerstate_setup.layer == inputlayer
