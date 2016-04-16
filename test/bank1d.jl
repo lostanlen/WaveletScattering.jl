@@ -8,4 +8,6 @@ W = Bank1D(Spec1D())
 @test ndims(W) == 1
 
 x = map(Float32, randn(1 << W.spec.log2_size[1]))
-@test W(x)
+Wx = W(x)
+@test isa(Wx,
+    WaveletScattering.ScatteredBlob{WaveletScattering.Node{Complex{Float32},2}})
