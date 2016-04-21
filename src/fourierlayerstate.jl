@@ -14,7 +14,7 @@ function FourierLayerState(
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
         # TODO: tighten typing
-        outnodes = DataStructures.SortedDict{Pair,RealFourierNode,
+        outnodes = DataStructures.SortedDict{Path,RealFourierNode,
             Base.Order.ForwardOrdering}()
         for path in keys(innodes)
             outnodes[path] = RealFourierNode(

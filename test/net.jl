@@ -39,3 +39,4 @@ net = Mocha.Net("fourier-modulus", backend, layers)
 
 s = net.states[1]
 layer = fourier
+inputs = s.blobs
