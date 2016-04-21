@@ -3,7 +3,8 @@ end
 
 call(ρ::Modulus, data::AbstractArray) = abs(data)
 
-call{N<:AbstractNode}(ρ::Modulus, pair::Pair{Path,N}) = ρ(pair.second)
+call{N<:AbstractNode}(ρ::Modulus, pair::Pair{Path,N}) =
+    (pair.first => ρ(pair.second))
 
 call(ρ::Modulus, node::AbstractNode) = ρ(node.data)
 
