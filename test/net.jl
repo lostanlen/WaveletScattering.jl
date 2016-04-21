@@ -18,21 +18,21 @@ import WaveletScattering: RealFourierNode, InvComplexFourierNode
 data = map(Float32, randn(256, 2))
 backend = Mocha.CPUBackend()
 signal = InputLayer(
-        tops = [:signal],
-        symbols = [:time, :chunk],
-        data = data)
+    tops = [:signal],
+    symbols = [:time, :chunk],
+    data = data)
 
 fourier = FourierLayer(
-        bottoms = [:signal],
-        tops = [:fourier],
-        pathkeys = [PathKey(:time)])
+    bottoms = [:signal],
+    tops = [:fourier],
+    pathkeys = [PathKey(:time)])
 
 modulus = PointwiseLayer(
-        bottoms = [:fourier],
-        tops = [:modulus],
-        ρ = Modulus())
+    bottoms = [:signal],
+    tops = [:modulus],
+    ρ = Modulus())
 
-layers = Mocha.Layer[signal, fourier, modulus]
+layers = Mocha.Layer[signal, modulus]
 
 Mocha.init(backend)
 net = Mocha.Net("fourier-modulus", backend, layers)
