@@ -13,7 +13,9 @@ function FourierLayerState(
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
-        outnodes = DataStructures.SortedDict{Path, AbstractFourierNode}()
+        # TODO: tighten typing
+        outnodes = DataStructures.SortedDict{Pair,RealFourierNode,
+            Base.Order.ForwardOrdering}()
         for path in keys(innodes)
             outnodes[path] = RealFourierNode(
                 innodes[path],

@@ -36,3 +36,6 @@ layers = Mocha.Layer[signal]
 
 Mocha.init(backend)
 net = Mocha.Net("fourier-modulus", backend, layers)
+
+s = net.states[1]
+layer = fourier
