@@ -33,7 +33,7 @@ end
 
 function ComplexFourierNode{T<:FFTW.fftwComplex}(
         node::AbstractNode{T},
-        region::AbstractArray{Int,1};
+        region::AbstractArray{Int,1} ;
         flags = FFTW.ESTIMATE,
         timelimit = Inf)
     forwardplan =
