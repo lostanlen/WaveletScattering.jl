@@ -6,7 +6,7 @@ end
 
 function FourierLayerState(
         backend::Mocha.CPUBackend,
-        layer::FourierLayer
+        layer::FourierLayer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
