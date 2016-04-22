@@ -1,21 +1,20 @@
 immutable PointwiseLayerState{P<:AbstractPointwise} <:
         AbstractScatteredLayerState
-    layer::PointwiseLayer{P}
     blobs::Vector{Mocha.Blob}
+    layer::PointwiseLayer{P}
 end
 
 function PointwiseLayerState(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
-        inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
+        inputs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         pairs = collect(inputs[idblob].nodes)
         blobs[idblob] = ScatteredBlob(
             DataStructures.SortedDict(map(layer.ρ, pairs)))
     end
-    return PointwiseLayerState(layer, blobs, diffs)
+    return PointwiseLayerState(blobs, layer)
 end
 
 function Mocha.setup(
@@ -24,7 +23,7 @@ function Mocha.setup(
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
     @assert length(inputs) == length(diffs)
-    return PointwiseLayerState(backend, layer, inputs, diffs)
+    return PointwiseLayerState(backend, layer, inputs)
 end
 
 function forward(
