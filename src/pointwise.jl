@@ -18,6 +18,14 @@ function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = ScatteredBlob(map(ρ, blob_in.nodes))
 end
 
+function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
+    outnodes =
+        DataStructures.SortedDict{Path,Node,Base.Order.ForwardOrdering}()
+    for path in keys(innodes)
+        outnodes[path] = Node(ρ(innodes[path].data), innodes[path].ranges)
+    end
+end
+
 function Base.map!(
         ρ::AbstractPointwise,
         blob_out::ScatteredBlob,
