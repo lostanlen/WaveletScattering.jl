@@ -7,6 +7,6 @@ fourier = FourierLayer(
         tops = [:fourier],
         pathkeys = [PathKey(:time)])
 
-@test Mocha.can_do_bp(fourier)
+@test !Mocha.can_do_bp(fourier)
 @test !Mocha.has_neuron(fourier)
 @test !Mocha.has_param(fourier)
