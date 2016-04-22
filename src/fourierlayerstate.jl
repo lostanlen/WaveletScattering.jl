@@ -34,7 +34,10 @@ function Base.findin{N}(
     return find([any(r.first.==fourierkeys) for r in ranges])
 end
 
-function Mocha.setup(backend::Mocha.Backend, layer::FourierLayer,
-        inputs::Vector{Mocha.Blob}, diffs::Vector{Mocha.Blob})
+function Mocha.setup(
+        backend::Mocha.Backend,
+        layer::FourierLayer,
+        inputs::Vector{Mocha.Blob},
+        diffs::Vector{Mocha.Blob})
     return FourierLayerState(backend, layer, inputs, diffs)
 end

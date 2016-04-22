@@ -15,7 +15,7 @@ end
 call{T,N}(ρ::Log1P{T}, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
 
 function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
-    blob_out = map(pair -> (pair.first => ρ(pair.second.data)), blob_in.nodes)
+    blob_out = ScatteredBlob(map(ρ, blob_in.nodes))
 end
 
 function Base.map!(

@@ -10,9 +10,7 @@ function PointwiseLayerState(
         inputs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
-        pairs = collect(inputs[idblob].nodes)
-        blobs[idblob] = ScatteredBlob(
-            DataStructures.SortedDict(map(layer.ρ, pairs)))
+        blobs[idblob] = map(layer.ρ, inputs[idblob])
     end
     return PointwiseLayerState(blobs, layer)
 end

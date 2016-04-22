@@ -38,3 +38,11 @@ Mocha.init(backend)
 net = Mocha.Net("fourier-modulus", backend, layers)
 
 @test isa(net, Mocha.Net{Mocha.CPUBackend})
+
+import WaveletScattering: Log1P
+log1p = PointwiseLayer(
+    bottoms = [:modulus],
+    tops = [:log1p],
+    ρ = Log1P(Float32(1e-2))
+)
+layers = Mocha.Layer[signal, modulus, log1p]
