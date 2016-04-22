@@ -2,14 +2,12 @@ immutable PointwiseLayerState{P<:AbstractPointwise} <:
         AbstractScatteredLayerState
     layer::PointwiseLayer{P}
     blobs::Vector{Mocha.Blob}
-    blobs_diff::Vector{Mocha.Blob}
 end
 
 function PointwiseLayerState(
         backend::Mocha.CPUBackend,
         layer::PointwiseLayer,
-        inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
+        inputs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         pairs = collect(inputs[idblob].nodes)

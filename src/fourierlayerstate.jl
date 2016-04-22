@@ -1,7 +1,6 @@
 # FourierLayerState
 immutable FourierLayerState <: AbstractScatteredLayerState
     blobs::Vector{Mocha.Blob}
-    blobs_diff::Vector{Mocha.Blob}
     layer::FourierLayer
 end
 
@@ -35,10 +34,7 @@ function Base.findin{N}(
     return find([any(r.first.==fourierkeys) for r in ranges])
 end
 
-function Mocha.setup(
-        backend::Mocha.Backend,
-        layer::FourierLayer,
-        inputs::Vector{Mocha.Blob},
-        diffs::Vector{Mocha.Blob})
+function Mocha.setup(backend::Mocha.Backend, layer::FourierLayer,
+        inputs::Vector{Mocha.Blob}, diffs::Vector{Mocha.Blob})
     return FourierLayerState(backend, diffs, inputs, layer)
 end

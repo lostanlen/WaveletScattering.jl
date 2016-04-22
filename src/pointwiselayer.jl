@@ -5,7 +5,7 @@ immutable PointwiseLayer{P<:AbstractPointwise} <: Mocha.Layer
     tops::Vector{Symbol}
 end
 
-Mocha.can_do_bp(::PointwiseLayer) = true
+Mocha.can_do_bp(::PointwiseLayer) = false
 Mocha.has_neuron(::PointwiseLayer) = false
 Mocha.has_param(::PointwiseLayer) = false
 
