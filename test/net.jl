@@ -11,7 +11,7 @@ import WaveletScattering: Spec1D
 # path.jl
 import WaveletScattering: Path, PathKey
 # pointwise.jl
-import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
+import WaveletScattering: Log1P, Modulus, PointwiseLayer, PointwiseLayerState
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 
@@ -32,17 +32,15 @@ modulus = PointwiseLayer(
     tops = [:modulus],
     ρ = Modulus())
 
-layers = Mocha.Layer[signal]
-
-Mocha.init(backend)
-net = Mocha.Net("fourier-modulus", backend, layers)
-
-@test isa(net, Mocha.Net{Mocha.CPUBackend})
-
-import WaveletScattering: Log1P
 log1p = PointwiseLayer(
     bottoms = [:modulus],
     tops = [:log1p],
     ρ = Log1P(Float32(1e-2))
 )
-layers = Mocha.Layer[signal, modulus, log1p]
+
+layers = Mocha.Layer[signal, fourier, modulus, log1p]
+
+Mocha.init(backend)
+net = Mocha.Net("fourier-modulus", backend, layers)
+
+@test isa(net, Mocha.Net{Mocha.CPUBackend})
