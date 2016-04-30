@@ -22,7 +22,7 @@ function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
     outnodes =
         DataStructures.SortedDict{Path,Node,Base.Order.ForwardOrdering}()
     for path in keys(innodes)
-        outnodes[path] = Node(ρ(innodes[path].data), innodes[path].ranges)
+        outnodes[path] = ρ(innodes[path])
     end
     return outnodes
 end
