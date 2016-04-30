@@ -24,6 +24,7 @@ function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
     for path in keys(innodes)
         outnodes[path] = Node(ρ(innodes[path].data), innodes[path].ranges)
     end
+    return outnodes
 end
 
 function Base.map!(
