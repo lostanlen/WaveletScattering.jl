@@ -12,8 +12,6 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     end
 end
 
-call{T,N}(ρ::Log1P{T}, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
-
 function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = ScatteredBlob(map(ρ, blob_in.nodes))
 end
@@ -33,16 +31,6 @@ function Base.map!(
         blob_in::ScatteredBlob)
     @inbounds for id in eachindex(blob_in.nodes)
         map!(ρ, blob_out.nodes[id].data, blob_in.nodes[id].data)
-    end
-end
-
-function Base.map!{T<:Real}(
-        ρ::Log1P{T},
-        data_out::Array{T},
-        data_in::Array{T})
-    @inbounds @fastmath for id in eachindex(data_in)
-        data_out[id] = data_in[id] * ρ.threshold
-        data_out[id] = log1p(data_out[id])
     end
 end
 
