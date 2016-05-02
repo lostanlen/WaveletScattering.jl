@@ -1,15 +1,16 @@
 using Base.Test
-# fourierfilter.jl
+# fourier1dfilter.jl
 import WaveletScattering: AbstractFilter, Analytic1DFilter,
     Coanalytic1DFilter, FourierSymmetric1DFilter,
     FullResolution1DFilter,
     Vanishing1DFilter, VanishingWithMidpoint1DFilter,
-    getindex, littlewoodpaleyadd!, renormalize!, spin
+    critical_log2_sampling, getindex, littlewoodpaleyadd!,
+    nextpow2_exponent, renormalize!, spin
 # meta.jl
 import WaveletScattering: ΨMeta, ΦMeta, get_bandwidth,
     get_centerfrequency, get_j, get_nOrientations,
     get_qualityfactor, get_scale, get_γ, get_θ, get_χ
-# sped1d.jl
+# spec1d.jl
 import WaveletScattering: Spec1D
 
 # AbstractFourierFilter 1D constructor
@@ -124,6 +125,17 @@ midpoint = Float32(0.5)
 @test ψ[-6:5] ==
     Float32[0.0, 0.5, 0.1, 0.3, 0.4, 0.0, 0.0, 0.0, 0.1, 0.3, 0.4, 0.0]
 
+
+# critical_log2_sampling
+an = Analytic1DFilter(Float32[0.1, 0.3, 0.4], 2)
+coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -2)
+midpoint = Float32(0.5)
+spec = Spec1D()
+ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
+@test critical_log2_sampling(an, spec) == -12
+@test critical_log2_sampling(coan, spec) == -16
+@test critical_log2_sampling(ψ, spec) == 0
+
 # littlewoodpaleyadd!
 # littlewoodpaleyadd!(lp::Vector, ψ::Analytic1DFilter)
 lp = zeros(Float32, 8)
@@ -185,6 +197,16 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 @test_approx_eq maximum(ψ) Float32(0.5)
+
+# nextpow2_exponent
+@test nextpow2_exponent(5) == 3
+@test nextpow2_exponent(4) == 2
+@test nextpow2_exponent(3) == 2
+@test nextpow2_exponent(2) == 1
+@test nextpow2_exponent(1) == 0
+@test nextpow2_exponent(0) == 0
+@test nextpow2_exponent(-1) == 0
+@test nextpow2_exponent(-2) == -1
 
 # renormalize!
 # case Q=1
