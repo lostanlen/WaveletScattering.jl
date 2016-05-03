@@ -33,11 +33,3 @@ function Base.map!(
         map!(ρ, blob_out.nodes[id].data, blob_in.nodes[id].data)
     end
 end
-
-for T in subtypes(AbstractPointwise)
-    @eval begin
-        function call{NODE<:AbstractNode}(ρ::$T, node::NODE)
-            return Node(ρ(node.data), node.ranges)
-        end
-    end
-end
