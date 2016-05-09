@@ -8,6 +8,7 @@ using MathProgBase
 tests = [
     "domain",
     "group",
+    "waveletclass",
     "path",
     "meta",
     "spec",
