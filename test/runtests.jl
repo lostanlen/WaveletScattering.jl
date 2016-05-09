@@ -22,6 +22,7 @@ tests = [
     "morlet1d",
     "pointwise",
     "modulus",
+    "log1p",
     "symbols",
     "layer",
     "inputlayer",
