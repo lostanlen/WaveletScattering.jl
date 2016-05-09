@@ -88,7 +88,8 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         G = typeof(pointgroup)
         spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_aspectratio, max_qualityfactor, max_scale, motherfrequency,
-            nFilters_per_octave, nOctaves, pointgroup, signaltype)
+            nFilters_per_octave, nOctaves, nOrientations, pointgroup,
+            signaltype)
         """Before returning the `spec`, we call the function `checkspec`
         which enforces properties of the wavelet filter bank to satisfy null
         mean, limited spatial support, and Littlewood-Paley inequality."""
