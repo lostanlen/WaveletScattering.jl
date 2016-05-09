@@ -110,7 +110,7 @@ nOctaves = 8
 @test_throws ErrorException checkspec(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas,
     1.0, 1e1, motherfrequency, 1, 12))
-@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (8,),
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, 8,
     ϕmeta, ψmetas,
     1.0, Inf, motherfrequency, 1, 1))
 
