@@ -159,7 +159,7 @@ end
 
 default_nOrientations(class::RedundantWaveletClass, nOrientations::Void) =
     issteerable(class) ? 4 : 1
-default_nOrientations(class:RedundantWaveletClass, nOrientations::Int) =
+default_nOrientations(class::RedundantWaveletClass, nOrientations::Int) =
     nOrientations
 
 """Fallback of the uncertainty constant from the spec to its class. The RHS
