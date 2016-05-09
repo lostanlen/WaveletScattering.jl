@@ -32,7 +32,8 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         """Default number of orientations"""
         nOrientations = default_nOrientations(class, nOrientations)
         """Infer point group from wavelet"""
-        G = issteerable(class) ? RotationGroup(nOrientations) : TrivialGroup()
+        pointgroup = issteerable(class) ?
+            RotationGroup(nOrientations) : TrivialGroup()
         """Maximum aspect ratio (length-to-width) of the wavelets"""
         max_aspectratio = default_max_aspectratio(class, max_aspectratio)
         """Maximum quality factor and number of filters per octave are
@@ -49,7 +50,8 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         nOctaves = default_nOctaves(nOctaves, class, log2_size,
             max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave)
         """The number of orientations of a one-dimensional filter bank is
-        equal to 1 for non-steerable real wavelets (`pointgroup::TrivialGroup`), equal to  (`pointgroup::ReflectionGroup`)."""
+        equal to 1 for non-steerable real wavelets (`pointgroup::TrivialGroup`),
+        equal to nOrientations otherwise (`pointgroup::RotationGroup`)."""
         nΘs = get_nOrientations(pointgroup)
         ħ = uncertainty(class)
         """The meta-information of the wavelets is computed as a 3-d array,
