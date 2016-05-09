@@ -39,7 +39,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     else
         min_centerfrequency = uncertainty(spec) / max_s * 1.0
     end
-    nOctaves = default_nOctaves(nothing, spec.class, tuple(log2_s),
+    nOctaves = default_nOctaves(nothing, spec.class, log2_s,
                                 Float64(max_q), max_s, spec.motherfrequency,
                                 nfo)
     ξs = [ meta.centerfrequency for meta in spec.ψmetas ]
