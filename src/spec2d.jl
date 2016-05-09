@@ -85,7 +85,7 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         ϕbandwidth = motherfrequency * exp2(-nOctaves)
         ϕscale = ħ / ϕbandwidth
         ϕmeta = ΦMeta(ϕbandwidth, ϕscale)
-        spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
+        spec = new{T,D,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_aspectratio, max_qualityfactor, max_scale, motherfrequency,
             nFilters_per_octave, nOctaves, pointgroup, signaltype)
         """Before returning the `spec`, we call the function `checkspec`
