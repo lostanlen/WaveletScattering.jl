@@ -87,7 +87,6 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         """Before returning the `spec`, we call the function `checkspec`
         which enforces properties of the wavelet filter bank to satisfy null
         mean, limited spatial support, and Littlewood-Paley inequality."""
-        # checkspec(spec) && return spec
-        return spec
+        checkspec(spec) && return spec
     end
 end
