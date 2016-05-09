@@ -291,10 +291,10 @@ function renormalize!{T<:Number,G<:LineGroups}(
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
         wavelet_range = 1:length(λs)
-        JuMP.@defVar(model, y[wavelet_range] >= 0)
-        JuMP.@setObjective(model, Min, sum(remainder - ψmat * y))
-        JuMP.@addConstraint(model, remainder .>= ψmat * y)
-        JuMP.@addConstraint(model, diff(y) .<= 0)
+        JuMP.@variable(model, y[wavelet_range] >= 0)
+        JuMP.@objective(model, Min, sum(remainder - ψmat * y))
+        JuMP.@constraint(model, remainder .>= ψmat * y)
+        JuMP.@constraint(model, diff(y) .<= 0)
         JuMP.solve(model)
         ψs[λs] .*= sqrt((1 + (nOrientations>1)) * JuMP.getValue(y))
     end
