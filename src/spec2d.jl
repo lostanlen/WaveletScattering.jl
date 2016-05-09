@@ -28,9 +28,11 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
             max_scale = Inf,
             nFilters_per_octave = nothing,
             nOctaves = nothing,
-            nOrientations = 4)
+            nOrientations = nothing)
+        """Default number of orientations"""
+        nOrientations = default_nOrientations(class, nOrientations)
         """Infer point group from wavelet"""
-        G = issteerable(class) ? RotationGroup() : TrivialGroup()
+        G = issteerable(class) ? RotationGroup(nOrientations) : TrivialGroup()
         """Maximum aspect ratio (length-to-width) of the wavelets"""
         max_aspectratio = default_max_aspectratio(class, max_aspectratio)
         """Maximum quality factor and number of filters per octave are
