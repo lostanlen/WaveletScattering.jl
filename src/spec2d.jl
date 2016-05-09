@@ -92,3 +92,13 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         checkspec(spec) && return spec
     end
 end
+
+default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Void) =
+    issteerable(class) ? 2.0 : 1.0
+default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Int) =
+    max_aspectratio
+
+default_nOrientations(class::RedundantWaveletClass, nOrientations::Void) =
+    issteerable(class) ? 4 : 1
+default_nOrientations(class::RedundantWaveletClass, nOrientations::Int) =
+    nOrientations

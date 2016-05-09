@@ -157,11 +157,6 @@ function default_nOctaves(nOctaves::Void, class::RedundantWaveletClass,
     return min(nOctaves_a, nOctaves_b)
 end
 
-default_nOrientations(class::RedundantWaveletClass, nOrientations::Void) =
-    issteerable(class) ? 4 : 1
-default_nOrientations(class::RedundantWaveletClass, nOrientations::Int) =
-    nOrientations
-
 """Fallback of the uncertainty constant from the spec to its class. The RHS
 method must be specifically implemented by `AbstractSpec` concrete subtypes."""
 uncertainty(spec::AbstractSpec) = uncertainty(spec.class)
