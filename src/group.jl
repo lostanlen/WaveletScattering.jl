@@ -23,6 +23,7 @@ immutable RotationGroup <: AbstractPointGroup
 end
 
 typealias LineGroups Union{TrivialGroup,ReflectionGroup}
+typealias PlaneGroups Union{TrivialGroup,RotationGroup}
 
 get_nOrientations(group::TrivialGroup) = 1
 get_nOrientations(group::ReflectionGroup) = 2
