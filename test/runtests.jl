@@ -13,6 +13,7 @@ tests = [
     "meta",
     "spec",
     "spec1d",
+    "spec2d",
     "filter",
     "fourierfilter",
     "weighting",
