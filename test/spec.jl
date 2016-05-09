@@ -76,7 +76,7 @@ nOctaves = 8
     ϕmeta, ψmetas,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
     nOctaves))
-@test_throws ErrorException checkspec(UncheckedSpec(ɛ, (1,),
+@test_throws ErrorException checkspec(UncheckedSpec(ɛ, 1,
     ϕmeta, ψmetas,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
     nOctaves))
