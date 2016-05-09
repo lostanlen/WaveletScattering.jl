@@ -1,8 +1,7 @@
 using Base.Test
 # spec.jl
 import WaveletScattering: checkspec, default_ɛ, default_max_qualityfactor,
-    default_motherfrequency, default_nFilters_per_octave, default_nOctaves,
-    tune_motherfrequency
+    default_motherfrequency, default_nFilters_per_octave, default_nOctaves
 # meta.jl
 import WaveletScattering: get_γ, get_scale, ΦMeta, ΨMeta
 # morlet1d.jl
@@ -137,18 +136,3 @@ nOctaves = 8
 # default_nOctaves (fallback)
 type WhateverType end
 @test default_nOctaves(5, WhateverType) == 5
-
-# tune_motherfrequency
-nfos = [1, 2, 4, 8, 12, 16, 24]
-pitchforks = [392, 415, 422, 430, 435, 440, 442, 444, 466]
-for nfo in nfos, pitchfork in pitchforks
-    tuningfrequency = pitchfork / 44100.0
-    spec = Spec1D()
-    ξ = tune_motherfrequency(tuningfrequency, spec.class, nfo)
-    γs = map(get_γ, spec.ψmetas)
-    ωs = ξ * exp2(-γs / nfo)
-    @test any(abs(ωs - ξ) .< 1e-4)
-    max_ξ = default_motherfrequency(spec.class, nfo)
-    @test ξ < max_ξ
-    @test ξ * exp2(inv(nfo)) > max_ξ
-end

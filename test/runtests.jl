@@ -12,6 +12,7 @@ tests = [
     "path",
     "meta",
     "spec",
+    "spec1d",
     "filter",
     "fourierfilter",
     "weighting",
