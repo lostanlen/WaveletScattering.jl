@@ -5,7 +5,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
     ψmetas::Array{ΨMeta,3}
     class::W
     domain::D
-    log2_size::Tuple{Int}
+    log2_size::Int
     max_qualityfactor::Float64
     max_scale::Float64
     motherfrequency::Float64
@@ -26,8 +26,6 @@ immutable Spec1D{T<:Real,D<:LineDomains,
             nFilters_per_octave = nothing,
             nOctaves = nothing,
             tuningfrequency = nothing)
-        "Integer `log2_size` is automatically converted to one-element tuple"
-        isa(log2_size, Int) && (log2_size = tuple(log2_size))
         """Maximum quality factor and number of filters per octave are
         set simultaneously, so that they default to each other if either
         is present."""

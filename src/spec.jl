@@ -27,7 +27,7 @@ function checkspec(spec::AbstractSpec)
     if (spec.ɛ >= 1.0) || (spec.ɛ < 0.0) || (spec.ɛ === -0.0)
         error("`ɛ` must be in `[0.0, 1.0[`. A typical value is `1e-4`.")
     end
-    if any(collect(spec.log2_size) .< 2)
+    if spec.log2_size .< 2
         error("Too short signal length.\n",
         "`log2_size =` ", spec.log2_size, "\n",
         "All elements in `log2_size` must be `≧2`")
