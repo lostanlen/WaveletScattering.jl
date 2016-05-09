@@ -64,7 +64,7 @@ function checkspec(spec::AbstractSpec)
         """The inequality `minimum(log2_size) > nOctaves` must be satisfied.
         Either increase `log2_size` or decrease `nOctaves`.""")
     end
-    if log2_size-spec.nOctaves .< 1+log2(spec.nFilters_per_octave))
+    if log2_size-spec.nOctaves .< 1+log2(spec.nFilters_per_octave)
         error("Too many filters per octave for the given length.\n",
         "`log2_size = `", spec.log2_size, "\n",
         "`log2(nFilters_per_octave) = `", log2(spec.nFilters_per_octave), "\n",
