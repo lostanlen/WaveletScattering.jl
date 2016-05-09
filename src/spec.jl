@@ -144,7 +144,7 @@ default_nFilters_per_octave(nfo::Void, max_q::Void) = 1
 below `2^(log2_size)`."""
 default_nOctaves(nOctaves::Int, args...) = nOctaves
 function default_nOctaves(nOctaves::Void, class::RedundantWaveletClass,
-        log2_size::Tuple, max_qualityfactor::Float64, max_scale::Real,
+        log2_size::Int, max_qualityfactor::Float64, max_scale::Real,
         motherfrequency::Float64, nFilters_per_octave::Int, args...)
     siglength = 1 << minimum(log2_size)
     if max_scale > siglength

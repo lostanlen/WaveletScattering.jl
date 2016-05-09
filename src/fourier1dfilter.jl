@@ -65,7 +65,7 @@ For one-dimensional filters in the Fourier domain, the output type may be:
 * `FullResolution1DFilter` if `y` is non-negligible along the whole spectrum"""
 function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
     supertype = AbstractFilter{T,FourierDomain{1}}
-    N = 1 << spec.log2_size[1]
+    N = 1 << spec.log2_size
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
     y2 = abs2(y)
@@ -135,12 +135,12 @@ such that the passband of `ψ` is not aliased. This resmpling factor is
 expressed in fraction of signal length ; thus, its base-2 logarithm is
 non-positive. The result does not account for manual oversampling."""
 critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
-    1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size[1]
+    1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size
 critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
-    1 + nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1) - spec.log2_size[1]
+    1 + nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1) - spec.log2_size
 critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
 critical_log2_sampling(ψ::FourierSymmetric1DFilter, spec::AbstractSpec) =
-    1 + nextpow2_exponent(length(ψ.leg)) - spec.log2_size[1]
+    1 + nextpow2_exponent(length(ψ.leg)) - spec.log2_size
 critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) = max(
     critical_log2_sampling(ψ.an, spec), critical_log2_sampling(ψ.coan, spec))
 critical_log2_sampling(ψ::VanishingWithMidpoint1DFilter, spec::AbstractSpec) = 0
@@ -272,7 +272,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
         spec::AbstractSpec{T,FourierDomain{1},G})
-    N = 1 << spec.log2_size[1]
+    N = 1 << spec.log2_size
     nOrientations = get_nOrientations(spec.pointgroup)
     ψmetas = spec.ψmetas
     if ψmetas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0

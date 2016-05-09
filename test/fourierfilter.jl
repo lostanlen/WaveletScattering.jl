@@ -229,7 +229,7 @@ bws = map(get_bandwidth, spec.ψmetas)
 # ϕ = scalingfunction(spec)
 # lp = renormalize!(ψs, ϕ, metas, spec)
 # @test all(lp.< 1.0001)
-# N = 1 << spec.log2_size[1]
+# N = 1 << spec.log2_size
 # firstω = round(Int, N * ξs[end])
 # lastω = round(Int, N * ξs[1])
 # @test all(lp[1+(firstω:lastω)] .> 0.5)
@@ -246,7 +246,7 @@ bws = map(get_bandwidth, spec.ψmetas)
 # ϕ = scalingfunction(spec)
 # lp = renormalize!(ψs, ϕ, metas, spec)
 # @test all(lp.< 1.001)
-# N = 1 << spec.log2_size[1]
+# N = 1 << spec.log2_size
 # firstω = round(Int, N * ξs[end])
 # lastω = round(Int, N * ξs[1])
 # @test all(lp[1+(firstω:lastω)] .> 0.5)
@@ -263,7 +263,7 @@ bws = map(get_bandwidth, spec.ψmetas)
 # ϕ = scalingfunction(spec)
 # lp = renormalize!(ψs, ϕ, metas, spec)
 # @test all(lp.< 1.001)
-# N = 1 << spec.log2_size[1]
+# N = 1 << spec.log2_size
 # firstω = round(Int, N * ξs[end])
 # lastω = round(Int, N * ξs[1])
 # @test all(lp[1+(firstω:lastω)] .> 0.5)

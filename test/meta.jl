@@ -55,7 +55,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     # scales
     @test all(scs.>0.0)
     @test all(scs[qs.>1.0] .< (max_s+machine_precision))
-    @test all(scs .< (exp2(spec.log2_size[1])+machine_precision))
+    @test all(scs .< (exp2(spec.log2_size)+machine_precision))
     # uncertainty
     empirical_uncertainty = bws .* scs
     @test all(abs(diff(empirical_uncertainty[:])) .< machine_precision)

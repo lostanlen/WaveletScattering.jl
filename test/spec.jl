@@ -51,7 +51,7 @@ end
 # checkspec
 immutable UncheckedSpec <: AbstractSpec
     ɛ::Float64
-    log2_size::Tuple{Int}
+    log2_size::Int
     ϕmeta::ΦMeta
     ψmetas::Array{ΨMeta,3}
     max_qualityfactor::Float64
@@ -61,7 +61,7 @@ immutable UncheckedSpec <: AbstractSpec
     nOctaves::Int
 end
 ɛ = 1e-3
-log2_size = (13,)
+log2_size = 13
 max_qualityfactor = 12.0
 max_scale = 5e3
 motherfrequency = 0.45
