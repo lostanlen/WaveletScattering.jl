@@ -97,6 +97,28 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
     end
 end
 
+function checkspec(spec::Spec2D)
+    if issteerable(spec.class)
+        if spec.max_aspectratio < 1.0
+            error("`max_aspectratio` must be `≧1.0`.",
+                "for steerable wavelets.")
+        end
+        if spec.nOrientations < 1
+            error("`nOrientations` must be `≧1` for steerable wavelets")
+        end
+    else
+        if spec.max_aspectratio != 1.0
+            error("`max_aspectratio` must be equal to `1.0`",
+                "for non-steerable wavelets.")
+        end
+        if spec.nOrientations != 1
+            error("`nOrientations` must be equal to `1`",
+                "for steerable wavelets")
+        end
+    end
+    checkspec_super(spec) && return true
+end
+
 default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Void) =
     issteerable(class) ? 2.0 : 1.0
 default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Any) =

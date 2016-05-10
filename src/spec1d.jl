@@ -83,6 +83,10 @@ immutable Spec1D{T<:Real,D<:LineDomains,
     end
 end
 
+function checkspec(spec::Spec1D)
+    checkspec_super(spec) && return true
+end
+
 """Given a dimensionless tuning frequency, returns the maximal admissible
 mother frequency such that the subsequent wavelets will be in tune with the
 tuning frequency.
