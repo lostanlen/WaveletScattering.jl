@@ -20,6 +20,7 @@ tests = [
     "behavior1d",
     "bank1d",
     "morlet1d",
+    "blob",
     "pointwise",
     "modulus",
     "log1p",
