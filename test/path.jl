@@ -56,6 +56,10 @@ import WaveletScattering: Literal, PathKey, Path, PathRange
 @test Path((:a, 2) => 2, :b => 3, :a => 1) ==
     Path(:a => 1, (:a, 2) => 2, :b => 3)
 
+# isless for Path
+@test Path(:a => 1) < Path((:a, 2) => 2)
+@test Path(:a => 1) < Path(:a => 2)
+
 # PathRange
 @test PathRange((:a, 2) => 2:4, :b => 3, :a => 1:1:3) ==
     PathRange(:a => 1:3, (:a, 2) => 2:1:4, :b => 3:3)
