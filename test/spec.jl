@@ -53,7 +53,7 @@ immutable UncheckedSpec <: AbstractSpec
     ɛ::Float64
     log2_size::Int
     ϕmeta::ΦMeta
-    ψmetas::Array{ΨMeta,3}
+    ψmetas::Array{ΨMeta1D,3}
     class::RedundantWaveletClass
     max_qualityfactor::Float64
     max_scale::Float64
