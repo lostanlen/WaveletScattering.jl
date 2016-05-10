@@ -12,7 +12,7 @@ import WaveletScattering: AbstractSpec
 # spec1d.jl
 import WaveletScattering: Spec1D
 # waveletclass.jl
-import WaveletScattering: Morlet, RedundantWaveletClass
+import WaveletScattering: MexicanHat, Morlet, RedundantWaveletClass
 
 # default_motherfrequency
 immutable NullWaveletClass <: RedundantWaveletClass end
@@ -71,6 +71,10 @@ nOctaves = 8
 ϕmeta = Spec1D().ϕmeta
 ψmetas = Spec1D().ψmetas
 class = Morlet()
+@test_throws ErrorException checkspec_super(UncheckedSpec(-0.1, log2_size,
+    ϕmeta, ψmetas, MexicanHat(),
+    2.0, max_scale, motherfrequency, nFilters_per_octave,
+    nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(-0.1, log2_size,
     ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
