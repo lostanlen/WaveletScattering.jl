@@ -3,6 +3,7 @@ abstract RedundantWaveletClass
 immutable Gammatone <: RedundantWaveletClass
     order::Int
 end
+Gammatone() = Gammatone(4)
 isdyadic(::Gammatone) = false
 
 immutable MexicanHat <: RedundantWaveletClass end
