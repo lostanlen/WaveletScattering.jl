@@ -1,17 +1,9 @@
-"""In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`. That
-is more accurate with the Littlewood-Paley energy conservation criterion than
-the generic fallback `ξ=0.4`, which is only valid when the wavelet has a
-symmetric profile in the Fourier domain. This is no longer the case for
-nFilters_per_octave==max_qualityfactor==1 as the Morlet low-frequency corrective
-term is no longer negligible."""
-default_motherfrequency(class::Morlet, nFilters_per_octave) =
-    nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
-
-"""Computes gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den).
-The Gaussian bell curve is defined as gauss(ω) = exp(- ω² / 2σ²).
-For performance reasons, we memoize the denominator 2σ², which is computed only
-once in the caller morlet1d.
-Also note that the exponentiation ω^2 is replaced by the explicit product ω*ω.
+"""Computes `gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den)`.
+The Gaussian bell curve is defined as `gauss(ω) = exp(- ω² / 2σ²)`.
+For performance reasons, we memoize the denominator `2σ²`,
+which is computed only once in the caller `morlet`.
+Also note that the exponentiation `ω²` is replaced by the explicit
+product `ω*ω`.
 """
 gauss{T<:Real}(ω, den::T) = @fastmath Base.convert(T, exp(- ω*ω/den))::T
 

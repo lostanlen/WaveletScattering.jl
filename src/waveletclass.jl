@@ -13,6 +13,16 @@ issteerable(::MexicanHat) = false
 uncertainty(::MexicanHat) = 2.0
 
 immutable Morlet <: RedundantWaveletClass end
+
+"""In the special case `nFilters_per_octave=1`, we manually set `ξ=0.39`. That
+is more accurate with the Littlewood-Paley energy conservation criterion than
+the generic fallback `ξ=0.4`, which is only valid when the wavelet has a
+symmetric profile in the Fourier domain. This is no longer the case for
+nFilters_per_octave==max_qualityfactor==1 as the Morlet low-frequency corrective
+term is no longer negligible."""
+default_motherfrequency(class::Morlet, nFilters_per_octave) =
+    nFilters_per_octave==1 ? 0.39 : inv(3.0 - exp2(-1.0/nFilters_per_octave))
+
 isdyadic(::Morlet) = false
 issteerable(::Morlet) = true
 

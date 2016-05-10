@@ -1,4 +1,8 @@
-import WaveletScattering: isdyadic, issteerable, Gammatone, MexicanHat, Morlet
+using Base.Test
+import WaveletScattering: default_motherfrequency, isdyadic, issteerable,
+    Gammatone, MexicanHat, Morlet
+
+@test_approx_eq default_motherfrequency(Morlet(), 1) 0.39
 
 @test Gammatone() == Gammatone(4)
 @test !isdyadic(Gammatone())
