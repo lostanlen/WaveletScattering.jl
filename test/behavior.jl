@@ -1,6 +1,6 @@
 using Base.Test
-# behavior1d.jl
-import WaveletScattering: Behavior1D
+# behavior.jl
+import WaveletScattering: Behavior
 # bank.jl
 import WaveletScattering: renormalize!
 # filter.jl
@@ -29,13 +29,13 @@ weighting = EqualWeighting()
 
 for log2_oversampling = 0:5
     for max_log2_stride = 0:(spec.nOctaves-1)
-        behavior = Behavior1D(ϕ, ψs, spec, is_ϕ_applied, j_range,
+        behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
             log2_oversampling, max_log2_stride, pathkey, weighting)
         @test all(behavior.ψ_log2_samplings .<= 0)
         @test all(behavior.ψ_log2_samplings .>= -max_log2_stride)
     end
 end
 
-behavior = Behavior1D(ϕ, ψs, spec, is_ϕ_applied, j_range,
+behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
     0, (spec.nOctaves-1), pathkey, weighting)
 @test all(behavior.weights .== 1.0)

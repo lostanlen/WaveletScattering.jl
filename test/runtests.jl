@@ -17,7 +17,7 @@ tests = [
     "filter",
     "fourierfilter",
     "weighting",
-    "behavior1d",
+    "behavior",
     "bank1d",
     "morlet1d",
     "blob",

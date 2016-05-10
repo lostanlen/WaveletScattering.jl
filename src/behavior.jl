@@ -27,7 +27,7 @@ human ear, as defined by the international standard 61672:2003.
 * `weights`: vector of floating-point weights corresponding to the
 frequencies of `ψ`'s. The weight assigned to `ϕ` is the same as the weight
 of the `ψ` with the lowest center frequency."""
-type Behavior1D{T<:Real}
+type Behavior{T<:Real}
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
     is_ϕ_applied::Bool
@@ -48,7 +48,7 @@ the critical sampling rates of all `ψs` and `ϕ`. Then, with the inputs
   sample rate.
 NB: if `log2_oversampling` and `max_log2_stride` are left as defaults, all
 sample rates are critical."""
-function Behavior1D{
+function Behavior{
     T<:Number,
     D<:AbstractDomain,
     G<:AbstractPointGroup,
@@ -72,6 +72,6 @@ function Behavior1D{
     max_log2_stride = - min(ϕ_log2_sampling, minimum(ψ_log2_samplings))
     ξs = map(get_centerfrequency, spec.ψmetas)
     weights = map(T, weight_frequencies(weighting, ξs))
-    Behavior1D(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
+    Behavior(ϕ_log2_sampling, ψ_log2_samplings, is_ϕ_applied, j_range,
         log2_oversampling, max_log2_stride, pathkey, weighting, weights)
 end
