@@ -10,7 +10,7 @@ immutable MexicanHat <: RedundantWaveletClass end
 isdyadic(::MexicanHat) = true
 issteerable(::MexicanHat) = false
 
-uncertainty(::MexicantHat) = 2.0
+uncertainty(::MexicanHat) = 2.0
 
 immutable Morlet <: RedundantWaveletClass end
 isdyadic(::Morlet) = false
