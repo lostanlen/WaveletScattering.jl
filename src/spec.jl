@@ -9,6 +9,9 @@ abstract AbstractSpec{
 """Enforces properties of the wavelets to satisfy null mean, limited spatial
 support, and Littlewood-Paley inequality.
 
+* If the wavelet is dyadic, the maximum required quality factor
+`max_qualityfactor` must be equal to `1.0`.
+
 * The truncation threshold `ɛ` must be `in [0.0, 1.0[`.
 
 * The signal length must be a power of two above 4, i.e. `log2_size > 1`.
@@ -24,13 +27,19 @@ maximum quality factor.
 * The lowest center frequency must be greater or equal than the number of
 per octaves, i.e. `(log2_size-nOctaves) >= 1 + log2(nFilters_per_octave)`."""
 function checkspec_super(spec::AbstractSpec)
+    if isdyadic(spec.class) && (spec.max_qualityfactor != 1.0)
+        error("Maximum quality factor must be equal to `1.0` ",
+        "for dyadic wavelets.\n",
+        "`class` = ", spec.class, "\n",
+        "`max_qualityfactor` = ", spec.max_qualityfactor, ".")
+    end
     if (spec.ɛ >= 1.0) || (spec.ɛ < 0.0) || (spec.ɛ === -0.0)
         error("`ɛ` must be in `[0.0, 1.0[`. A typical value is `1e-4`.")
     end
     if spec.log2_size .< 2
         error("Too short signal length.\n",
         "`log2_size =` ", spec.log2_size, "\n",
-        "All elements in `log2_size` must be `≧2`")
+        "`log2_size` must be `≧2`")
     end
     if spec.max_qualityfactor < 1.0
         error("Too small maximum quality factor.\n",
