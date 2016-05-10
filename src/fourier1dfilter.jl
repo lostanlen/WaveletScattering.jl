@@ -132,6 +132,7 @@ function nextpow2_exponent(n::Integer)
         return oftype(n, -nextpow2_exponent(unsigned(-n)))
     else
         return oftype(n, nextpow2_exponent(unsigned(n)))
+    end
 end
 
 """Given a narrowband filter `ψ` and its corresponding filter bank
