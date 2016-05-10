@@ -12,7 +12,6 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
     motherfrequency::Float64
     nFilters_per_octave::Int
     nOctaves::Int
-    nOrientations::Int
     pointgroup::G
     signaltype::Type{T}
 
@@ -29,7 +28,6 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
             nFilters_per_octave = nothing,
             nOctaves = nothing,
             nOrientations = nothing)
-        """Default number of orientations."""
         nOrientations = default_nOrientations(class, nOrientations)
         """Infer point group from wavelet."""
         pointgroup = issteerable(class) ?
@@ -88,8 +86,7 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         G = typeof(pointgroup)
         spec = new{T,D,G,W}(ɛ, ϕmeta, ψmetas, class, domain, log2_size,
             max_aspectratio, max_qualityfactor, max_scale, motherfrequency,
-            nFilters_per_octave, nOctaves, nOrientations, pointgroup,
-            signaltype)
+            nFilters_per_octave, nOctaves, pointgroup, signaltype)
         """Before returning the `spec`, we call the function `checkspec`
         which enforces properties of the wavelet filter bank to satisfy null
         mean, limited spatial support, and Littlewood-Paley inequality."""

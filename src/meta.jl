@@ -22,6 +22,18 @@ immutable ΨMeta1D <: AbstractΨMeta
     scale::Float64
 end
 
+immutable ΨMeta2D <: AbstractΨMeta
+    γ::Int16
+    θ::Int8
+    χ::Int8
+    aspectratio::Float64
+    bandwidth::Float64
+    centerfrequency::Float64
+    j::Int8
+    qualityfactor::Float64
+    scale::Float64
+end
+
 """A `ΦMeta` object contains all the meta-information to identify a low-pass
 filter within a wavelet filter bank. Fields:
 * `bandwidth` ∈]0,1] the width at -3dB, expressed in fraction of signal length
