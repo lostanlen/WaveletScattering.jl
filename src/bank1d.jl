@@ -23,7 +23,7 @@ immutable Bank1D{
         W<:RedundantWaveletClass} <: AbstractBank{T,D,G,W}
     ϕ::AbstractFilter{T,D}
     ψs::Array{AbstractFilter{T,D},3}
-    behavior::Behavior1D{T}
+    behavior::Behavior{T}
     spec::Spec1D{T,D,G,W}
     function call{T,D,G,W}(::Type{Bank1D},
             spec::Spec1D{T,D,G,W},
