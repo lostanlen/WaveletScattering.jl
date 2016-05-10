@@ -12,7 +12,7 @@ import WaveletScattering: AbstractSpec
 # spec1d.jl
 import WaveletScattering: Spec1D
 # waveletclass.jl
-import WaveletScattering: RedundantWaveletClass
+import WaveletScattering: Morlet, RedundantWaveletClass
 
 # default_motherfrequency
 immutable NullWaveletClass <: RedundantWaveletClass end
@@ -54,6 +54,7 @@ immutable UncheckedSpec <: AbstractSpec
     log2_size::Int
     ϕmeta::ΦMeta
     ψmetas::Array{ΨMeta,3}
+    class::RedundantWaveletClass
     max_qualityfactor::Float64
     max_scale::Float64
     motherfrequency::Float64
@@ -69,50 +70,51 @@ nFilters_per_octave = 16
 nOctaves = 8
 ϕmeta = Spec1D().ϕmeta
 ψmetas = Spec1D().ψmetas
+class = Morlet()
 @test_throws ErrorException checkspec_super(UncheckedSpec(-0.1, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
     nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(1.0, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
     nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, 1,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
     nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     0.9, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, 0.0, nFilters_per_octave, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, 0.51, nFilters_per_octave, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, 0, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 0))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, 11, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     16.1, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 14))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 12))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     1.0, 1e1, motherfrequency, 1, 12))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, 8,
-    ϕmeta, ψmetas,
+    ϕmeta, ψmetas, class,
     1.0, Inf, motherfrequency, 1, 1))
 
 
