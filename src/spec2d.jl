@@ -29,19 +29,19 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
             nFilters_per_octave = nothing,
             nOctaves = nothing,
             nOrientations = nothing)
-        """Default number of orientations"""
+        """Default number of orientations."""
         nOrientations = default_nOrientations(class, nOrientations)
-        """Infer point group from wavelet"""
+        """Infer point group from wavelet."""
         pointgroup = issteerable(class) ?
             RotationGroup(nOrientations) : TrivialGroup()
-        """Maximum aspect ratio (length-to-width) of the wavelets"""
+        """Maximum aspect ratio (length-to-width) of the wavelets."""
         max_aspectratio = default_max_aspectratio(class, max_aspectratio)
         """Maximum quality factor and number of filters per octave are
         set simultaneously, so that they default to each other if either
         is present."""
         max_qualityfactor, nFilters_per_octave =
-             default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
-             default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
+            default_max_qualityfactor(max_qualityfactor, nFilters_per_octave),
+            default_nFilters_per_octave(nFilters_per_octave, max_qualityfactor)
         """Center frequency of the mother wavelet (`motherfrequency`)."""
         motherfrequency = default_motherfrequency(class, nFilters_per_octave)
         """By default, the number of octaves in the filter bank is such that
