@@ -1,4 +1,5 @@
 abstract AbstractMeta
+abstract AbstractΨMeta <: AbstractMeta
 
 """A `ψMeta` object contains all the meta-information to identify
 an oriented wavelet within a filter bank. Fields:
@@ -10,7 +11,7 @@ an oriented wavelet within a filter bank. Fields:
 * `centerfrequency` ∈]0,1] is expressed in fraction of signal length
 * `qualityfactor` ∈[1,max_qualityfactor] is equal to `centerfrequency/bandwidth`
 * `scale` is the FWTM (full width at tenth maximum) in spatial domain"""
-immutable ΨMeta <: AbstractMeta
+immutable ΨMeta1D <: AbstractΨMeta
     γ::Int16
     θ::Int8
     χ::Int8
@@ -33,9 +34,9 @@ end
 get_bandwidth(meta::AbstractMeta) = meta.bandwidth
 get_scale(meta::AbstractMeta) = meta.scale
 
-get_γ(meta::ΨMeta) = meta.γ
-get_θ(meta::ΨMeta) = meta.θ
-get_χ(meta::ΨMeta) = meta.χ
-get_centerfrequency(meta::ΨMeta) = meta.centerfrequency
-get_j(meta::ΨMeta) = meta.j
-get_qualityfactor(meta::ΨMeta) = meta.qualityfactor
+get_γ(meta::AbstractΨMeta) = meta.γ
+get_θ(meta::AbstractΨMeta) = meta.θ
+get_χ(meta::AbstractΨMeta) = meta.χ
+get_centerfrequency(meta::AbstractΨMeta) = meta.centerfrequency
+get_j(meta::AbstractΨMeta) = meta.j
+get_qualityfactor(meta::AbstractΨMeta) = meta.qualityfactor

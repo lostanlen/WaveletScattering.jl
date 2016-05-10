@@ -11,7 +11,7 @@ gauss{T<:Real}(ω, den::T) = @fastmath Base.convert(T, exp(- ω*ω/den))::T
 A Morlet wavelet of center frequency `ξ` and of variance `σ` looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
 substract a corrective term around the zeroth frequency."""
-function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ψmeta::ΨMeta,
+function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ψmeta::ΨMeta1D,
         spec::Spec1D{T,FourierDomain{1},G,Morlet})
     """1. **Gaussian denominator `den = 2σ²`**
     The FWHM (full width at half maximum) bw of a Gaussian bell curve of

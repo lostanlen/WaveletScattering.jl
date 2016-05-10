@@ -2,7 +2,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
         G<:LineGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G,W}
     ɛ::Float64
     ϕmeta::ΦMeta
-    ψmetas::Array{ΨMeta,3}
+    ψmetas::Array{ΨMeta1D,3}
     class::W
     domain::D
     log2_size::Int
@@ -52,7 +52,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
         * the orientation variable `θ`,
         * the chroma variable `χ`, and
         * the octave variable `j`."""
-        ψmetas = Array{ΨMeta}(nΘs, nFilters_per_octave, nOctaves)
+        ψmetas = Array{ΨMeta1D}(nΘs, nFilters_per_octave, nOctaves)
         for j in 0:(nOctaves-1), χ in 0:(nFilters_per_octave-1)
             γ = j * nFilters_per_octave + χ
             resolution = exp2(-γ / nFilters_per_octave)
@@ -63,7 +63,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
             qualityfactor = clamp(unbounded_q, 1.0, max_qualityfactor)
             bandwidth = centerfrequency / qualityfactor
             for θ in 0:(nΘs-1)
-                ψmetas[1+θ, 1+χ, 1+j] = ΨMeta(γ, θ, χ, bandwidth,
+                ψmetas[1+θ, 1+χ, 1+j] = ΨMeta1D(γ, θ, χ, bandwidth,
                     centerfrequency, j, qualityfactor, scale)
             end
         end

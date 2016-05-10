@@ -2,7 +2,7 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         G<:PlaneGroups,W<:RedundantWaveletClass} <: AbstractSpec{T,D,G,W}
     ɛ::Float64
     ϕmeta::ΦMeta
-    ψmetas::Array{ΨMeta,3}
+    ψmetas::Array{ΨMeta2D,3}
     class::W
     domain::D
     log2_size::Int
