@@ -103,8 +103,8 @@ function checkspec(spec::Spec2D)
             error("`max_aspectratio` must be `≧1.0`.",
                 "for steerable wavelets.")
         end
-        if spec.nOrientations < 1
-            error("`nOrientations` must be `≧1` for steerable wavelets")
+        if spec.nOrientations < 2
+            error("`nOrientations` must be `≧2` for steerable wavelets")
         end
     else
         if spec.max_aspectratio != 1.0
