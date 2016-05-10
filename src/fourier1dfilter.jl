@@ -73,7 +73,7 @@ function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
     negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
     posfirst, poslast = findfirst(posbools), findlast(posbools)
-    hasmidpoint = y2[1] .> ɛ2
+    hasmidpoint = y2[1+halfN] .> ɛ2
     if hasmidpoint
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
