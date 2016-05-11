@@ -25,6 +25,9 @@ end
 typealias LineGroups Union{TrivialGroup,ReflectionGroup}
 typealias PlaneGroups Union{TrivialGroup,RotationGroup}
 
+"""Returns the number of orientations associated to a point group.
+Equal to `1` for `TrivialGroup`, `2` for `ReflectionGroup`,
+and `group.nOrientations` for `RotationGroup`."""
 get_nOrientations(group::TrivialGroup) = 1
 get_nOrientations(group::ReflectionGroup) = 2
 get_nOrientations(group::RotationGroup) = group.nOrientations
