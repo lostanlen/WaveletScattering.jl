@@ -137,5 +137,11 @@ wavelets, such as `Morlet`. For non-steerable wavelets, such as `MexicanHat`,
 the number of orientations must be equal to `1`."""
 default_nOrientations(class::RedundantWaveletClass, nOrientations::Void) =
     issteerable(class) ? 4 : 1
-default_nOrientations(class::RedundantWaveletClass, nOrientations::Any) =
-    Int(nOrientations)
+
+function default_nOrientations(class::RedundantWaveletClass, nOrientations::Any)
+    if issteerable(class)
+        return Int(nOrientations)
+    else
+        error("`nOrientations` must be equal to `1` for steerable wavelets")
+    end
+end
