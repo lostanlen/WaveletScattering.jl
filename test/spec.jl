@@ -4,7 +4,7 @@ import WaveletScattering: checkspec_super, default_ɛ,
     default_max_qualityfactor, default_motherfrequency,
     default_nFilters_per_octave, default_nOctaves
 # meta.jl
-import WaveletScattering: get_γ, get_scale, ΦMeta, ΨMeta
+import WaveletScattering: get_γ, get_scale, ΦMeta, ΨMeta1D
 # morlet1d.jl
 import WaveletScattering: uncertainty
 # spec.jl
