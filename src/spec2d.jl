@@ -116,11 +116,17 @@ function checkspec(spec::Spec2D)
     checkspec_super(spec) && return true
 end
 
+"""By default, the maximum aspect ratio is set to `2.0` for steerable
+wavelets, such as `Morlet`. For non-steerable wavelets, such as `MexicanHat`,
+the maximum aspect ratio must be equal to `1.0`."""
 default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Void) =
     issteerable(class) ? 2.0 : 1.0
 default_max_aspectratio(class::RedundantWaveletClass, max_aspectratio::Any) =
     Float64(max_aspectratio)
 
+"""By default, the number of orientations is set to `4` for steerable
+wavelets, such as `Morlet`. For non-steerable wavelets, such as `MexicanHat`,
+the number of orientations must be equal to `1`."""
 default_nOrientations(class::RedundantWaveletClass, nOrientations::Void) =
     issteerable(class) ? 4 : 1
 default_nOrientations(class::RedundantWaveletClass, nOrientations::Any) =
