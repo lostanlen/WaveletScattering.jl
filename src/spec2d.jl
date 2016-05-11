@@ -94,6 +94,13 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
     end
 end
 
+"""Enforces properties of two-dimensional wavelets.
+
+* For steerable wavelets, such as `Morlet`, `max_aspectratio` must be `≧1.0` and
+`nOrientations` must be `≧2`.
+
+* For non-steerable wavelets, such as `MexicanHat`, `max_aspectratio` must be
+equal to `1.0` and `nOrientations` must be equal to `1`. """
 function checkspec(spec::Spec2D)
     if issteerable(spec.class)
         if spec.max_aspectratio < 1.0
