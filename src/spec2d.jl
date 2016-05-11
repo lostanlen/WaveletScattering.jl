@@ -73,8 +73,9 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
             aspectratio = scale * centerfrequency / (ħ * scale)
             bandwidth = centerfrequency / qualityfactor
             for θ in 0:(nΘs-1)
-                ψmetas[1+θ, 1+χ, 1+j] = ΨMeta(γ, θ, χ, bandwidth,
-                    centerfrequency, j, qualityfactor, scale)
+                ψmetas[1+θ, 1+χ, 1+j] = ΨMeta2D(γ, θ, χ,
+                    aspectratio, bandwidth, centerfrequency, j,
+                    qualityfactor, scale)
             end
         end
         """The bandwidth of the lowpass filter `ϕ` is such that the Fourier
