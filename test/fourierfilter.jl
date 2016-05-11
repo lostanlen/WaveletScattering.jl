@@ -219,7 +219,7 @@ qs = map(get_qualityfactor, spec.ψmetas)
 scs = map(get_scale, spec.ψmetas)
 bws = map(get_bandwidth, spec.ψmetas)
 @inbounds metas = [
-    ΨMeta(γs[i], 1, χs[i], bws[i], ξs[i], js[i], qs[i],
+    ΨMeta1D(γs[i], 1, χs[i], bws[i], ξs[i], js[i], qs[i],
     scs[i])
     for i in eachindex(γs) ]
 
