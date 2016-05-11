@@ -93,7 +93,8 @@ tuning frequency.
 
 For example, to tune a 12-chroma Morlet filter bank to a concert pitch of
 440 Hz at a sample rate of 44,1 kHz:
-    Morlet1DSpec(nFilters_per_octave = 12, tuning_frequency = 440.0/44100.0)"""
+    `Morlet1DSpec(nFilters_per_octave = 12, tuning_frequency = 440.0/44100.0)`
+"""
 function tune_motherfrequency(tuningfrequency, spectype, nFilters_per_octave)
     max_centerfrequency =
         default_motherfrequency(spectype, nFilters_per_octave)
