@@ -57,7 +57,7 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
         * the orientation variable `θ`,
         * the chroma variable `χ`, and
         * the octave variable `j`."""
-        ψmetas = Array{ΨMeta}(nΘs, nFilters_per_octave, nOctaves)
+        ψmetas = Array{ΨMeta2D}(nΘs, nFilters_per_octave, nOctaves)
         for j in 0:(nOctaves-1), χ in 0:(nFilters_per_octave-1)
             γ = j * nFilters_per_octave + χ
             resolution = exp2(-γ / nFilters_per_octave)
@@ -100,7 +100,7 @@ end
 `nOrientations` must be `≧2`.
 
 * For non-steerable wavelets, such as `MexicanHat`, `max_aspectratio` must be
-equal to `1.0` and `nOrientations` must be equal to `1`. """
+equal to `1.0` and `nOrientations` must be equal to `1`."""
 function checkspec(spec::Spec2D)
     if issteerable(spec.class)
         if spec.max_aspectratio < 1.0
