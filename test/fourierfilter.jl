@@ -7,7 +7,7 @@ import WaveletScattering: AbstractFilter, Analytic1DFilter,
     critical_log2_sampling, getindex, littlewoodpaleyadd!,
     nextpow2_exponent, renormalize!, spin
 # meta.jl
-import WaveletScattering: ΨMeta, ΦMeta, get_bandwidth,
+import WaveletScattering: ΨMeta1D, ΦMeta, get_bandwidth,
     get_centerfrequency, get_j, get_nOrientations,
     get_qualityfactor, get_scale, get_γ, get_θ, get_χ
 # spec1d.jl
@@ -211,61 +211,48 @@ midpoint = Float32(0.5)
 # renormalize!
 # case Q=1
 spec = Spec1D()
-γs = map(get_γ, spec.ψmetas)
-χs = map(get_χ, spec.ψmetas)
-js = map(get_j, spec.ψmetas)
-ξs = map(get_centerfrequency, spec.ψmetas)
-qs = map(get_qualityfactor, spec.ψmetas)
-scs = map(get_scale, spec.ψmetas)
-bws = map(get_bandwidth, spec.ψmetas)
-@inbounds metas = [
-    ΨMeta1D(γs[i], 1, χs[i], bws[i], ξs[i], js[i], qs[i],
-    scs[i])
-    for i in eachindex(γs) ]
-
-
-# @inbounds ψs = AbstractFilter{spec.signaltype,1}[
-#     fourierwavelet(meta, spec) for meta in metas]
-# ϕ = scalingfunction(spec)
-# lp = renormalize!(ψs, ϕ, metas, spec)
-# @test all(lp.< 1.0001)
-# N = 1 << spec.log2_size
-# firstω = round(Int, N * ξs[end])
-# lastω = round(Int, N * ξs[1])
-# @test all(lp[1+(firstω:lastω)] .> 0.5)
-# # case Q>1, max_s = Inf
-# spec = Spec1D(nFilters_per_octave=8)
-# γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
-# ξs, qs = centerfrequencies(spec), qualityfactors(spec)
-# scs, bws = scales(spec), bandwidths(spec)
-# @inbounds metas = [
-#     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-#     for i in eachindex(γs) ]
-# @inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
-#     fourierwavelet(meta, spec) for meta in metas]
-# ϕ = scalingfunction(spec)
-# lp = renormalize!(ψs, ϕ, metas, spec)
-# @test all(lp.< 1.001)
-# N = 1 << spec.log2_size
-# firstω = round(Int, N * ξs[end])
-# lastω = round(Int, N * ξs[1])
+(nΘs, nΧs, nJs) = size(spec.ψmetas)
+D = typeof(spec.domain)
+ψs = Array(AbstractFilter{spec.signaltype,D}, (nΘs, nΧs, nJs))
+ψs[1, :, :] =
+    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
+(nΘs > 1) && spin!(ψs)
+ϕ = AbstractFilter(spec.ϕmeta, spec)
+lp = renormalize!(ϕ, ψs, spec)
+@test all(lp.< 1.0001)
+N = 1 << spec.log2_size
+firstω = round(Int, N * ξs[end])
+lastω = round(Int, N * ξs[1])
+@test all(lp[1+(firstω:lastω)] .> 0.5)
+# case Q>1, max_s = Inf
+spec = Spec1D(nFilters_per_octave = 8)
+(nΘs, nΧs, nJs) = size(spec.ψmetas)
+D = typeof(spec.domain)
+ψs = Array(AbstractFilter{spec.signaltype,D}, (nΘs, nΧs, nJs))
+ψs[1, :, :] =
+    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
+(nΘs > 1) && spin!(ψs)
+ϕ = AbstractFilter(spec.ϕmeta, spec)
+lp = renormalize!(ϕ, ψs, spec)
+@test all(lp.< 1.0001)
+N = 1 << spec.log2_size
+firstω = round(Int, N * ξs[end])
+lastω = round(Int, N * ξs[1])
 # @test all(lp[1+(firstω:lastω)] .> 0.5)
 # # case Q>1, max_s < Inf
-# spec = Morlet1DSpec(nFilters_per_octave=8, max_scale=4410)
-# γs, χs, js = gammas(spec), chromas(spec), octaves(spec)
-# ξs, qs = centerfrequencies(spec), qualityfactors(spec)
-# scs, bws = scales(spec), bandwidths(spec)
-# @inbounds metas = [
-#     NonOrientedMeta(γs[i], χs[i], bws[i], ξs[i], js[i], qs[i], scs[i])
-#     for i in eachindex(γs) ]
-# @inbounds ψs = AbstractFourierFilter{spec.signaltype,1}[
-#     fourierwavelet(meta, spec) for meta in metas]
-# ϕ = scalingfunction(spec)
-# lp = renormalize!(ψs, ϕ, metas, spec)
-# @test all(lp.< 1.001)
-# N = 1 << spec.log2_size
-# firstω = round(Int, N * ξs[end])
-# lastω = round(Int, N * ξs[1])
+spec = Spec1D(max_scale = 4410, nFilters_per_octave = 8)
+(nΘs, nΧs, nJs) = size(spec.ψmetas)
+D = typeof(spec.domain)
+ψs = Array(AbstractFilter{spec.signaltype,D}, (nΘs, nΧs, nJs))
+ψs[1, :, :] =
+    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
+(nΘs > 1) && spin!(ψs)
+ϕ = AbstractFilter(spec.ϕmeta, spec)
+lp = renormalize!(ϕ, ψs, spec)
+@test all(lp.< 1.0001)
+N = 1 << spec.log2_size
+firstω = round(Int, N * ξs[end])
+lastω = round(Int, N * ξs[1])
 # @test all(lp[1+(firstω:lastω)] .> 0.5)
 
 # spin
