@@ -296,13 +296,12 @@ function renormalize!{T<:Number,G<:LineGroups}(
         littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
         remainder = maximum(lp) - lp[1 + (1:elbowω)]
         model = JuMP.Model()
-        wavelet_range = 1:length(λs)
-        JuMP.@variable(model, y[wavelet_range] >= 0)
+        JuMP.@variable(model, y[1:length(λs)] >= 0)
         JuMP.@objective(model, Min, sum(remainder - ψmat * y))
         JuMP.@constraint(model, remainder .>= ψmat * y)
         JuMP.@constraint(model, diff(y) .<= 0)
         JuMP.solve(model)
-        ψs[λs] .*= sqrt((1 + (nOrientations>1)) * JuMP.getValue(y))
+        ψs[λs] .*= sqrt((1 + (nOrientations>1)) * JuMP.getvalue(y))
     end
     lp = zeros(real(T), N)
     for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
