@@ -65,7 +65,7 @@ function call{T<:Real,DIM}(
     octavekey = prepend(:j, bank.behavior.pathkey)
     for j in bank.behavior.j_range
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
-        downsampled_length = size(x, 1) << (-ψ_log2_sampling)
+        downsampled_length = size(x, 1) >> (-ψ_log2_sampling)
         octave_size = (downsampled_length,
             size(x)[2:end]..., bank.spec.nFilters_per_octave)
         octave_ft = zeros(Complex{T}, octave_size)
