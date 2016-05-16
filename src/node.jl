@@ -17,7 +17,7 @@ end
 function RealFourierNode{T<:FFTW.fftwReal}(
         node::AbstractNode{T},
         region::AbstractArray{Int,1},
-        flags::UInt32,
+        flags::UInt32 = FFTW.ESTIMATE,
         timelimit = Inf)
     forwardplan = plan_rfft(
             node.data, region, flags = flags, timelimit = timelimit)
@@ -55,8 +55,8 @@ end
 
 function InvComplexFourierNode{T<:FFTW.fftwComplex}(
         node::AbstractNode{T},
-        region::Vector{Int} ;
-        flags = FFTW.ESTIMATE,
+        region::Vector{Int},
+        flags::UInt32 = FFTW.ESTIMATE,
         timelimit = Inf)
     inverseplan =
         plan_ifft(node.data, region ; flags = flags, timelimit = timelimit)
