@@ -49,7 +49,7 @@ end
 immutable InvComplexFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
         AbstractNode{T,N}
     data::Array{T,N}
-    inverseplan::Base.DFT.ScaledPlan{R,FFTW.cFFTWPlan{T,1,false,N},T}
+    inverseplan::Base.DFT.ScaledPlan{T,FFTW.cFFTWPlan{T,1,false,N},R}
     ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
 end
 
