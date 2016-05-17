@@ -87,7 +87,7 @@ end
 function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
     N = 1 << bank.spec.log2_size
     (nΘs, nΧs, nJs) = size(bank.spec.ψmetas)
-    tensor = zeros(T, N, nΘs, nJs, nΧs)
+    tensor = zeros(T, N, nΘs, nΧs, nJs)
     for j in 0:(nJs-1)
         for χ in 0:(nΧs-1)
             for θ in 0:(nΘs-1)
