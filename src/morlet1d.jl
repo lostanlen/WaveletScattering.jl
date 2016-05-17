@@ -62,7 +62,7 @@ function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
     ωstart = - halfN + pstart * N
     ωstop = halfN + pstop * N - 1
     @inbounds begin
-        gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop]
+        gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop ]
         gauss_0 = T[ gauss(ω, den)
             for ω in (ωstart + pstart*N):(ωstop + pstop*N) ]
         corrective_gaussians = T[ gauss_0[1 + ω + p*N]
