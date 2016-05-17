@@ -12,7 +12,7 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     end
 end
 
-function Base.map(ρ::AbstractPointwise, blob_in::ScatteredBlob)
+function Base.call(ρ::AbstractPointwise, blob_in::ScatteredBlob)
     blob_out = ScatteredBlob(map(ρ, blob_in.nodes))
 end
 

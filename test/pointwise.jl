@@ -32,4 +32,4 @@ ranges = ntuple(k -> kthrange(layer, k), ndims(layer.data))
 blob = ScatteredBlob(
     DataStructures.SortedDict((Path() => Node(layer.data, ranges),)))
 ρ = Identity()
-outblob = map(ρ, blob)
+outblob = ρ(blob)

@@ -3,6 +3,8 @@ end
 
 call(ρ::Modulus, data::AbstractArray) = abs(data)
 
+Base.abs(blob::ScatteredBlob) = Modulus()(blob)
+
 immutable SquaredModulus <: AbstractPointwise
 end
 
