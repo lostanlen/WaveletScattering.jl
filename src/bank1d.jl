@@ -46,8 +46,6 @@ immutable Bank1D{
     end
 end
 
-Base.ndims(::Bank1D) = 1
-
 function call{T<:Real,DIM}(
         bank::Bank1D{T,FourierDomain{1},TrivialGroup},
         x::AbstractArray{T,DIM};
@@ -85,3 +83,19 @@ function call{T<:Real,DIM}(
     waveletblob = ScatteredBlob(waveletnodes)
     return waveletblob
 end
+
+function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
+    N = 1 << bank.spec.log2_size
+    (nΘs, nΧs, nJs) = size(bank.ψmetas)
+    tensor = zeros(T, N, nΘs, nJs, nΧs)
+    for j in 0:(nJs-1)
+        for χ in 0:(nXs-1)
+            for θ in 0:(nΘs-1)
+                tensor[:, 1+θ, 1+χ, 1+j] = bank.ψs[1+θ, 1+χ, 1+j][0:(N-1)]
+            end
+        end
+    end
+    return tensor
+end
+
+Base.ndims(::Bank1D) = 1
