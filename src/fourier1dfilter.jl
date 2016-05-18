@@ -120,21 +120,6 @@ Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
 Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter{T}(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
 
-
-"""The exponent of the smallest power of two not less than input integer `n`.
-Returns `0` for `n==0`, and returns `-nextpow2_exponent(-n)` for negative
-arguments."""
-nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
-function nextpow2_exponent(n::Integer)
-    if n == 0
-        return oftype(n, 0)
-    elseif n < 0
-        return oftype(n, -nextpow2_exponent(unsigned(-n)))
-    else
-        return oftype(n, nextpow2_exponent(unsigned(n)))
-    end
-end
-
 """Given a narrowband filter `ψ` and its corresponding filter bank
 specification `spec`, returns the base-2 logarithm of the resampling factor
 such that the passband of `ψ` is not aliased. This resmpling factor is
@@ -268,6 +253,20 @@ Base.maximum(ψ::FourierSymmetric1DFilter) =
 Base.maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
 Base.maximum(ψ::VanishingWithMidpoint1DFilter) =
     max(maximum(ψ.an), maximum(ψ.coan), abs(ψ.midpoint))
+
+"""The exponent of the smallest power of two not less than input integer `n`.
+Returns `0` for `n==0`, and returns `-nextpow2_exponent(-n)` for negative
+arguments."""
+nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
+function nextpow2_exponent(n::Integer)
+    if n == 0
+        return oftype(n, 0)
+    elseif n < 0
+        return oftype(n, -nextpow2_exponent(unsigned(-n)))
+    else
+        return oftype(n, nextpow2_exponent(unsigned(n)))
+    end
+end
 
 """Renormalizes an array of Fourier-domain wavelets `ψs` by the square root
 of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
