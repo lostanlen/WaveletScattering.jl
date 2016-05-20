@@ -20,7 +20,7 @@ imposes no oversampling per se.
 * `pathkey`: key of the variable over which the filter bank is applied.
 
 * `weighting`: scalar weighting of each wavelet frequency band. Default is
-`EqualWeighting()`, i.e. all weights are one. Can be set to
+`EqualWeighting()`, i.e. all weights are one. Can alternatively be set to
 `LoudnessWeighting(samplerate)` to model the relative loudness perceived by the
 human ear, as defined by the international standard 61672:2003.
 
