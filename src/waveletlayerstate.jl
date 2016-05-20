@@ -14,10 +14,10 @@ end
 
 """diffs and inputs must contain `ScatteredBlob`'s."""
 function Mocha.setup{T,N}(
-        backend::Mocha.CPUBackend,
+        backend::Mocha.Backend,
         layer::WaveletLayer,
-        diffs::Vector{Mocha.Blob{T}},
-        inputs::Vector{Mocha.Blob{T}})
+        inputs::Vector{Mocha.Blob{T}},
+        diffs::Vector{Mocha.Blob{T}})
     blobs = Vector{Mocha.Blob}(length(inputs))
     pathkey = layer.bank.behavior.pathkey
     for idblob in eachindex(inputs)
