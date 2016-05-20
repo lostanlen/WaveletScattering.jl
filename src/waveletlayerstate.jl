@@ -12,20 +12,25 @@ function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
     end
 end
 
+"""diffs and inputs must contain `ScatteredBlob`'s."""
 function Mocha.setup{T,N}(
         backend::Mocha.CPUBackend,
-        diffs::Vector{ScatteredBlob{T}},
-        inputs::Vector{Mocha.CPUBlob{T,N}},
-        layer::WaveletLayer)
+        layer::WaveletLayer,
+        diffs::Vector{Mocha.Blob{T}},
+        inputs::Vector{Mocha.Blob{T}})
     blobs = Vector{Mocha.Blob}(length(inputs))
+    pathkey = layer.bank.behavior.pathkey
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
-        outnodes = Dict{Path, AbstractFourierNode}()
-        for path in keys(innodes)
+        # TODO: tighten typing
+        outnodes =
+            SortedDict{Path,AbstractFourierNode,Base.Order.ForwardOrdering}()
+        for inpath in keys(innodes)
+            innode = innodes[inpath]
 
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    blobs_diff = 0
+    blobs_diff = Vector{Mocha.Blob}(length(inputs))
     WaveletLayerState(blobs, blobs_diff, layer)
 end
