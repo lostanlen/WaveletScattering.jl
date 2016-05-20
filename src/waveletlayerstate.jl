@@ -18,7 +18,7 @@ function Mocha.setup(
         layer::WaveletLayer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
-    blobs = Vector{Mocha.Blob}(length(inputs))
+    blobs = Vector{ScatteredBlob}(length(inputs))
     pathkey = layer.bank.behavior.pathkey
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
@@ -31,6 +31,6 @@ function Mocha.setup(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    blobs_diff = Vector{Mocha.Blob}(length(inputs))
+    blobs_diff = Vector{ScatteredBlob}(length(inputs))
     WaveletLayerState(blobs, blobs_diff, layer)
 end
