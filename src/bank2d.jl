@@ -23,6 +23,16 @@ immutable Bank2D{
     ψs::Array{AbstractFilter{T,D},3}
     behavior::Behavior{T}
     spec::Spec2D{T,D,G,W}
+
+    function call{T,D,G,W}(::Type{Bank2D},
+            spec::Spec2D{T,D,G,W},
+            pathkey::PathKey = PathKey(:space) ;
+            is_ϕ_applied::Bool = false,
+            j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
+            log2_oversampling::Int = 0,
+            max_log2_stride::Int = spec.nOctaves-1,
+            weighting::AbstractWeighting = EqualWeighting())
+    end
 end
 
 Base.ndims(::Bank2D) = 2
