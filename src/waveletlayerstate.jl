@@ -31,6 +31,6 @@ function Mocha.setup(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    blobs_diff = fill!(Mocha.NullBlob(), length(inputs))
+    blobs_diff = blobs
     WaveletLayerState(blobs, blobs_diff, layer)
 end
