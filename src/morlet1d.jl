@@ -46,7 +46,7 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ϕmeta::ΦMeta,
     halfN = N >> 1
     bw = N * T(ϕmeta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
-    """2. **Call to morlet**"""
+    """2. **Call to `morlet`**"""
     lastω = round(Int, min(bw * sqrt(2.0 / spec.ɛ), halfN - 1))
     leg = T[ gauss(ω, den) for ω in 1:lastω ]
     """3. **Trimming to true support boundaries**"""
@@ -56,11 +56,13 @@ end
 
 function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
         center::T, den::T, N::Int, nPeriods::Int)
+    """1. **Compute range of frequencies with nonneglible magnitude**"""
     halfN = N >> 1
     pstart = - ((nPeriods-1)>>1)
     pstop = (nPeriods-1)>>1 + iseven(nPeriods)
     ωstart = - halfN + pstart * N
     ωstop = halfN + pstop * N - 1
+    """2. **Compute Gaussians**"""
     @inbounds begin
         gauss_center = T[ gauss(ω-center, den) for ω in ωstart:ωstop ]
         gauss_0 = T[ gauss(ω, den)
@@ -68,10 +70,12 @@ function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
         corrective_gaussians = T[ gauss_0[1 + ω + p*N]
             for ω in 0:(N*nPeriods-1), p in 0:(nPeriods-1) ]
     end
+    """3. **Solve linear system to find out the corrective factors**"""
     b = T[ gauss(p*N - center, den) for p in pstart:pstop ]
     A = T[ gauss((q-p)*N, den)
         for p in 0:(nPeriods-1), q in 0:(nPeriods-1) ]
     corrective_factors = A \ b
+    """4. **Periodize in Fourier domain**"""
     y = gauss_center - corrective_gaussians * corrective_factors
     y = reshape(y, N, nPeriods)
     y = squeeze(sum(y, 2), 2)
