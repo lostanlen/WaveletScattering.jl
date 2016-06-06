@@ -138,6 +138,7 @@ function transform!(
         input = sub(node.data, inds_in)
         inds_out[dim] = 1 + size(destination, dim) + ω
         output = sub(destination, inds_out)
-        broadcast!(*, output, ψ.coan.neg[1 + end + ω], input)
+        broadcast!(*, output,
+            ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
 end
