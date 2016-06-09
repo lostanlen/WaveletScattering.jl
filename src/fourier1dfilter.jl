@@ -168,7 +168,7 @@ end
 function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, i::Integer)
     i==0 && return ϕ.zero
     abs(i)>length(ϕ.leg) && return zero(T)
-    return ψ.leg[abs(i)]
+    return ϕ.leg[abs(i)]
 end
 function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, I::UnitRange{Int64})
     T[ ϕ[ω] for ω in I ]
