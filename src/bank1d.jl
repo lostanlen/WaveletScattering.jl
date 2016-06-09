@@ -99,7 +99,6 @@ function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
 end
 
 function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
-    using Winston
     (ψs, ϕ) = collect(bank)
     ψs = ψs[:, :]
     ωs = linspace(0, 2pi, length(ϕ)+1)[1:(end-1)]
