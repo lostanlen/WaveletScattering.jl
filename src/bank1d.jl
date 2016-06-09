@@ -98,8 +98,20 @@ function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
     return (ψs, ϕ)
 end
 
-function littlewoodpaleyplot(bank)
+function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
+    bank = ws.Bank1D(ws.Spec1D(
+        nFilters_per_octave = 1, nOctaves = 4))
     (ψs, ϕ) = collect(bank)
+    ψs = ψs[:, :]
+    ωs = linspace(0, 2pi, length(ϕ)+1)[1:(end-1)]
+    lp2 = sum(abs2(ψs), 2)
+    symmetrize!(lp)
+    lp2 += sum(abs2(ϕ), 2)
+    lp = sqrt(lp)
+    Winston.plot(collect(ωs), ψs,
+                 collect(ωs), ϕ,
+                 collect(ωs), lp)
+    Winston.xlabel("ω (rad / s)")
 end
 
 Base.ndims(::Bank1D) = 1
