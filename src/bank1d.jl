@@ -97,6 +97,9 @@ function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
     ϕ = bank.ϕ[ωs]
     return (ψs, ϕ)
 end
+
+function littlewoodpaleyplot(bank)
+    (ψs, ϕ) = collect(bank)
 end
 
 Base.ndims(::Bank1D) = 1
