@@ -165,6 +165,14 @@ function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
         ψ.neg[end - ψ.neglast + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
+function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, i::Integer)
+    i==0 && return ϕ.zero
+    abs(i)>length(ϕ.leg) && return zero(T)
+    return ψ.leg[abs(i)]
+end
+function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, I::UnitRange{Int64})
+    T[ ϕ[ω] for ω in I ]
+end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
     N = length(ψ.coeff)
     halfN = N >> 1
