@@ -78,7 +78,7 @@ function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
             return FullResolution1DFilter(fftshift(y))::supertype
-        midpoint = y[1]
+        midpoint = y[1+halfN]
         if (neglast == 0)
             coan = Coanalytic1DFilter(zeros(T, 1), -halfN + 1)
         else
