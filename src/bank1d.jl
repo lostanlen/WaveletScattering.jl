@@ -94,7 +94,7 @@ function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
         ψs[:, 1+θ, 1+χ, 1+j] =
             fftshift(bank.ψs[1+θ, 1+χ, 1+j][ωs])
     end
-    ϕ = bank.ϕ[ωs]
+    ϕ = fftshift(bank.ϕ[ωs])
     return (ψs, ϕ)
 end
 
