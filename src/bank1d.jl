@@ -84,6 +84,9 @@ function call{T<:Real,DIM}(
     return waveletblob
 end
 
+"""Collects band-pass filters `ψ`s and low-pass filter `ϕ` in the Fourier domain. The band-pass filters are organized as a 4-D tensor, where the
+dimensions correspond to frequency `ω`, orientation `θ`, chroma `χ`,
+and octave index `j`."""
 function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
     N = 1 << bank.spec.log2_size
     halfN = N >> 1
@@ -102,10 +105,10 @@ function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
     (ψs, ϕ) = collect(bank)
     ψs = ψs[:, :]
     ωs = linspace(0, 2pi, length(ϕ)+1)[1:(end-1)]
-    lp2 = sum(abs2(ψs), 2)
-    symmetrize!(lp)
-    lp2 += sum(abs2(ϕ), 2)
-    lp = sqrt(lp)
+    lp2 = squeeze(sum(abs2(ψs), 2), 2)
+    symmetrize!(lp2)
+    lp2 += abs2(ϕ)
+    lp = sqrt(lp2)
     Winston.plot(collect(ωs), ψs,
                  collect(ωs), ϕ,
                  collect(ωs), lp)
