@@ -73,12 +73,12 @@ function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
     negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
     posfirst, poslast = findfirst(posbools), findlast(posbools)
-    hasmidpoint = y2[1+halfN] .> ɛ2
+    hasmidpoint = y2[1] .> ɛ2
     if hasmidpoint
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
             return FullResolution1DFilter(fftshift(y))::supertype
-        midpoint = y[1+halfN]
+        midpoint = y[1]
         if (neglast == 0)
             coan = Coanalytic1DFilter(zeros(T, 1), -halfN + 1)
         else
