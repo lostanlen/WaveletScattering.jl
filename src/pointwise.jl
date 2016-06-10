@@ -23,6 +23,7 @@ function Base.abs{NODE<:AbstractNode}(nodes::DataStructures.SortedDict{
     for (path, nodevalue) in nodes
         absnodes[path] = Node{T,dim}(abs(nodevalue.data), nodevalue.ranges)
     end
+    return absnodes
 end
 
 Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
