@@ -159,7 +159,7 @@ function transform!(
     @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
         inds[dim] = 1 - ω
         input = sub(node.data, inds...)
-        inds_out[dim] = 1 + size(destination, dim) + ω
+        inds[dim] = 1 + size(destination, dim) + ω
         output = sub(destination, inds...)
         broadcast!(*, output, ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
