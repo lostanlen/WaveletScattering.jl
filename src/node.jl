@@ -78,7 +78,7 @@ function transform!(
         inds[dim] = 1 + ω
         input = sub(node.data, inds...)
         output = sub(destination, inds...)
-        broadcast!(*, output, ψ.pos[1+ω], input)
+        broadcast!(*, output, ψ.pos[1 - ψ.posfirst + ω], input)
     end
 end
 
@@ -93,7 +93,7 @@ function transform!(
         inds[dim] = 1 + ω
         input = sub(node.data, inds...)
         output = sub(destination, inds...)
-        broadcast!(*, output, ψ.coeff[1+ω], input)
+        broadcast!(*, output, ψ.coeff[1 + ω], input)
     end
 end
 
