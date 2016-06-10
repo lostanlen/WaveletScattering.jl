@@ -46,7 +46,7 @@ end
 get_γ(meta::AbstractΨMeta) = meta.γ
 get_θ(meta::AbstractΨMeta) = meta.θ
 get_χ(meta::AbstractΨMeta) = meta.χ
-get_aspectratio(meta::ψMeta2D) = meta.aspectratio
+get_aspectratio(meta::ΨMeta2D) = meta.aspectratio
 get_bandwidth(meta::AbstractMeta) = meta.bandwidth
 get_centerfrequency(meta::AbstractΨMeta) = meta.centerfrequency
 get_j(meta::AbstractΨMeta) = meta.j
