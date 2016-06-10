@@ -43,12 +43,12 @@ immutable ΦMeta <: AbstractMeta
     scale::Float64
 end
 
-get_bandwidth(meta::AbstractMeta) = meta.bandwidth
-get_scale(meta::AbstractMeta) = meta.scale
-
 get_γ(meta::AbstractΨMeta) = meta.γ
 get_θ(meta::AbstractΨMeta) = meta.θ
 get_χ(meta::AbstractΨMeta) = meta.χ
+get_aspectratio(meta::ψMeta2D) = meta.aspectratio
+get_bandwidth(meta::AbstractMeta) = meta.bandwidth
 get_centerfrequency(meta::AbstractΨMeta) = meta.centerfrequency
 get_j(meta::AbstractΨMeta) = meta.j
 get_qualityfactor(meta::AbstractΨMeta) = meta.qualityfactor
+get_scale(meta::AbstractMeta) = meta.scale
