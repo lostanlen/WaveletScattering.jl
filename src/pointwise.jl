@@ -21,7 +21,7 @@ function Base.abs{NODE<:AbstractNode}(nodes::DataStructures.SortedDict{
     absnodes =
         DataStructures.SortedDict{Path,Node{T,dim},Base.Order.ForwardOrdering}
     for (path, nodevalue) in nodes
-        absnodes[path] = Node(abs(nodevalue.data), nodevalue.ranges)
+        absnodes[path] = Node{T,dim}(abs(nodevalue.data), nodevalue.ranges)
     end
 end
 
