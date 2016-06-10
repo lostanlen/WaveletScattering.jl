@@ -16,15 +16,15 @@ import WaveletScattering: Spec1D
 # AbstractFourierFilter 1D constructor
 spec = Spec1D(log2_size = 4)
 N = 16
-y = zeros(Float32, N); y[15] = 1.0
+y = zeros(Float32, N); y[16] = 1.0
 @test isa(AbstractFilter(y, spec), Analytic1DFilter{Float32})
 y = zeros(Float32, N); y[2] = 1.0
 @test isa(AbstractFilter(y, spec), Coanalytic1DFilter{Float32})
 y = ones(Float32, N)
 @test isa(AbstractFilter(y, spec), FullResolution1DFilter{Float32})
-y = zeros(Float32, N); y[2] = 1.0; y[15] = 1.0
+y = zeros(Float32, N); y[2] = 1.0; y[16] = 1.0
 @test isa(AbstractFilter(y, spec), Vanishing1DFilter{Float32})
-y = zeros(Float32, N); y[2] = 1.0; y[9] = 1.0; y[15] = 1.0
+y = zeros(Float32, N); y[2] = 1.0; y[9] = 1.0; y[1] = 1.0
 @test isa(AbstractFilter(y, spec), VanishingWithMidpoint1DFilter{Float32})
 
 # multiplication operator with scalar
