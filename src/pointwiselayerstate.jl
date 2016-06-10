@@ -10,7 +10,7 @@ function PointwiseLayerState(
         inputs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
-        blobs[idblob] = map(layer.ρ, inputs[idblob])
+        blobs[idblob] = layer.ρ(inputs[idblob])
     end
     return PointwiseLayerState(blobs, layer)
 end
