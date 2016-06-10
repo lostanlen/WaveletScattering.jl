@@ -10,12 +10,11 @@ import WaveletScattering: Path
 # spec1d.jl
 import WaveletScattering: Spec1D
 
-W = Bank1D(Spec1D(nFilters_per_octave = 4))
+W = Bank1D(Spec1D(nFilters_per_octave = 4, nOctaves = 8))
 @test ndims(W) == 1
 
 x = zeros(Float32, 1 << W.spec.log2_size)
 x[1] = 1.0
 Wx = W(x)
-
 
 @test isa(Wx, ScatteredBlob{InvComplexFourierNode{Complex{Float32},2,Float32}})
