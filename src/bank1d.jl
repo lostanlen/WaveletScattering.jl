@@ -59,8 +59,7 @@ function call{T<:Real,DIM}(
     chromarange = chromakey => 0:1:(bank.spec.nFilters_per_octave-1)
     waveletranges = (collect(inputnode.ranges)..., chromarange)
     waveletnodes =
-        DataStructures.SortedDict(
-            Pair{Path,InvComplexFourierNode{Complex{T},DIM+1,T}}[])
+        DataStructures.SortedDict(Pair{Path,Node{Complex{T},DIM+1,T}}[])
     octavekey = prepend(:j, bank.behavior.pathkey)
     for j in bank.behavior.j_range
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
@@ -74,9 +73,8 @@ function call{T<:Real,DIM}(
             inds[end] = 1 + χ
             transform!(sub(octave_ft, inds...), ψ, fouriernode, 1)
         end
-        waveletfouriernode = Node(octave_ft, waveletranges)
-        waveletnode =
-            InvComplexFourierNode(waveletfouriernode, [1], flags, timelimit)
+        ifft_plan = plan_ifft(octave_ft, 1 ; flags=flags, timelimit=timelimit)
+        waveletnode = Node(ifft_plan * octave_ft, waveletranges)
         waveletpath = Path(octavekey => j)
         waveletnodes[waveletpath] = waveletnode
     end
