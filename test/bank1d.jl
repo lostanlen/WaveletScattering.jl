@@ -4,7 +4,7 @@ import WaveletScattering: Bank1D
 # blob.jl
 import WaveletScattering: ScatteredBlob
 # node.jl
-import WaveletScattering: InvComplexFourierNode
+import WaveletScattering: Node
 # path.jl
 import WaveletScattering: Path
 # spec1d.jl
