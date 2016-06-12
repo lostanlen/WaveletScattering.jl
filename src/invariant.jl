@@ -12,14 +12,16 @@ SumInvariant(Ux::WaveletScattering.ScatteredBlob) =
     SumInvariant(Ux.nodes[collect(keys(Ux.nodes))[1]])
 
 function SumInvariant{T<:Number}(node::AbstractNode{T})
-    domain = SpatialDomain()
     pathkey = node.ranges[1].first
+    K = sum([r.first == pathkey for r in node.ranges])
+    domain = SpatialDomain(K)
     signaltype = T
 end
 
 function SumInvariant{T<:Number}(node::AbstractFourierNode{T})
-    domain = FourierDomain()
     pathkey = node.ranges[1].first
+    K = sum([r.first == pathkey for r in node.ranges])
+    domain = FourierDomain(K)
     signaltype = T
 end
 
