@@ -9,7 +9,7 @@ immutable SumInvariant{T<:Number,D<:AbstractDomain} <: AbstractInvariant{T,D}
     signaltype::Type{T}
 end
 SumInvariant(Ux::WaveletScattering.ScatteredBlob) =
-    SumInvariant(Ux[collect(keys(Ux.nodes))[1]])
+    SumInvariant(Ux.nodes[collect(keys(Ux.nodes))[1]])
 
 function SumInvariant{T<:Number}(node::AbstractNode{T})
     domain = SpatialDomain()
