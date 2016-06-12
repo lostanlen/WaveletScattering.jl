@@ -16,7 +16,7 @@ function SumInvariant{T<:Number}(node::AbstractNode{T})
     K = sum([r.first == pathkey for r in node.ranges])
     domain = SpatialDomain(K)
     signaltype = T
-    SumInvariant(domain, pathkey, signaltype
+    SumInvariant(domain, pathkey, signaltype)
 end
 
 function SumInvariant{T<:Number}(node::AbstractFourierNode{T})
