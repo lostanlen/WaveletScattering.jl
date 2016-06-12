@@ -26,7 +26,7 @@ end
 function transform!{T<:Number}(
         destination::SubArray,
         invariant::SumInvariant{T,SpatialDomain},
-        node::AbstractNode{T,N},
+        node::AbstractNode{T},
         dim::Int)
     destination[:] = sum(node.data, dim)
 end
