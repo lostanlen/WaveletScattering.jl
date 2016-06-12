@@ -12,12 +12,8 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     end
 end
 
-function Base.abs{T,N}(nodes::DataStructures.SortedDict{
+function Base.abs(nodes::DataStructures.SortedDict{
         Path,Node{T,N},Base.Order.ForwardOrdering})
-    nodevalues = collect(values(nodes))
-    isempty(nodevalues) && return nodes
-    T = real(eltype(nodevalues[1].data))
-    N = ndims(nodevalues[1].data)
     absnodes =
         DataStructures.SortedDict{Path,Node{T,N},Base.Order.ForwardOrdering}()
     for (path, nodevalue) in nodes
