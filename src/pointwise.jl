@@ -25,9 +25,8 @@ end
 
 Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
 
-function Base.call(ρ::AbstractPointwise, blob_in::ScatteredBlob)
-    blob_out = ScatteredBlob(map(ρ, blob_in.nodes))
-end
+Base.call(ρ::AbstractPointwise, blob_in::ScatteredBlob) =
+    ScatteredBlob(map(ρ, blob_in.nodes))
 
 function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
     outnodes =
