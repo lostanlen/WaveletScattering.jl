@@ -12,8 +12,8 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     end
 end
 
-function Base.abs{NODE<:AbstractNode}(nodes::DataStructures.SortedDict{
-        WaveletScattering.Path,NODE,Base.Order.ForwardOrdering})
+function Base.abs{T,N}(nodes::DataStructures.SortedDict{
+        Path,Node{T,N},Base.Order.ForwardOrdering})
     nodevalues = collect(values(nodes))
     isempty(nodevalues) && return nodes
     T = real(eltype(nodevalues[1].data))
@@ -23,7 +23,8 @@ function Base.abs{NODE<:AbstractNode}(nodes::DataStructures.SortedDict{
     for (path, nodevalue) in nodes
         absnodes[path] = Node{T,N}(abs(nodevalue.data), nodevalue.ranges)
     end
-    return absnodes
+    return absnodes::DataStructures.SortedDict{
+        Path,Node{T,N},Base.Order.ForwardOrdering}
 end
 
 Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
