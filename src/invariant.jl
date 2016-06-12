@@ -27,10 +27,10 @@ function SumInvariant{T<:Number}(node::AbstractFourierNode{T})
     SumInvariant(domain, pathkey, signaltype)
 end
 
-function call{T<:Number,NODE<:AbstractNode}(
-        invariant::SumInvariant{T,SpatialDomain},
+function call{T<:Number,K,N}(
+        invariant::SumInvariant{T,SpatialDomain{K}},
         nodes::DataStructures.SortedDict{
-            WaveletScattering.Path,NODE,Base.Order.ForwardOrdering})
+            WaveletScattering.Path,Node{T,N},Base.Order.ForwardOrdering})
     nodevalues = collect(values(nodes))
     isempty(nodevalues) && return nodes
     T = real(eltype(nodevalues[1].data))
