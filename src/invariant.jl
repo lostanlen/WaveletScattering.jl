@@ -27,6 +27,23 @@ function SumInvariant{T<:Number}(node::AbstractFourierNode{T})
     SumInvariant(domain, pathkey, signaltype)
 end
 
+function call{T<:Number}(
+        invariant::SumInvariant{T,SpatialDomain},
+        nodes::DataStructures.SortedDict{
+            WaveletScattering.Path,NODE,Base.Order.ForwardOrdering})
+    nodevalues = collect(values(nodes))
+    isempty(nodevalues) && return nodes
+    T = real(eltype(nodevalues[1].data))
+    N = ndims(nodevalues[1].data)
+    dims = find([r.first == invariant.pathkey for r in nodevalues[1].ranges])
+    invnodes =
+        DataStructures.SortedDict{Path,Node{T,dim},Base.Order.ForwardOrdering}()
+    for (path, nodevalue) in Ux.nodes
+        invnodes[path] = Node{T,N}(sum(nodevalue.data, dims), nodevalue.ranges)
+    end
+    return invnodes
+end
+
 function transform!{T<:Number}(
         destination::SubArray,
         invariant::SumInvariant{T,SpatialDomain},
