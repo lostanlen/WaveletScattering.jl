@@ -31,18 +31,16 @@ function call{T<:Number,K,N}(
         invariant::SumInvariant{T,SpatialDomain{K}},
         nodes::DataStructures.SortedDict{
             WaveletScattering.Path,Node{T,N},Base.Order.ForwardOrdering})
-    nodevalues = collect(values(nodes))
-    isempty(nodevalues) && return nodes
-    T = real(eltype(nodevalues[1].data))
-    N = ndims(nodevalues[1].data)
-    dims = find([r.first == invariant.pathkey for r in nodevalues[1].ranges])
-    invnodes =
-        DataStructures.SortedDict{Path,Node{T,dim},Base.Order.ForwardOrdering}()
-    for (path, nodevalue) in Ux.nodes
-        invnodes[path] = Node{T,N}(sum(nodevalue.data, dims), nodevalue.ranges)
+    sumnodes =
+        DataStructures.SortedDict{Path,Node{T,N},Base.Order.ForwardOrdering}()
+    for (path, nodevalue) in nodes
+        dims = find([r.first == invariant.pathkey for r in nodevalue.ranges])
+        sumnodes[path] = Node{T,N}(sum(nodevalue.data, dims), nodevalue.ranges)
     end
-    return invnodes
+    return sumnodes
 end
+
+call(invariant::SumInvariant, Ux::ScatteredBlob) = call(invariant, Ux.nodes)
 
 function transform!{T<:Number}(
         destination::SubArray,
