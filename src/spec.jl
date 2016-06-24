@@ -133,10 +133,10 @@ default_max_qualityfactor(max_q::Void, nfo::Void) = 1.0
 
 """The dimensionless mother center frequency `ξ` (corresponding to a log-period
 `γ=0`) is computed as the midpoint between the center frequency of the second
-center frequency `ξ*2^(-1/nFilters_per_octave)` (corresponding to `γ=1`) and the
+wavelet `ξ*2^(-1/nFilters_per_octave)` (corresponding to `γ=1`) and the
 negative mother center frequency `(1-ξ)`. Hence the equation
 `2ξ = ξ*2^(-1/nFilters_per_octave) + (1-ξ)`, of which we
-derive `ξ = 1 / (3 - 2^(1/nFilters_per_octave))`. This formula is valid
+derive `ξ = 1 / (3 - 2^(-1/nFilters_per_octave))`. This formula is valid
 only when the wavelet is a symmetric bump in the Fourier domain."""
 default_motherfrequency(class::RedundantWaveletClass, nFilters_per_octave) =
     inv(3.0 - exp2(-inv(nFilters_per_octave)))
