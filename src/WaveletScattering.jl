@@ -5,7 +5,6 @@ using DataStructures
 using JuMP
 using MathProgBase
 using Mocha
-using Winston
 
 include("domain.jl")
 include("group.jl")
