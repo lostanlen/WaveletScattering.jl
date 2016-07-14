@@ -24,7 +24,7 @@ immutable Bank2D{
     behavior::Behavior{T}
     spec::Spec2D{T,D,G,W}
 
-    function call{T,D,G,W}(::Type{Bank2D},
+    function (::Type{Bank2D}){T,D,G,W}(
             spec::Spec2D{T,D,G,W},
             pathkey::PathKey = PathKey(:space) ;
             is_ϕ_applied::Bool = false,

@@ -25,7 +25,7 @@ immutable Bank1D{
     ψs::Array{AbstractFilter{T,D},3}
     behavior::Behavior{T}
     spec::Spec1D{T,D,G,W}
-    function call{T,D,G,W}(::Type{Bank1D},
+    function (::Type{Bank1D}){T,D,G,W}(
             spec::Spec1D{T,D,G,W},
             pathkey::PathKey = PathKey(:time) ;
             is_ϕ_applied::Bool = false,
