@@ -4,6 +4,8 @@ immutable Identity <: AbstractPointwise end
 
 call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
 
+(ρ::Identity)(blob_in::ScatteredBlob) = ScatteredBlob(blob_in.nodes)
+
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
     function call{T}(::Type{Log1P}, threshold::T)
@@ -11,6 +13,8 @@ immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
         new{T}(threshold)
     end
 end
+
+(ρ::Log1P)(blob_in::ScatteredBlob) = map(ρ, ScatteredBlob(blob_in.nodes))
 
 function Base.abs{T,N}(nodes::DataStructures.SortedDict{
         Path,Node{T,N},Base.Order.ForwardOrdering})
@@ -24,9 +28,6 @@ function Base.abs{T,N}(nodes::DataStructures.SortedDict{
 end
 
 Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
-
-Base.call(ρ::AbstractPointwise, blob_in::ScatteredBlob) =
-    ScatteredBlob(map(ρ, blob_in.nodes))
 
 function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
     outnodes =
