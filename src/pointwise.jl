@@ -6,7 +6,7 @@ immutable Identity <: AbstractPointwise end
 
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T
-    function call{T}(::Type{Log1P}, threshold::T)
+    function (::Type{Log1P{T}})(threshold::T)
         (threshold<0) && throw(DomainError)
         new{T}(threshold)
     end

@@ -1,4 +1,4 @@
-call{T,N}(ρ::Log1P{T}, data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
+(ρ::Log1P{T}){N}(data::AbstractArray{T,N}) = log1p(ρ.threshold * data)
 
 function Base.map!{T<:Real}(
         ρ::Log1P{T},
