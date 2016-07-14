@@ -39,7 +39,7 @@ function (::Type{SumInvariant{T,SpatialDomain{K}}}){T,K,N}(
     return sumnodes
 end
 
-call(invariant::SumInvariant, Ux::ScatteredBlob) = call(invariant, Ux.nodes)
+(invariant::SumInvariant)(Ux::ScatteredBlob) = invariant(Ux.nodes)
 
 function transform!{T<:Number}(
         destination::SubArray,
