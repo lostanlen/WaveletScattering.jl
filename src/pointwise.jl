@@ -2,9 +2,7 @@ abstract AbstractPointwise
 
 immutable Identity <: AbstractPointwise end
 
-call{T,N}(ρ::Identity, data::AbstractArray{T,N}) = data
-
-(ρ::Identity)(blob_in::ScatteredBlob) = ScatteredBlob(blob_in.nodes)
+(ρ::Identity)(x::Any) = x
 
 immutable Log1P{T<:AbstractFloat} <: AbstractPointwise
     threshold::T

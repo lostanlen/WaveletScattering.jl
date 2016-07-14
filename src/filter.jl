@@ -15,7 +15,7 @@ end
 Base.:*(b::Number, ψ::AbstractFilter) = ψ * b
 
 # element-wise multiplication operator ".*" with scalar falls back to "*"
-Base.(:.*)(ψ::AbstractFilter, b::Number) = ψ * b
+Base.:.*(ψ::AbstractFilter, b::Number) = ψ * b
 
 function spin!{T,D}(ψs::Array{AbstractFilter{T,D},3})
     (nΘs, nΧs, nJs) = size(ψs)
