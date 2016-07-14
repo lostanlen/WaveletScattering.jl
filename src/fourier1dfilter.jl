@@ -107,17 +107,17 @@ function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
 end
 
 # multiplication operator with scalar *
-Base.(:*){T}(ψ::Analytic1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(b * ψ.pos, ψ.posfirst)
-Base.(:*){T}(ψ::Coanalytic1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b * ψ.neg, ψ.neglast)
-Base.(:*){T}(ψ::FullResolution1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b * ψ.coeff)
-Base.(:*){T}(ψ::FourierSymmetric1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::FourierSymmetric1DFilter{T}, b::Number) =
     FourierSymmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
-Base.(:*){T}(ψ::Vanishing1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::Vanishing1DFilter{T}, b::Number) =
     Vanishing1DFilter{T}(b * ψ.an, b * ψ.coan)
-Base.(:*){T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
     VanishingWithMidpoint1DFilter{T}(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
 
 """Given a narrowband filter `ψ` and its corresponding filter bank

@@ -43,7 +43,7 @@ immutable PathKey
     end
 end
 
-Base.(:(==))(x::PathKey, y::PathKey) = (x.literals == y.literals)
+Base.:(==)(x::PathKey, y::PathKey) = (x.literals == y.literals)
 
 Base.convert(::Type{PathKey}, sym::Symbol) = PathKey(sym)
 Base.convert(::Type{PathKey}, tup::Tuple) = PathKey(tup...)
@@ -82,7 +82,7 @@ immutable Path
     end
 end
 
-Base.(:(==))(x::Path, y::Path) = reduce(&, map(==, x.sdict, y.sdict))
+Base.:(==)(x::Path, y::Path) = reduce(&, map(==, x.sdict, y.sdict))
 
 function Base.isless(a::Path, b::Path)
     for (x, y) in zip(a.sdict, b.sdict)
@@ -122,4 +122,4 @@ immutable PathRange
     end
 end
 
-Base.(:(==))(x::PathRange, y::PathRange) = reduce(&, map(==, x.sdict, y.sdict))
+Base.:(==)(x::PathRange, y::PathRange) = reduce(&, map(==, x.sdict, y.sdict))

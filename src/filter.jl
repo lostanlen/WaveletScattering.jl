@@ -12,7 +12,7 @@ immutable Symmetric1DFilter{T<:Number} <: AbstractFilter{T,SpatialDomain{1}}
 end
 
 # product with scalar number is commutative
-Base.(:*)(b::Number, ψ::AbstractFilter) = ψ * b
+Base.:*(b::Number, ψ::AbstractFilter) = ψ * b
 
 # element-wise multiplication operator ".*" with scalar falls back to "*"
 Base.(:.*)(ψ::AbstractFilter, b::Number) = ψ * b
