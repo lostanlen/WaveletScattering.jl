@@ -46,7 +46,7 @@ immutable Bank1D{
     end
 end
 
-function (bank::Bank1D{T,FourierDomain{1},TrivialGroup})(
+function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
         x::AbstractArray{T,DIM};
         flags = FFTW.ESTIMATE,
         timelimit = Inf,
