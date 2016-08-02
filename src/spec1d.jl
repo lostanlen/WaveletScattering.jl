@@ -13,7 +13,7 @@ immutable Spec1D{T<:Real,D<:LineDomains,
     nOctaves::Int
     pointgroup::G
     signaltype::Type{T}
-    function (::Type{Spec1D}){T,D,G,W}(
+    function (::Type{Spec1D}){T,D,G,W}( ;
             class::W = Morlet(),
             pointgroup::G = TrivialGroup(),
             signaltype::Type{T} = Float32,

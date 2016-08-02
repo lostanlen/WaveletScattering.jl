@@ -15,7 +15,7 @@ immutable Spec2D{T<:Real,D<:PlaneDomains,
     pointgroup::G
     signaltype::Type{T}
 
-    function (::Type{Spec2D}){T,D,W}(
+    function (::Type{Spec2D}){T,D,W}( ;
             class::W = Morlet(),
             signaltype::Type{T} = Float32,
             domain::D = FourierDomain(2),
