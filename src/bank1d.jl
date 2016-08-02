@@ -51,7 +51,7 @@ function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
         flags = FFTW.ESTIMATE,
         timelimit = Inf,
         verbose = 0)
-    syms = appendsymbols(fill(symbol(bank.behavior.pathkey), 1), DIM)
+    syms = appendsymbols(fill(Symbol(bank.behavior.pathkey), 1), DIM)
     inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), DIM))
     fouriernode = AbstractFourierNode(inputnode, [1], flags, timelimit)
     chromakey = prepend(:χ, bank.behavior.pathkey)
