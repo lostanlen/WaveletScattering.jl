@@ -64,7 +64,7 @@ function Base.string(pathkey::PathKey)
     return join([string(literal) for literal in pathkey.literals], "_")
 end
 
-Base.symbol(pathkey::PathKey) = symbol(string(pathkey))
+Base.Symbol(pathkey::PathKey) = Symbol(string(pathkey))
 
 prepend(prefix, pathkey::PathKey) =
     PathKey(vcat(Literal(prefix), pathkey.literals))
