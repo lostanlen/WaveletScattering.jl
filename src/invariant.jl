@@ -8,7 +8,7 @@ immutable SumInvariant{T<:Number,D<:AbstractDomain} <: AbstractInvariant{T,D}
     pathkey::PathKey
     signaltype::Type{T}
 end
-SumInvariant(Ux::WaveletScattering.ScatteredBlob) =
+SumInvariant(Ux::ScatteredBlob) =
     SumInvariant(Ux.nodes[collect(keys(Ux.nodes))[1]])
 
 function SumInvariant{T<:Number}(node::AbstractNode{T})
@@ -28,8 +28,8 @@ function SumInvariant{T<:Number}(node::AbstractFourierNode{T})
 end
 
 function (::Type{SumInvariant{T,SpatialDomain{K}}}){T,K,N}(
-        nodes::DataStructures.SortedDict{
-            WaveletScattering.Path,Node{T,N},Base.Order.ForwardOrdering})
+        nodes::DataStructures.SortedDict{Path,
+            Node{T,N},Base.Order.ForwardOrdering})
     sumnodes =
         DataStructures.SortedDict{Path,Node{T,N},Base.Order.ForwardOrdering}()
     for (path, nodevalue) in nodes

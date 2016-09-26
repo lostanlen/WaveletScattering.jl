@@ -70,7 +70,7 @@ function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
         for χ in 0:(bank.spec.nFilters_per_octave-1)
             ψ = bank.ψs[1, 1+χ, 1+j]
             inds[end] = 1 + χ
-            transform!(sub(octave_ft, inds...), ψ, fouriernode, 1)
+            transform!(view(octave_ft, inds...), ψ, fouriernode, 1)
         end
         ifft_plan = plan_ifft(octave_ft, 1 ; flags=flags, timelimit=timelimit)
         waveletnode = Node(ifft_plan * octave_ft, waveletranges)
@@ -106,10 +106,10 @@ function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
     symmetrize!(lp2)
     lp2 += abs2(ϕ)
     lp = sqrt(lp2)
-    Winston.plot(collect(ωs), ψs,
+    Gadfly.plot(collect(ωs), ψs,
                  collect(ωs), ϕ,
                  collect(ωs), lp)
-    Winston.xlabel("ω (rad / s)")
+    Gadfly.xlabel("ω (rad / s)")
 end
 
 Base.ndims(::Bank1D) = 1

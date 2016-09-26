@@ -16,5 +16,5 @@ function PointwiseLayer( ;
         tops::Vector{Symbol} = Symbol[])
     @assert length(bottoms) > 0
     @assert length(tops) == length(bottoms)
-    PointwiseLayer(ρ, bottoms, name, tops)
+    PointwisLayer(ρ, bottoms, name, tops)
 end

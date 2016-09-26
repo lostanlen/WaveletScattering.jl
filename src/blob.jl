@@ -1,5 +1,5 @@
 # ScatteredBlob
-immutable ScatteredBlob{NODE<:AbstractNode} <: Mocha.Blob
+immutable ScatteredBlob{NODE<:AbstractNode}
     nodes::DataStructures.SortedDict{Path,NODE}
 end
 
@@ -10,7 +10,7 @@ function Base.show(io::IO, blob::ScatteredBlob)
 end
 
 function forward!(
-        backend::Mocha.CPUBackend,
+        backend,
         blob_out::ScatteredBlob,
         bank::Bank1D,
         blob_in::ScatteredBlob)

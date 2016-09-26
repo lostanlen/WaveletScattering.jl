@@ -4,7 +4,6 @@ module WaveletScattering
 using DataStructures
 using JuMP
 using MathProgBase
-using Mocha
 
 include("domain.jl")
 include("group.jl")
@@ -30,14 +29,17 @@ include("modulus.jl")
 include("log1p.jl")
 include("pointwise-call.jl")
 include("symbols.jl")
-include("inputlayer.jl")
-include("pointwiselayer.jl")
-include("fourierlayer.jl")
-include("waveletlayer.jl")
-include("layerstate.jl")
-include("inputlayerstate.jl")
-include("pointwiselayerstate.jl")
-include("fourierlayerstate.jl")
-include("waveletlayerstate.jl")
+
+# Mocha
+# using Mocha
+# include("inputlayer.jl")
+# include("pointwiselayer.jl")
+# include("fourierlayer.jl")
+# include("waveletlayer.jl")
+# include("layerstate.jl")
+# include("inputlayerstate.jl")
+# include("pointwiselayerstate.jl")
+# include("fourierlayerstate.jl")
+# include("waveletlayerstate.jl")
 
 end
