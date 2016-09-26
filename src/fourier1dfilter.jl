@@ -253,11 +253,11 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 end
 
 """Returns the maximum Fourier-domain absolute value of a filter."""
-Base.maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2(ψ.pos)))
-Base.maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2(ψ.neg)))
-Base.maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2(ψ.coeff)))
+Base.maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2.(ψ.pos)))
+Base.maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2.(ψ.neg)))
+Base.maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2.(ψ.coeff)))
 Base.maximum(ψ::FourierSymmetric1DFilter) =
-    sqrt(max(maximum(abs2(ψ.leg)), abs2(ψ.zero)))
+    sqrt(max(maximum(abs2.(ψ.leg)), abs2(ψ.zero)))
 Base.maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
 Base.maximum(ψ::VanishingWithMidpoint1DFilter) =
     max(maximum(ψ.an), maximum(ψ.coan), abs(ψ.midpoint))
