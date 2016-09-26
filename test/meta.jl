@@ -14,7 +14,7 @@ import WaveletScattering: Spec1D
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
-    log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
+    log2_s in (7+ceil(Int, log2.(nfo)):18), max_s in [max_q*exp2.(5:14); Inf]
     machine_precision = max(1e-10, default_ɛ(T))
     spec = Spec1D(
             signaltype=T,
@@ -55,9 +55,9 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     # scales
     @test all(scs.>0.0)
     @test all(scs[qs.>1.0] .< (max_s+machine_precision))
-    @test all(scs .< (exp2(spec.log2_size)+machine_precision))
+    @test all(scs .< (exp2.(spec.log2_size)+machine_precision))
     # uncertainty
     empirical_uncertainty = bws .* scs
-    @test all(abs(diff(empirical_uncertainty[:])) .< machine_precision)
-    @test all(abs(uncertainty(spec)-empirical_uncertainty).< machine_precision)
+    @test all(abs.(diff(empirical_uncertainty[:])) .< machine_precision)
+    @test all(abs.(uncertainty(spec)-empirical_uncertainty).< machine_precision)
 end
