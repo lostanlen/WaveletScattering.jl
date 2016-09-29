@@ -76,8 +76,8 @@ function transform!(
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in (ψ.posfirst):(ψ.posfirst+length(ψ.pos)-1)
         inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.pos[1 - ψ.posfirst + ω], input)
     end
 end
@@ -91,8 +91,8 @@ function transform!(
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in 0:(size(node.data, dim)-1)
         inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.coeff[1 + ω], input)
     end
 end
@@ -106,15 +106,15 @@ function transform!(
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
         inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
     end
     @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
         inds[dim] = 1 + size(node.data, dim) + ω
-        input = sub(node.data, inds...)
+        input = view(node.data, inds...)
         inds[dim] = 1 + size(destination, dim) + ω
-        output = sub(destination, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.coan.neg[1 + end + ω], input)
     end
 end
@@ -128,16 +128,16 @@ function transform!(
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
         inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
     end
     inds_in, inds_out = inds, Base.copy(inds)
     @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
         inds_in[dim] = 1 - ω
-        input = sub(node.data, inds_in...)
+        input = view(node.data, inds_in...)
         inds_out[dim] = 1 + size(destination, dim) + ω
-        output = sub(destination, inds_out...)
+        output = view(destination, inds_out...)
         broadcast!(*, output, ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
 end
@@ -151,22 +151,22 @@ function transform!(
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
     @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
         inds[dim] = 1 + ω
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
     end
     @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
         inds[dim] = 1 - ω
-        input = sub(node.data, inds...)
+        input = view(node.data, inds...)
         inds[dim] = 1 + size(destination, dim) + ω
-        output = sub(destination, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
     @inbounds begin
         ωmidpoint = ψ.an.posfirst + length(ψ.an.pos)
         inds[dim] = 1 + ωmidpoint
-        input = sub(node.data, inds...)
-        output = sub(destination, inds...)
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
         broadcast!(*, output, ψ.midpoint, input)
     end
 end
