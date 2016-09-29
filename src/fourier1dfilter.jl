@@ -68,7 +68,7 @@ function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
     N = 1 << spec.log2_size
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
-    y2 = abs2(y)
+    y2 = abs2.(y)
     negbools = y2[2:halfN] .> ɛ2
     negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
