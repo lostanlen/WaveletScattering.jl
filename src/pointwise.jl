@@ -14,7 +14,7 @@ end
 
 (ρ::Log1P)(blob_in::ScatteredBlob) = map(ρ, ScatteredBlob(blob_in.nodes))
 
-function Base.abs.{T,N}(nodes::DataStructures.SortedDict{
+function Base.abs{T,N}(nodes::DataStructures.SortedDict{
         Path,Node{T,N},Base.Order.ForwardOrdering})
     absnodes =
         DataStructures.SortedDict{Path,Node{T,N},Base.Order.ForwardOrdering}()
@@ -25,7 +25,7 @@ function Base.abs.{T,N}(nodes::DataStructures.SortedDict{
         Path,Node{T,N},Base.Order.ForwardOrdering}
 end
 
-Base.abs.(Wx::ScatteredBlob) = ScatteredBlob(abs.(Wx.nodes))
+Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
 
 function Base.map(ρ::AbstractPointwise, innodes::SortedDict)
     outnodes =
