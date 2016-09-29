@@ -23,5 +23,3 @@ end
 
 kthrange(layer::InputLayer, k::Int) =
     (PathKey(layer.symbols[k]) => (1:1:size(layer.data, k)))
-kthrange(syms::Vector{Symbol}, x::AbstractArray, k::Int) =
-    (PathKey(syms[k]) => (1:1:size(x, k)))

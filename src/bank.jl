@@ -6,3 +6,6 @@ abstract AbstractBank{
 
 immutable NullBank <: AbstractBank
 end
+
+kthrange(syms::Vector{Symbol}, x::AbstractArray, k::Int) =
+    (PathKey(syms[k]) => (1:1:size(x, k)))
