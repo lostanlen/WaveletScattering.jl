@@ -308,7 +308,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         JuMP.@constraint(model, remainder .>= ψmat * y)
         JuMP.@constraint(model, diff(y) .<= 0)
         JuMP.solve(model)
-        ψs[λs] .*= sqrt((1 + (nOrientations>1)) * JuMP.getvalue(y))
+        ψs[λs] .*= sqrt.((1 + (nOrientations>1)) * JuMP.getvalue(y))
     end
     lp = zeros(real(T), N)
     for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
