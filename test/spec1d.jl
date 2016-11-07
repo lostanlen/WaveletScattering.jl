@@ -14,8 +14,8 @@ for nfo in nfos, pitchfork in pitchforks
     spec = Spec1D()
     ξ = tune_motherfrequency(tuningfrequency, spec.class, nfo)
     γs = map(get_γ, spec.ψmetas)
-    ωs = ξ * exp2(-γs / nfo)
-    @test any(abs(ωs - ξ) .< 1e-4)
+    ωs = ξ * exp2.(-γs / nfo)
+    @test any(abs.(ωs - ξ) .< 1e-4)
     max_ξ = default_motherfrequency(spec.class, nfo)
     @test ξ < max_ξ
     @test ξ * exp2(inv(nfo)) > max_ξ

@@ -26,7 +26,7 @@ end
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
-    log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2(5:14); Inf]
+    log2_s in (7+ceil(Int, log2(nfo)):18), max_s in [max_q*exp2.(5:14); Inf]
     spec = Spec1D(
         log2_size = log2_s,
         max_qualityfactor = max_q,

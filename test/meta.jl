@@ -44,7 +44,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     @test_approx_eq bws ξs./qs
     # centerfrequencies
     @test_approx_eq ξs[1] spec.motherfrequency
-    difflogξs = diff(log2(ξs[:]))
+    difflogξs = diff(log2.(ξs[:]))
     @test_approx_eq difflogξs (-ones(difflogξs)/spec.nFilters_per_octave)
     @test all(ξs.>0.0)
     @test_approx_eq ξs bws.*qs
