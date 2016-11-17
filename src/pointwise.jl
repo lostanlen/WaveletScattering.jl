@@ -16,13 +16,14 @@ end
 
 function Base.abs{T,N}(nodes::DataStructures.SortedDict{
         Path,Node{T,N},Base.Order.ForwardOrdering})
+    realT = real(T)
     absnodes =
-        DataStructures.SortedDict{Path,Node{T,N},Base.Order.ForwardOrdering}()
+        DataStructures.SortedDict{Path,Node{realT,N},Base.Order.ForwardOrdering}()
     for (path, nodevalue) in nodes
-        absnodes[path] = Node{T,N}(abs.(nodevalue.data), nodevalue.ranges)
+        absnodes[path] = Node{realT,N}(abs.(nodevalue.data), nodevalue.ranges)
     end
     return absnodes::DataStructures.SortedDict{
-        Path,Node{T,N},Base.Order.ForwardOrdering}
+        Path,Node{realT,N},Base.Order.ForwardOrdering}
 end
 
 Base.abs(Wx::ScatteredBlob) = ScatteredBlob(abs(Wx.nodes))
