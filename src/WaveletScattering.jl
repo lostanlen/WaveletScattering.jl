@@ -31,15 +31,15 @@ include("pointwise-call.jl")
 include("symbols.jl")
 
 # Mocha
-# using Mocha
-# include("inputlayer.jl")
-# include("pointwiselayer.jl")
-# include("fourierlayer.jl")
-# include("waveletlayer.jl")
-# include("layerstate.jl")
-# include("inputlayerstate.jl")
-# include("pointwiselayerstate.jl")
-# include("fourierlayerstate.jl")
-# include("waveletlayerstate.jl")
+using Mocha
+include("inputlayer.jl")
+include("pointwiselayer.jl")
+include("fourierlayer.jl")
+include("waveletlayer.jl")
+include("layerstate.jl")
+include("inputlayerstate.jl")
+include("pointwiselayerstate.jl")
+include("fourierlayerstate.jl")
+include("waveletlayerstate.jl")
 
 end
