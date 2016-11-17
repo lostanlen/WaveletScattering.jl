@@ -6,6 +6,6 @@ function Base.map!{T<:Real}(
         data_in::AbstractArray{T})
     @inbounds @fastmath for id in eachindex(data_in)
         data_out[id] = data_in[id] * ρ.threshold
-        data_out[id] = log1p(data_out[id])
+        data_out[id] = log1p.(data_out[id])
     end
 end
