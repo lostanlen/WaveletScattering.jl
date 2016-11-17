@@ -1,5 +1,5 @@
 # ScatteredBlob
-immutable ScatteredBlob{NODE<:AbstractNode}
+immutable ScatteredBlob{NODE<:AbstractNode} <: Mocha.Blob
     nodes::DataStructures.SortedDict{Path,NODE}
 end
 
