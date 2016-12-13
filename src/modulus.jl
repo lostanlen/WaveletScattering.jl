@@ -3,7 +3,7 @@ end
 
 (ρ::Modulus)(data::AbstractArray) = abs.(data)
 
-(ρ::Modulus)(blob_in::ScatteredBlob) = map(ρ, ScatteredBlob(blob_in.nodes))
+(ρ::Modulus)(blob_in::ScatteredBlob) = ScatteredBlob(map(ρ, blob_in.nodes))
 
 immutable SquaredModulus <: AbstractPointwise
 end
@@ -11,4 +11,4 @@ end
 (ρ::SquaredModulus)(data::AbstractArray) = abs2.(data)
 
 (ρ::SquaredModulus)(blob_in::ScatteredBlob) =
-    map(ρ, ScatteredBlob(blob_in.nodes))
+    ScatteredBlob(map(ρ, blob_in.nodes)
