@@ -67,6 +67,14 @@ function pathdepth(node::AbstractNode, refkey::PathKey)
     mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
 end
 
+function transform!{T}(
+        destination::SubArray,
+        ψ::AbstractFilter{T,FourierDomain{1}},
+        node::AbstractNode,
+        dims::Array{Int})
+    transform!(destination, ψ, node, dims[1])
+end
+
 function transform!(
         destination::SubArray,
         ψ::Analytic1DFilter,
