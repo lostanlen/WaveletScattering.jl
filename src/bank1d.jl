@@ -36,7 +36,7 @@ immutable Bank1D{
         (nΘs, nΧs, nJs) = size(spec.ψmetas)
         ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
         ψs[1, :, :] =
-            pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
+            pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs, nJs))
         (nΘs > 1) && spin!(ψs)
         ϕ = AbstractFilter(spec.ϕmeta, spec)
         renormalize!(ϕ, ψs, spec)
