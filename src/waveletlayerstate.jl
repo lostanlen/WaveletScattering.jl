@@ -25,7 +25,7 @@ function Mocha.setup(
     octavekey = prepend(:j, layer.bank.behavior.pathkey)
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
-        outnodes = DataStructures.SortedDict{Path,AbstractFourierNode,
+        outnodes = DataStructures.SortedDict{Path,AbstractNode,
             Base.Order.ForwardOrdering}()
         for inpath in keys(innodes)
             innode = innodes[inpath]
@@ -36,25 +36,27 @@ function Mocha.setup(
             if isa(innode, RealFourierNode)
                 insizes[subscripts] = 2 * (insizes[subscripts] - 1)
             end
-            outranges = (collect(inranges)..., chromarange)
+            outranges = [inranges..., chromarange]
             outsizes = [insizes ; layer.bank.spec.nFilters_per_octave]
             for j in layer.bank.behavior.j_range
                 ψ_log2_sampling = layer.bank.behavior.ψ_log2_samplings[1+j]
                 for subscript in subscripts
                     outsizes[subscript] =
                         insizes[subscript] >> (-ψ_log2_sampling)
-                    # TODO update outranges
+                    inrange = outranges[subscript].second
+                    outranges[subscript] = outranges[subscript].first =>
+                        (inrange.start):(1<<-ψ_log2_sampling):(inrange.stop)
                 end
                 outdata = zeros(eltype(innode.data), tuple(outsizes...))
                 inds = [fill(Colon(), ndims(innode.data)) ; 0]
                 for χ in 0:(layer.bank.spec.nFilters_per_octave-1)
                     ψ = layer.bank.ψs[1, 1+χ, 1+j]
                     inds[end] = 1 + χ
-                    transform!(view(outdata, inds...), ψ, innode, subscripts)
+                    transform!(
+                        view(outdata, inds...), ψ, innode, subscripts...)
                 end
                 outpath = Path(octavekey => j)
-                # should be InvComplexFourierNode instead of Node
-                #outnodes[outpath] = Node(outdata, outranges)
+                outnodes[outpath] = Node(outdata, tuple(outranges...))
             end
         end
         blobs[idblob] = ScatteredBlob(outnodes)
