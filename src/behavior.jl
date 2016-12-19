@@ -2,31 +2,19 @@
 values of these fields may be changed *after* the construction of the filter
 bank, without having to recompute the underlying architecture. Fields:
 
-* `is_ϕ_applied`: true if and only if the lowpass filter `ϕ` (also known as
-scaling function) in addition to the bandpass filters `ψ`'s.
+* `is_ϕ_applied`: true if and only if the lowpass filter `ϕ` (also known as scaling function) in addition to the bandpass filters `ψ`'s.
 
-* `j_range`: range of wavelet octaves that are actually used in the
-convolutions. Default is all of them.
+* `j_range`: range of wavelet octaves that are actually used in the convolutions. Default is all of them.
 
-* `log2_oversampling`: base-2 logarithm of the oversampling factor with respect
-to the critical sampling rate. Must be positive. Default is 0, i.e. no
-oversampling.
+* `log2_oversampling`: base-2 logarithm of the oversampling factor with respect to the critical sampling rate. Must be positive. Default is 0, i.e. no oversampling.
 
-* `max_log2_stride`: base-2 logarithm of the maximum distance between
-neighboring coefficients after subsampling (also known as *hop size* or
-*stride*). Must be positive. Default is the number of octaves minus one, which
-imposes no oversampling per se.
+* `max_log2_stride`: base-2 logarithm of the maximum distance between neighboring coefficients after subsampling (also known as *hop size* or *stride*). Must be positive. Default is the number of octaves minus one, which imposes no oversampling per se.
 
 * `pathkey`: key of the variable over which the filter bank is applied.
 
-* `weighting`: scalar weighting of each wavelet frequency band. Default is
-`EqualWeighting()`, i.e. all weights are one. Can alternatively be set to
-`LoudnessWeighting(samplerate)` to model the relative loudness perceived by the
-human ear, as defined by the international standard 61672:2003.
+* `weighting`: scalar weighting of each wavelet frequency band. Default is `EqualWeighting()`, i.e. all weights are one. Can alternatively be set to `LoudnessWeighting(samplerate)` to model the relative loudness perceived by the human ear, as defined by the international standard 61672:2003.
 
-* `weights`: vector of floating-point weights corresponding to the
-frequencies of `ψ`'s. The weight assigned to `ϕ` is the same as the weight
-of the `ψ` with the lowest center frequency."""
+* `weights`: vector of floating-point weights corresponding to the frequencies of `ψ`'s. The weight assigned to `ϕ` is the same as the weight of the `ψ` with the lowest center frequency."""
 type Behavior{T<:Real}
     ϕ_log2_sampling::Int
     ψ_log2_samplings::Vector{Int}
