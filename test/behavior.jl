@@ -18,7 +18,7 @@ spec = Spec1D()
 domaintype = typeof(spec.domain)
 ψs = Array(AbstractFilter{spec.signaltype,domaintype}, (nΘs, nΧs, nJs))
 ψs[1, :, :] =
-    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs * nJs))
+    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs, nJs))
 (nΘs > 1) && spin!(ψs)
 ϕ = AbstractFilter(spec.ϕmeta, spec)
 renormalize!(ϕ, ψs, spec)
