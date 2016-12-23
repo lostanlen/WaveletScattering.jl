@@ -285,37 +285,11 @@ function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
         spec::AbstractSpec{T,FourierDomain{1},G})
-    N = 1 << spec.log2_size
-    nOrientations = get_nOrientations(spec.pointgroup)
-    ψmetas = spec.ψmetas
-    if ψmetas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
-        elbowλ = 1
-        # Caution: partial linear indexing may be deprecated in the future
-        while (ψmetas[1, elbowλ].scale<spec.max_scale) elbowλ += 1; end
-        elbowω = round(Int, N * ψmetas[1, elbowλ].centerfrequency)
-        nΛs = size(ψmetas, 2) * size(ψmetas, 3)
-        λs = elbowλ:nΛs
-        ψmat = zeros(T, (elbowω, length(λs)))
-        for idλ in eachindex(λs) ψmat[:, idλ] = ψs[1, λs[idλ]][1:elbowω]; end
-        lp = zeros(T, N)
-        for idλ in 1:elbowλ littlewoodpaleyadd!(lp, ψs[idλ]); end
-        (nOrientations>1) && symmetrize!(lp)
-        littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
-        remainder = maximum(lp) - lp[1 + (1:elbowω)]
-        model = JuMP.Model()
-        JuMP.@variable(model, y[1:length(λs)] >= 0)
-        JuMP.@objective(model, Min, sum(remainder - ψmat * y))
-        JuMP.@constraint(model, remainder .>= ψmat * y)
-        JuMP.@constraint(model, diff(y) .<= 0)
-        JuMP.solve(model)
-        ψs[λs] .*= sqrt.((1 + (nOrientations>1)) * JuMP.getvalue(y))
-    end
     lp = zeros(real(T), N)
     for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
-    (nOrientations==1) && symmetrize!(lp)
-    max_lp = maximum(lp)
-    ψs .*= inv(sqrt(max_lp))
-    return scale!(lp, inv(max_lp))
+    get_nOrientations(spec.pointgroup) && symmetrize!(lp)
+    ψs .*= inv(sqrt(lp[1+end>>1]))
+    return scale!(lp, inv(lp[1+end>>1]))
 end
 
 """Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
