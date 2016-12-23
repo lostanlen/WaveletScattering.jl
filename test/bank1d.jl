@@ -18,6 +18,3 @@ x[1] = 1.0
 Wx = W(x)
 
 @test isa(Wx, ScatteredBlob{Node{Complex{Float32},2}})
-
-Ux = abs(Wx)
-@test isa(Ux, ScatteredBlob{Node{Float32,2}})
