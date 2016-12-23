@@ -285,7 +285,7 @@ function renormalize!{T<:Number,G<:LineGroups}(
         ϕ::FourierSymmetric1DFilter{T},
         ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
         spec::AbstractSpec{T,FourierDomain{1},G})
-    lp = zeros(real(T), N)
+    lp = zeros(real(T), 1<<spec.log2_size)
     for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
     get_nOrientations(spec.pointgroup) && symmetrize!(lp)
     ψs .*= inv(sqrt(lp[1+end>>1]))
