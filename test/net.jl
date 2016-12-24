@@ -18,7 +18,9 @@ import WaveletScattering: RealFourierNode, InvComplexFourierNode
 import WaveletScattering: WaveletLayer
 
 J = 8
-data = map(Float32, randn(2^J, 2))
+data = zeros(Float32, 2^J)
+data[1] = 1.0f0
+
 backend = Mocha.CPUBackend()
 signal = InputLayer(
     tops = [:signal],
@@ -47,18 +49,11 @@ modulus = PointwiseLayer(
     tops = [:modulus],
     ρ = Modulus())
 
-log1p = PointwiseLayer(
-    bottoms = [:modulus],
-    tops = [:log1p],
-    ρ = Log1P(Float32(1e-2))
-)
-
 layers = Mocha.Layer[signal, fourier, wavelets]
 
 Mocha.init(backend)
 net = Mocha.Net("network", backend, layers)
+@test isa(net, Mocha.Net{Mocha.CPUBackend})
 
 layer = wavelets
-inputs = net.output_blobs[:wavelets].nodes
-
-@test isa(net, Mocha.Net{Mocha.CPUBackend})
+inputs = net.output_blobs[:wavelets]
