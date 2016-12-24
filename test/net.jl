@@ -51,7 +51,7 @@ modulus = PointwiseLayer(
     tops = [:modulus],
     ρ = Modulus())
 
-layers = Mocha.Layer[signal, fourier, wavelets, invfourier]
+layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus]
 
 Mocha.init(backend)
 net = Mocha.Net("network", backend, layers)
