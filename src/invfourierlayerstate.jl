@@ -6,13 +6,13 @@ end
 
 function InvFourierLayerState(
         backend::Mocha.CPUBackend,
-        layer::Mocha.Layer,
+        layer::InvFourierLayer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
-        outnodes = DataStructures.SortedDict{Path,RealFourierNode,
+        outnodes = DataStructures.SortedDict{Path,InvComplexFourierNode,
             Base.Order.ForwardOrdering}()
         for path in keys(innodes)
             outnodes[path] = InvComplexFourierNode(
