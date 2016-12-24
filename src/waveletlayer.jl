@@ -2,6 +2,7 @@ immutable WaveletLayer <: Mocha.Layer
     bank::AbstractBank
     bottoms::Vector{Symbol}
     name::AbstractString
+    pathkeys::Vector{PathKey}
     tops::Vector{Symbol}
 end
 
@@ -9,11 +10,12 @@ function WaveletLayer( ;
         bank::AbstractBank = NullBank(),
         bottoms::Vector{Symbol} = Symbol[],
         name::AbstractString = "wavelets",
+        pathkeys::Vector{PathKey} = PathKey[],
         tops::Vector{Symbol} = Symbol[])
     @assert !isa(bank, NullBank)
     @assert length(bottoms) > 0
     @assert length(bottoms) == length(tops)
-    return WaveletLayer(bank, bottoms, name, tops)
+    return WaveletLayer(bank, bottoms, name, pathkeys, tops)
 end
 
 Mocha.can_do_bp(::WaveletLayer) = true
