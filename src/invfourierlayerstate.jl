@@ -1,12 +1,12 @@
 # InvFourierLayerState
 immutable InvFourierLayerState <: AbstractScatteredLayerState
     blobs::Vector{Mocha.Blob}
-    layer::FourierLayer
+    layer::InvFourierLayer
 end
 
 function InvFourierLayerState(
         backend::Mocha.CPUBackend,
-        layer::FourierLayer,
+        layer::Mocha.Layer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
     blobs = Vector{Mocha.Blob}(length(inputs))

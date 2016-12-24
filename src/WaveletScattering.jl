@@ -36,10 +36,12 @@ include("inputlayer.jl")
 include("pointwiselayer.jl")
 include("fourierlayer.jl")
 include("waveletlayer.jl")
+include("invfourierlayer.jl")
 include("layerstate.jl")
 include("inputlayerstate.jl")
 include("pointwiselayerstate.jl")
 include("fourierlayerstate.jl")
 include("waveletlayerstate.jl")
+include("invfourierlayerstate.jl")
 
 end
