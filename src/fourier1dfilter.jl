@@ -174,21 +174,10 @@ function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, I::UnitRange{Int64})
     T[ ϕ[ω] for ω in I ]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
-    N = length(ψ.coeff)
-    halfN = N >> 1
-    i<(-halfN) && return zero(T)
-    i>(halfN-1) && return zero(T)
-    return ψ.coeff[mod1(1 + i, N)]
+    return ψ.coeff[ mod1(1 + i, length(ψ.coeff)) ]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
-    N = length(ψ.coeff)
-    halfN = N >> 1
-    start = max(I.start, -halfN)
-    stop = min(I.stop, halfN-1)
-    T[
-        zeros(T, max(min(start, I.stop + 1) - I.start, 0)) ;
-        ψ.coeff[[ mod1(1+ω, N) for ω in start:stop ]] ;
-        zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
+    return ψ.coeff[ mod1.( 1 + (I.start:I.stop), length(ψ.coeff)) ]
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
     return (i > 0 ? ψ.an[i] : ψ.coan[i])
