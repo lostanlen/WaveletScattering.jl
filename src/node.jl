@@ -111,7 +111,7 @@ function transform!(
         input = view(node.data, inds...)
         inds[dim] = 1 + ω
         output = view(destination, inds...)
-        broadcast!(*, output, ψ.coeff[1+ω], input)
+        broadcast!(A_mul_Bc, output, ψ.coeff[1 + ω], input)
     end
 end
 
