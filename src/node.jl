@@ -93,7 +93,32 @@ end
 function transform!(
         destination::SubArray,
         ψ::FullResolution1DFilter,
-        node::AbstractNode,
+        node::RealFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    halfN = size(node.data, dim) - 1
+    # positive frequencies (including 0 and π)
+    @inbounds for ω in 0:halfN
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.coeff[1 + ω], input)
+    end
+    # negative frequencies
+    @inbounds for ω in (halfN+1):(2*halfN-1)
+        inds[dim] = 1 + 2*halfN - ω
+        input = view(node.data, inds...)
+        inds[dim] = 1 + ω
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.coeff[1+ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::FullResolution1DFilter,
+        node::ComplexFourierNode,
         dim::Int)
     inds = Union{Colon,Int}[
         fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
