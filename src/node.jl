@@ -171,7 +171,8 @@ function transform!(
         input = view(node.data, inds_in...)
         inds_out[dim] = 1 + size(destination, dim) + ω
         output = view(destination, inds_out...)
-        broadcast!(*, output, ψ.coan.neg[end - ψ.coan.neglast + ω], input)
+        broadcast!(A_mul_Bc, output,
+            ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
 end
 
@@ -193,7 +194,8 @@ function transform!(
         input = view(node.data, inds...)
         inds[dim] = 1 + size(destination, dim) + ω
         output = view(destination, inds...)
-        broadcast!(*, output, ψ.coan.neg[end - ψ.coan.neglast + ω], input)
+        broadcast!(A_mul_Bc, output,
+            ψ.coan.neg[end - ψ.coan.neglast + ω], input)
     end
     @inbounds begin
         ωmidpoint = ψ.an.posfirst + length(ψ.an.pos)
