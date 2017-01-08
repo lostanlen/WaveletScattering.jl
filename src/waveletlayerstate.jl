@@ -1,7 +1,6 @@
 # WaveletLayerState
 immutable WaveletLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
     blobs::Vector{B}
-    blobs_diff::Vector{B}
     layer::WaveletLayer
 end
 
@@ -61,6 +60,5 @@ function Mocha.setup(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    blobs_diff = blobs
     WaveletLayerState(blobs, blobs_diff, layer)
 end

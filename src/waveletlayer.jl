@@ -16,6 +16,6 @@ function WaveletLayer( ;
     return WaveletLayer(bank, bottoms, name, tops)
 end
 
-Mocha.can_do_bp(::WaveletLayer) = true
+Mocha.can_do_bp(::WaveletLayer) = false
 Mocha.has_neuron(::WaveletLayer) = false
 Mocha.has_param(::WaveletLayer) = false
