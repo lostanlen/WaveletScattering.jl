@@ -100,12 +100,7 @@ midpoint = Float32(0.5)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
 @test Float32[ψ[ω] for ω in -2:1] == Float32[0.2, 0.3, 0.01, 0.1]
 # getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
-@test ψ[-8:-6] == Float32[0.0, 0.0, 0.0]
-@test ψ[-3:0] == Float32[0.0, 0.2, 0.3, 0.01]
-@test ψ[-1:1] == Float32[0.3, 0.01, 0.1]
-@test ψ[0:3] == Float32[0.01, 0.1, 0.0, 0.0]
-@test ψ[-3:2] == Float32[0.0, 0.2, 0.3, 0.01, 0.1, 0.0]
-@test ψ[7:7] == Float32[0.0]
+@test ψ[-2:1] == Float32[0.2, 0.3, 0.01, 0.1]
 # getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
