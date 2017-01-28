@@ -56,10 +56,11 @@ modulus = PointwiseLayer(
 pooling = PoolingLayer(
     bottoms = [:modulus],
     tops = [:pooling],
+    pathkeys = [PathKey(:time)],
     pooling = mean
 )
 
-layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus, pooling]
+layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus]
 
 Mocha.init(backend)
 net = Mocha.Net("network", backend, layers)
