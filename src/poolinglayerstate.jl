@@ -17,15 +17,21 @@ function Mocha.setup(
             innode = innodes[inpath]
             inranges = innode.ranges
             inpathkeys = [ pair.first for pair in collect(inranges) ]
-            subscripts = findin(inpathkeys, layer.pathkeys)
+            subscripts = vcat(
+                [find(pathkey.==inpathkeys) for pathkey in layer.pathkeys]...)
             indata = innode.data
             outdata = layer.pooling(indata, subscripts)
-            outranges = inranges
+            outranges = collect(inranges)
             for subscript in subscripts
-                outranges[subscript].second.step =
-                    inranges[subscript].second.stop -
-                    inranges[subscript].second.start + 1
+                outranges[subscript] =
+                    Pair(inranges[subscript].first,
+                        StepRange(
+                        inranges[subscript].second.start,
+                        inranges[subscript].second.stop -
+                        inranges[subscript].second.start + 1,
+                        inranges[subscript].second.stop))
             end
+            outranges = tuple(outranges...)
             outnode = Node(outdata, outranges)
             outpath = inpath
             outnodes[outpath] = outnode
