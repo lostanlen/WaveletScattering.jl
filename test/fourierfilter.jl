@@ -98,7 +98,7 @@ midpoint = Float32(0.5)
 @test ψ[-6:-2] == Float32[0.0 ; 0.1 ; 0.3 ; 0.4 ; 0.0]
 # getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
-@test Float32[ψ[ω] for ω in -3:2] == Float32[0.0, 0.2, 0.3, 0.01, 0.1, 0.0]
+@test Float32[ψ[ω] for ω in -2:1] == Float32[0.2, 0.3, 0.01, 0.1]
 # getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
 @test ψ[-8:-6] == Float32[0.0, 0.0, 0.0]
 @test ψ[-3:0] == Float32[0.0, 0.2, 0.3, 0.01]
