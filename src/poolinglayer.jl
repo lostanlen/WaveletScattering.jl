@@ -8,7 +8,7 @@ end
 
 function PoolingLayer( ;
         bottoms::Vector{Symbol} = Symbol[],
-        name::AbstractString = "pointwise",
+        name::AbstractString = "pooling",
         pathkeys::Vector{PathKey} = PathKey[],
         pooling::Function = mean,
         tops::Vector{Symbol} = Symbol[])
