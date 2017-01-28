@@ -12,7 +12,7 @@ name = "wavelets"
 tops = [:wavelets]
 waveletlayer = WaveletLayer(bank=bank,
     bottoms=bottoms, name=name, tops=tops)
-@test Mocha.can_do_bp(waveletlayer)
+@test !Mocha.can_do_bp(waveletlayer)
 @test !Mocha.has_neuron(waveletlayer)
 @test !Mocha.has_param(waveletlayer)
 
