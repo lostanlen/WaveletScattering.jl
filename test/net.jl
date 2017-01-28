@@ -10,14 +10,16 @@ import WaveletScattering: FourierLayer, FourierLayerState
 import WaveletScattering: Spec1D
 # path.jl
 import WaveletScattering: Path, PathKey
-# pointwise.jl
-import WaveletScattering: Log1P, Modulus, PointwiseLayer, PointwiseLayerState
 # node.jl
 import WaveletScattering: RealFourierNode, InvComplexFourierNode
 # waveletlayer.jl
 import WaveletScattering: WaveletLayer
 # invfourierlayer.jl
 import WaveletScattering: InvFourierLayer
+# pointwise.jl
+import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
+# pooling.jl
+import WaveletScattering: Pooling
 
 J = 8
 data = zeros(Float32, 2^J, 2)
@@ -47,9 +49,15 @@ invfourier = InvFourierLayer(
 )
 
 modulus = PointwiseLayer(
-    bottoms = [:wavelets],
+    bottoms = [:invfourier],
     tops = [:modulus],
     ρ = Modulus())
+
+pooling = PoolingLayer(
+    bottoms = [:modulus],
+    tops = [:pooling],
+    pooling = mean
+)
 
 layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus]
 
@@ -58,5 +66,7 @@ net = Mocha.Net("network", backend, layers)
 
 @test isa(net, Mocha.Net{Mocha.CPUBackend})
 
-inputs = net.states[3].blobs
-layer = invfourier
+ws = WaveletScattering
+
+
+# SUMMARY OF KNOWN BUGS:
