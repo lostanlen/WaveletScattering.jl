@@ -2,7 +2,7 @@ immutable PoolingLayer <: Mocha.Layer
     bottoms::Vector{Symbol}
     name::AbstractString
     pathkeys::Vector{PathKey}
-    pooling::Pooling
+    pooling::Function
     tops::Vector{Symbol}
 end
 
