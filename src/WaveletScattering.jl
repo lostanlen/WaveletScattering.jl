@@ -37,11 +37,13 @@ include("pointwiselayer.jl")
 include("fourierlayer.jl")
 include("waveletlayer.jl")
 include("invfourierlayer.jl")
+include("poolinglayer.jl")
 include("layerstate.jl")
 include("inputlayerstate.jl")
 include("pointwiselayerstate.jl")
 include("fourierlayerstate.jl")
 include("waveletlayerstate.jl")
 include("invfourierlayerstate.jl")
+include("poolinglayerstate.jl")
 
 end
