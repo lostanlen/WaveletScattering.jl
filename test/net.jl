@@ -18,8 +18,8 @@ import WaveletScattering: WaveletLayer
 import WaveletScattering: InvFourierLayer
 # pointwise.jl
 import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
-# pooling.jl
-import WaveletScattering: Pooling
+# poolinglayer.jl
+import WaveletScattering: PoolingLayer
 
 J = 8
 data = zeros(Float32, 2^J, 2)
@@ -59,7 +59,7 @@ pooling = PoolingLayer(
     pooling = mean
 )
 
-layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus]
+layers = Mocha.Layer[signal, fourier, wavelets, invfourier, modulus, pooling]
 
 Mocha.init(backend)
 net = Mocha.Net("network", backend, layers)
