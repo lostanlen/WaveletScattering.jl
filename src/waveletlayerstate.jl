@@ -60,5 +60,5 @@ function Mocha.setup(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    WaveletLayerState(blobs, blobs_diff, layer)
+    WaveletLayerState(blobs, layer)
 end
