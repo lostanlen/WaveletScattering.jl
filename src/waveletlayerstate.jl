@@ -11,7 +11,6 @@ function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
     end
 end
 
-"""diffs and inputs must contain `ScatteredBlob`'s."""
 function Mocha.setup(
         backend::Mocha.Backend,
         layer::WaveletLayer,
