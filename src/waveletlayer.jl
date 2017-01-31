@@ -11,8 +11,8 @@ function WaveletLayer( ;
         name::AbstractString = "wavelets",
         tops::Vector{Symbol} = Symbol[])
     @assert !isa(bank, NullBank)
-    @assert length(bottoms) > 0
-    @assert length(bottoms) == length(tops)
+    @assert length(bottoms) == 1
+    @assert length(tops) == 1
     return WaveletLayer(bank, bottoms, name, tops)
 end
 

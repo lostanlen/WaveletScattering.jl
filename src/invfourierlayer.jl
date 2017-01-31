@@ -14,8 +14,8 @@ function InvFourierLayer( ;
         pathkeys::Vector{PathKey} = PathKey[],
         timelimit::Float64 = Inf,
         tops::Vector{Symbol} = Symbol[])
-    @assert length(bottoms) > 0
-    @assert length(bottoms) == length(tops)
+    @assert length(bottoms) == 1
+    @assert length(tops) == 1
     InvFourierLayer(bottoms, flags, name, pathkeys, timelimit, tops)
 end
 
