@@ -19,7 +19,7 @@ immutable ReflectionGroup <: AbstractPointGroup end
 """The `RotationGroup` is a continuous group, which represents the rotations of
 the plane. Its orientations are discretized uniformly."""
 immutable RotationGroup <: AbstractPointGroup
-    nOrientations::Int
+    n_orientations::Int
 end
 
 typealias LineGroups Union{TrivialGroup,ReflectionGroup}
@@ -27,7 +27,7 @@ typealias PlaneGroups Union{TrivialGroup,RotationGroup}
 
 """Returns the number of orientations associated to a point group.
 Equal to `1` for `TrivialGroup`, `2` for `ReflectionGroup`,
-and `group.nOrientations` for `RotationGroup`."""
-get_nOrientations(group::TrivialGroup) = 1
-get_nOrientations(group::ReflectionGroup) = 2
-get_nOrientations(group::RotationGroup) = group.nOrientations
+and `group.n_orientations` for `RotationGroup`."""
+get_n_orientations(group::TrivialGroup) = 1
+get_n_orientations(group::ReflectionGroup) = 2
+get_n_orientations(group::RotationGroup) = group.n_orientations

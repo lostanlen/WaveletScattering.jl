@@ -18,7 +18,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     machine_precision = max(1e-10, default_ɛ(T))
     spec = Spec1D(
             signaltype=T,
-            nFilters_per_octave=nfo,
+            n_filters_per_octave=nfo,
             max_qualityfactor=max_q,
             log2_size=log2_s,
             max_scale=max_s)
@@ -45,7 +45,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     # centerfrequencies
     @test_approx_eq ξs[1] spec.motherfrequency
     difflogξs = diff(log2.(ξs[:]))
-    @test_approx_eq difflogξs (-ones(difflogξs)/spec.nFilters_per_octave)
+    @test_approx_eq difflogξs (-ones(difflogξs)/spec.n_filters_per_octave)
     @test all(ξs.>0.0)
     @test_approx_eq ξs bws.*qs
     # qualityfactors

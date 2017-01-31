@@ -18,7 +18,7 @@ function forward!(
     map(node -> pathdepth(bank.behavior.pathkey, keys(blob_in.nodes)))
     γkey = cons(Literal(:γ, 1), bank.behavior.pathkey)
     for j in bank.behavior.j_range
-        for χ in 0:(bank.spec.nFilters_per_octave-1)
+        for χ in 0:(bank.spec.n_filters_per_octave-1)
             ψ = bank.ψs[1 + θ, 1 + χ, 1 + j]
             for (path_in, node_in) in input.nodes
                 path_out = copy(path_in)

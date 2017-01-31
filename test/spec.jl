@@ -2,7 +2,7 @@ using Base.Test
 # spec.jl
 import WaveletScattering: checkspec_super, default_ɛ,
     default_max_qualityfactor, default_motherfrequency,
-    default_nFilters_per_octave, default_nOctaves
+    default_n_filters_per_octave, default_n_octaves
 # meta.jl
 import WaveletScattering: get_γ, get_scale, ΦMeta, ΨMeta1D
 # morlet1d.jl
@@ -22,7 +22,7 @@ for nfo in [1, 2, 4, 8, 12, 24, 32]
     @test_approx_eq 2ξ (ξ*2^(-1/nfo) + (1-ξ))
 end
 
-# default_nOctaves
+# default_n_octaves
 numerictypes = [Float16, Float32, Float64]
 nfos = [1, 2, 4, 8, 12, 24, 32]
 for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
@@ -31,7 +31,7 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
         log2_size = log2_s,
         max_qualityfactor = max_q,
         max_scale = max_s,
-        nFilters_per_octave = nfo,
+        n_filters_per_octave = nfo,
         signaltype = T)
     siglength = 1 << log2_s
     if max_s > siglength
@@ -39,13 +39,13 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     else
         min_centerfrequency = uncertainty(spec) / max_s * 1.0
     end
-    nOctaves = default_nOctaves(nothing, spec.class, log2_s,
+    n_octaves = default_n_octaves(nothing, spec.class, log2_s,
                                 Float64(max_q), max_s, spec.motherfrequency,
                                 nfo)
     ξs = [ meta.centerfrequency for meta in spec.ψmetas ]
-    nOctaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
-    nOctaves_b = log2_s - 1 - ceil(Int, log2(nfo))
-    @test nOctaves == min(nOctaves_a, nOctaves_b)
+    n_octaves_a = floor(Int, log2(ξs[1] / min_centerfrequency))
+    n_octaves_b = log2_s - 1 - ceil(Int, log2(nfo))
+    @test n_octaves == min(n_octaves_a, n_octaves_b)
 end
 
 # checkspec_super
@@ -58,62 +58,62 @@ immutable UncheckedSpec <: AbstractSpec
     max_qualityfactor::Float64
     max_scale::Float64
     motherfrequency::Float64
-    nFilters_per_octave::Int
-    nOctaves::Int
+    n_filters_per_octave::Int
+    n_octaves::Int
 end
 ɛ = 1e-3
 log2_size = 13
 max_qualityfactor = 12.0
 max_scale = 5e3
 motherfrequency = 0.45
-nFilters_per_octave = 16
-nOctaves = 8
+n_filters_per_octave = 16
+n_octaves = 8
 ϕmeta = Spec1D().ϕmeta
 ψmetas = Spec1D().ψmetas
 class = Morlet()
 @test_throws ErrorException checkspec_super(UncheckedSpec(-0.1, log2_size,
     ϕmeta, ψmetas, MexicanHat(),
-    2.0, max_scale, motherfrequency, nFilters_per_octave,
-    nOctaves))
+    2.0, max_scale, motherfrequency, n_filters_per_octave,
+    n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(-0.1, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
-    nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave,
+    n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(1.0, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
-    nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave,
+    n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, 1,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave,
-    nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave,
+    n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    0.9, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+    0.9, max_scale, motherfrequency, n_filters_per_octave, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, 0.0, nFilters_per_octave, nOctaves))
+    max_qualityfactor, max_scale, 0.0, n_filters_per_octave, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, 0.51, nFilters_per_octave, nOctaves))
+    max_qualityfactor, max_scale, 0.51, n_filters_per_octave, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, 0, nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, 0, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 0))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave, 0))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, 11, nOctaves))
+    max_qualityfactor, max_scale, motherfrequency, 11, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    16.1, max_scale, motherfrequency, nFilters_per_octave, nOctaves))
+    16.1, max_scale, motherfrequency, n_filters_per_octave, n_octaves))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 14))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave, 14))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
-    max_qualityfactor, max_scale, motherfrequency, nFilters_per_octave, 12))
+    max_qualityfactor, max_scale, motherfrequency, n_filters_per_octave, 12))
 @test_throws ErrorException checkspec_super(UncheckedSpec(ɛ, log2_size,
     ϕmeta, ψmetas, class,
     1.0, 1e1, motherfrequency, 1, 12))
@@ -135,11 +135,11 @@ class = Morlet()
 @test_approx_eq default_max_qualityfactor(nothing, 8) 8.0
 @test_approx_eq default_max_qualityfactor(nothing, nothing) 1.0
 
-# default_nFilters_per_octave
-@test default_nFilters_per_octave(12, nothing) == 12
-@test default_nFilters_per_octave(nothing, 7.9) == 8
-@test default_nFilters_per_octave(nothing, nothing) == 1
+# default_n_filters_per_octave
+@test default_n_filters_per_octave(12, nothing) == 12
+@test default_n_filters_per_octave(nothing, 7.9) == 8
+@test default_n_filters_per_octave(nothing, nothing) == 1
 
-# default_nOctaves (fallback)
+# default_n_octaves (fallback)
 type WhateverType end
-@test default_nOctaves(5, WhateverType) == 5
+@test default_n_octaves(5, WhateverType) == 5

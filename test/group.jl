@@ -1,8 +1,8 @@
 using Base.Test
-import WaveletScattering: get_nOrientations, ReflectionGroup,
+import WaveletScattering: get_n_orientations, ReflectionGroup,
     RotationGroup, TrivialGroup
 
-@test get_nOrientations(TrivialGroup()) == 1
-@test get_nOrientations(ReflectionGroup()) == 2
-@test get_nOrientations(RotationGroup(4)) == 4
-@test get_nOrientations(RotationGroup(8)) == 8
+@test get_n_orientations(TrivialGroup()) == 1
+@test get_n_orientations(ReflectionGroup()) == 2
+@test get_n_orientations(RotationGroup(4)) == 4
+@test get_n_orientations(RotationGroup(8)) == 8

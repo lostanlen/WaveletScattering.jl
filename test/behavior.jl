@@ -24,11 +24,11 @@ domaintype = typeof(spec.domain)
 renormalize!(ϕ, ψs, spec)
 
 is_ϕ_applied = false
-j_range = 0:(spec.nOctaves-1)
+j_range = 0:(spec.n_octaves-1)
 weighting = EqualWeighting()
 
 for log2_oversampling = 0:5
-    for max_log2_stride = 0:(spec.nOctaves-1)
+    for max_log2_stride = 0:(spec.n_octaves-1)
         behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
             log2_oversampling, max_log2_stride, pathkey, weighting)
         @test all(behavior.ψ_log2_samplings .<= 0)
@@ -37,5 +37,5 @@ for log2_oversampling = 0:5
 end
 
 behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
-    0, (spec.nOctaves-1), pathkey, weighting)
+    0, (spec.n_octaves-1), pathkey, weighting)
 @test all(behavior.weights .== 1.0)

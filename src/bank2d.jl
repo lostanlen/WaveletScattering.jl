@@ -12,7 +12,7 @@ To create a `Bank2D`
 1. define a `Spec2D`,
 2. if needed, provide behavior characteristics as keyword arguments.
 Example:
-spec = Spec2D(nOrientations = 8)
+spec = Spec2D(n_orientations = 8)
 bank = Bank2D(spec)"""
 immutable Bank2D{
         T<:Number,
@@ -28,9 +28,9 @@ immutable Bank2D{
             spec::Spec2D{T,D,G,W},
             pathkey::PathKey = PathKey(:space) ;
             is_ϕ_applied::Bool = false,
-            j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
+            j_range::UnitRange{Int} = 0:(spec.n_octaves-1),
             log2_oversampling::Int = 0,
-            max_log2_stride::Int = spec.nOctaves-1,
+            max_log2_stride::Int = spec.n_octaves-1,
             weighting::AbstractWeighting = EqualWeighting())
     end
 end

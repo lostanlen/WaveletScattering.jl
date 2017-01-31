@@ -8,7 +8,7 @@ import WaveletScattering: AbstractFilter, Analytic1DFilter,
     nextpow2_exponent, renormalize!, spin
 # meta.jl
 import WaveletScattering: ΨMeta1D, ΦMeta, get_bandwidth,
-    get_centerfrequency, get_j, get_nOrientations,
+    get_centerfrequency, get_j, get_n_orientations,
     get_qualityfactor, get_scale, get_γ, get_θ, get_χ
 # spec1d.jl
 import WaveletScattering: Spec1D
@@ -221,7 +221,7 @@ firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
 # case Q>1, max_s = Inf
-spec = Spec1D(nFilters_per_octave = 8)
+spec = Spec1D(n_filters_per_octave = 8)
 (nΘs, nΧs, nJs) = size(spec.ψmetas)
 D = typeof(spec.domain)
 ψs = Array(AbstractFilter{spec.signaltype,D}, (nΘs, nΧs, nJs))
@@ -237,7 +237,7 @@ firstω = round(Int, N * ξs[end])
 lastω = round(Int, N * ξs[1])
 @test all(lp[1+(firstω:lastω)] .> 0.5)
 # # case Q>1, max_s < Inf
-spec = Spec1D(max_scale = 4410, nFilters_per_octave = 8)
+spec = Spec1D(max_scale = 4410, n_filters_per_octave = 8)
 (nΘs, nΧs, nJs) = size(spec.ψmetas)
 D = typeof(spec.domain)
 ψs = Array(AbstractFilter{spec.signaltype,D}, (nΘs, nΧs, nJs))

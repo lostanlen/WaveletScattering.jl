@@ -15,8 +15,8 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ψmeta::ΨMeta,
     bw = N * T(ψmeta.bandwidth)
     den = @fastmath bw * bw / T(2.0 * log(2.0))
     """2. **Angle**"""
-    nOrientations = get_nOrientations(spec.pointgroup)
-    θ = T(2π * ψmeta.θ / nOrientations)
+    n_orientations = get_n_orientations(spec.pointgroup)
+    θ = T(2π * ψmeta.θ / n_orientations)
     """3. **Number of periods**"""
     halfsupport = sqrt(den * log(inv(spec.ɛ)))
     firstω = max(center - halfsupport, -5N/2)

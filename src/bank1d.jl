@@ -13,7 +13,7 @@ To create a `Bank1D`
 2. define a `PathKey` on which to apply the wavelet filterbank,
 3. if needed, provide behavior characteristics as keyword arguments.
 Example:
-spec = Spec1D(nFilters_per_octave = 12, nOctaves = 10)
+spec = Spec1D(n_filters_per_octave = 12, n_octaves = 10)
 pathkey = PathKey(:time)
 bank = Bank1D(spec, pathkey, j_range = 2:9)"""
 immutable Bank1D{
@@ -29,9 +29,9 @@ immutable Bank1D{
             spec::Spec1D{T,D,G,W},
             pathkey::PathKey = PathKey(:time) ;
             is_ϕ_applied::Bool = false,
-            j_range::UnitRange{Int} = 0:(spec.nOctaves-1),
+            j_range::UnitRange{Int} = 0:(spec.n_octaves-1),
             log2_oversampling::Int = 0,
-            max_log2_stride::Int = spec.nOctaves-1,
+            max_log2_stride::Int = spec.n_octaves-1,
             weighting::AbstractWeighting = EqualWeighting())
         (nΘs, nΧs, nJs) = size(spec.ψmetas)
         ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
@@ -55,7 +55,7 @@ function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
     inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), DIM))
     fouriernode = AbstractFourierNode(inputnode, [1], flags, timelimit)
     chromakey = prepend(:χ, bank.behavior.pathkey)
-    chromarange = chromakey => 0:1:(bank.spec.nFilters_per_octave-1)
+    chromarange = chromakey => 0:1:(bank.spec.n_filters_per_octave-1)
     waveletranges = (collect(inputnode.ranges)..., chromarange)
     waveletnodes =
         DataStructures.SortedDict(Pair{Path,Node{Complex{T},DIM+1}}[])
@@ -64,10 +64,10 @@ function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
         ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
         downsampled_length = size(x, 1) >> (-ψ_log2_sampling)
         octave_size = (downsampled_length,
-            size(x)[2:end]..., bank.spec.nFilters_per_octave)
+            size(x)[2:end]..., bank.spec.n_filters_per_octave)
         octave_ft = zeros(Complex{T}, octave_size)
         inds = [fill(Colon(), DIM) ; 0]
-        for χ in 0:(bank.spec.nFilters_per_octave-1)
+        for χ in 0:(bank.spec.n_filters_per_octave-1)
             ψ = bank.ψs[1, 1+χ, 1+j]
             inds[end] = 1 + χ
             transform!(view(octave_ft, inds...), ψ, fouriernode, 1)
