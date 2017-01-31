@@ -10,7 +10,7 @@ Mocha.has_neuron(::PointwiseLayer) = false
 Mocha.has_param(::PointwiseLayer) = false
 
 function PointwiseLayer( ;
-        ρ :: AbstractPointwise = Identity(),
+        ρ::AbstractPointwise = Identity(),
         bottoms::Vector{Symbol} = Symbol[],
         name::AbstractString = "pointwise",
         tops::Vector{Symbol} = Symbol[])
