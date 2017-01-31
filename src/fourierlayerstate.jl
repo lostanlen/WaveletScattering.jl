@@ -24,7 +24,6 @@ function FourierLayerState(
         end
         blobs[idblob] = ScatteredBlob(outnodes)
     end
-    # TODO: build diffs
     return FourierLayerState(blobs, layer)
 end
 
