@@ -11,7 +11,7 @@ Mocha.has_neuron(::ScatteringLayer) = false
 Mocha.has_param(::ScatteringLayer) = false
 
 function ScatteringLayer( ;
-        bank::AbstractPointwise = Identity(),
+        bank::AbstractBank = NullBank(),
         bottoms::Vector{Symbol} = Symbol[],
         name::AbstractString = "scattering",
         sibling_mask_factor = 1.0,
