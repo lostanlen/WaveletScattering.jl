@@ -4,13 +4,6 @@ immutable WaveletLayerState{B<:ScatteredBlob} <: AbstractScatteredLayerState
     layer::WaveletLayer
 end
 
-function forward!(backend::Mocha.CPUBackend, state::PointwiseLayerState,
-                  ρ::AbstractPointwise, inputs::Vector)
-    @inbounds for idblob in eachindex(inputs)
-        map!(ρ, state.blobs[idblob], inputs[idblob])
-    end
-end
-
 function Mocha.setup(
         backend::Mocha.Backend,
         layer::WaveletLayer,
@@ -19,7 +12,7 @@ function Mocha.setup(
     blobs = Vector{ScatteredBlob}(length(inputs))
     pathkey = layer.bank.behavior.pathkey
     chromakey = prepend(:χ, layer.bank.behavior.pathkey)
-    chromarange = chromakey => 0:1:(layer.bank.spec.nFilters_per_octave-1)
+    chromarange = chromakey => 0:1:(layer.bank.spec.n_filters_per_octave-1)
     octavekey = prepend(:j, layer.bank.behavior.pathkey)
     for idblob in eachindex(inputs)
         innodes = inputs[idblob].nodes
@@ -35,7 +28,7 @@ function Mocha.setup(
                 insizes[subscripts] = 2 * (insizes[subscripts] - 1)
             end
             outranges = [inranges..., chromarange]
-            outsizes = [insizes ; layer.bank.spec.nFilters_per_octave]
+            outsizes = [insizes ; layer.bank.spec.n_filters_per_octave]
             for j in layer.bank.behavior.j_range
                 ψ_log2_sampling = layer.bank.behavior.ψ_log2_samplings[1+j]
                 for subscript in subscripts
@@ -47,7 +40,7 @@ function Mocha.setup(
                 end
                 outdata = zeros(eltype(innode.data), tuple(outsizes...))
                 inds = [fill(Colon(), ndims(innode.data)) ; 0]
-                for χ in 0:(layer.bank.spec.nFilters_per_octave-1)
+                for χ in 0:(layer.bank.spec.n_filters_per_octave-1)
                     ψ = layer.bank.ψs[1, 1+χ, 1+j]
                     inds[end] = 1 + χ
                     transform!(
