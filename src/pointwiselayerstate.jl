@@ -20,7 +20,6 @@ function Mocha.setup(
         layer::PointwiseLayer,
         inputs::Vector{Mocha.Blob},
         diffs::Vector{Mocha.Blob})
-    @assert length(inputs) == length(diffs)
     return PointwiseLayerState(backend, layer, inputs)
 end
 
@@ -30,5 +29,15 @@ function forward(
         inputs::Vector{Mocha.Blob})
     for id in eachindex(inputs)
         map!(layerstate.ρ, layerstate.blobs[id], inputs[id])
+    end
+end
+
+function forward!(
+        backend::Mocha.CPUBackend,
+        state::PointwiseLayerState,
+        ρ::AbstractPointwise,
+        inputs::Vector)
+    @inbounds for idblob in eachindex(inputs)
+        map!(ρ, state.blobs[idblob], inputs[idblob])
     end
 end
