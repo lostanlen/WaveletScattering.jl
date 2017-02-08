@@ -1,9 +1,6 @@
 module WaveletScattering
 
-# using Clp
 using DataStructures
-using JuMP
-using MathProgBase
 using Mocha
 
 include("domain.jl")
