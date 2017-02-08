@@ -1,10 +1,5 @@
 using Base.Test
 
-# using Clp
-using DataStructures
-using JuMP
-using MathProgBase
-
 tests = [
     "domain",
     "group",
