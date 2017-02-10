@@ -20,6 +20,8 @@ import WaveletScattering: InvFourierLayer
 import WaveletScattering: Modulus, PointwiseLayer, PointwiseLayerState
 # poolinglayer.jl
 import WaveletScattering: PoolingLayer
+# scatteringlayer.jl
+import WaveletScattering: ScatteringLayer
 
 J = 8
 data = zeros(Float32, 2^J, 2)
@@ -37,7 +39,7 @@ fourier = FourierLayer(
     pathkeys = [PathKey(:time)])
 
 wavelets = WaveletLayer(
-    bank = Bank1D(Spec1D(log2_size=J)),
+    bank = Bank1D(Spec1D(log2_size=J, n_filters_per_octave=4)),
     bottoms = [:fourier],
     tops = [:wavelets]
 )
@@ -60,6 +62,13 @@ fourier2 = FourierLayer(
     pathkeys = [PathKey(:time)]
 )
 
+scattering = ScatteringLayer(
+    bank = Bank1D(Spec1D(log2_size=J, n_filters_per_octave=2)),
+    bottoms = [:fourier2, :wavelets],
+    name = "scattering",
+    tops = [:scattering]
+)
+
 layers = Mocha.Layer[
     signal,
     fourier,
@@ -73,7 +82,21 @@ net = Mocha.Net("network", backend, layers)
 
 @test isa(net, Mocha.Net{Mocha.CPUBackend})
 
-ws = WaveletScattering
+import WaveletScattering: get_bandwidth, get_centerfrequency
 
+# setup
+layer = scattering
+inputs = [fourier2, wavelets]
+previous_ψmetas = inputs[2].bank.spec.ψmetas
+previous_bandwidths = map(get_bandwidth, previous_ψmetas)
+ψmetas = layer.bank.spec.ψmetas
+centerfrequencies = map(get_centerfrequency, ψmetas)
+n_octaves = size(centerfrequencies, 3)
+last_j1s = Array{Int}(n_octaves)
 
-# SUMMARY OF KNOWN BUGS:
+for j2 in 0:(n_octaves-1)
+    centerfrequency = centerfrequencies[1, end, 1+j2]
+    last_j1s[1+j2] = findlast( sibling_mask_factor *
+        previous_bandwidths[1, 1, :] .>= centerfrequency) - 1
+    
+end
