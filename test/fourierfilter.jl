@@ -32,34 +32,34 @@ y = zeros(Float32, N); y[2] = 1.0; y[9] = 1.0; y[1] = 1.0
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Analytic1DFilter{Float32})
-@test_approx_eq ψ2.pos Float32[0.2, 0.6]
+@test ψ2.pos ≈ Float32[0.2, 0.6]
 @test ψ2.posfirst == 2
 # Base.:*{T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Coanalytic1DFilter{Float32})
-@test_approx_eq ψ2.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.neg ≈ Float32[0.2, 0.6, 0.8]
 @test ψ2.neglast == -3
 # Base.:*{T<:Number}(ψ::FullResolution1DFilter{T}, b::Number)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, FullResolution1DFilter{Float32})
-@test_approx_eq ψ2.coeff Float32[0.02, 0.2, 0.4, 0.6]
+@test ψ2.coeff ≈ Float32[0.02, 0.2, 0.4, 0.6]
 # Base.:*{T<:Number}(ψ::FourierSymmetric1DFilter{T}, b::Number)
 ψ = FourierSymmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, FourierSymmetric1DFilter{Float32})
-@test_approx_eq ψ2.leg Float32[1.6, 0.6, 0.2]
-@test_approx_eq ψ2.zero Float32(2.0)
+@test ψ2.leg ≈ Float32[1.6, 0.6, 0.2]
+@test ψ2.zero ≈ Float32(2.0)
 # Base.:*{T<:Number}(ψ::Vanishing1DFilter{T}, b::Number)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, Vanishing1DFilter{Float32})
-@test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
+@test ψ2.an.pos ≈ Float32[0.2, 0.6]
 @test ψ2.an.posfirst == 2
-@test_approx_eq ψ2.coan.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.coan.neg ≈ Float32[0.2, 0.6, 0.8]
 @test ψ2.coan.neglast == -3
 # Base.:*{T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number))
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
@@ -68,11 +68,11 @@ midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 ψ2 = ψ * Float32(2.0)
 @test isa(ψ2, VanishingWithMidpoint1DFilter{Float32})
-@test_approx_eq ψ2.an.pos Float32[0.2, 0.6]
+@test ψ2.an.pos ≈ Float32[0.2, 0.6]
 @test ψ2.an.posfirst == 2
-@test_approx_eq ψ2.coan.neg Float32[0.2, 0.6, 0.8]
+@test ψ2.coan.neg ≈ Float32[0.2, 0.6, 0.8]
 @test ψ2.coan.neglast == -3
-@test_approx_eq ψ2.midpoint Float32(1.0)
+@test ψ2.midpoint ≈ Float32(1.0)
 
 # getindex
 # getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
@@ -138,21 +138,21 @@ lp = zeros(Float32, 8)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.0, 0.0, 0.0]
+@test lp ≈ Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.0, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::Coanalytic1DFilter)
 lp = zeros(Float32, 8)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[0.0, 0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0]
+@test lp ≈ Float32[0.0, 0.0, 0.0, 0.01, 0.09, 0.16, 0.0, 0.0]
 # littlewoodpaleyadd!(lp::Vector, ψ::FourierSymmetric1DFilter)
 lp = zeros(Float32, 8)
 ψ = FourierSymmetric1DFilter(Float32[0.8, 0.3, 0.1], one(Float32))
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[1.0, 0.64, 0.09, 0.01, 0.0, 0.01, 0.09, 0.64]
+@test lp ≈ Float32[1.0, 0.64, 0.09, 0.01, 0.0, 0.01, 0.09, 0.64]
 # littlewoodpaleyadd!(lp::Vector, ψ::Vanishing1DFilter)
 lp = zeros(Float32, 8)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
@@ -161,7 +161,7 @@ coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -1)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
+@test lp ≈ Float32[0.0, 0.0, 0.01, 0.09, 0.0, 0.01, 0.09, 0.16]
 # littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 lp = zeros(Float32, 8)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
@@ -171,27 +171,27 @@ midpoint = Float32(0.5)
 littlewoodpaleyadd!(lp, ψ); lp = zeros(Float32, 8) # warmup
 allocatedmemory = @allocated littlewoodpaleyadd!(lp, ψ)
 @test allocatedmemory <= 1e3 # on some machines (e.g. Travis's Linux) it is >0
-@test_approx_eq lp Float32[0.0, 0.0, 0.01, 0.09, 0.25, 0.01, 0.09, 0.16]
+@test lp ≈ Float32[0.0, 0.0, 0.01, 0.09, 0.25, 0.01, 0.09, 0.16]
 
 # Base.maximum
 # Base.maximum(ψ::Analytic1DFilter)
-@test_approx_eq maximum(Analytic1DFilter([0.1, -0.3], 2)) 0.3
+@test maximum(Analytic1DFilter([0.1, -0.3], 2)) ≈ 0.3
 # Base.maximum(ψ::Coanalytic1DFilter)
-@test_approx_eq maximum(Coanalytic1DFilter([0.1, 0.3, 0.4*im], -3)) 0.4
+@test maximum(Coanalytic1DFilter([0.1, 0.3, 0.4*im], -3)) ≈ 0.4
 # Base.maximum(ψ::FullResolution1DFilter)
-@test_approx_eq maximum(FullResolution1DFilter([0.01, 0.1*im, 0.2, -0.3])) 0.3
+@test maximum(FullResolution1DFilter([0.01, 0.1*im, 0.2, -0.3])) ≈ 0.3
 # Base.maximum(ψ::FourierSymmetric1DFilter)
-@test_approx_eq maximum(FourierSymmetric1DFilter([0.2, 0.1], 1.0)) 1.0
+@test maximum(FourierSymmetric1DFilter([0.2, 0.1], 1.0)) ≈ 1.0
 # Base.maximum(ψ::Vanishing1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
-@test_approx_eq maximum(Vanishing1DFilter(an, coan)) Float32(0.4)
+@test maximum(Vanishing1DFilter(an, coan)) ≈ Float32(0.4)
 # Base.maximum(ψ::VanishingWithMidpoint1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
-@test_approx_eq maximum(ψ) Float32(0.5)
+@test maximum(ψ) ≈ Float32(0.5)
 
 # nextpow2_exponent
 @test nextpow2_exponent(5) == 3
@@ -258,28 +258,28 @@ lastω = round(Int, N * ξs[1])
 ψ = Analytic1DFilter(Float32[0.1, 0.3], 2)
 ψspinned = spin(ψ)
 @test isa(ψspinned, Coanalytic1DFilter{Float32})
-@test_approx_eq ψspinned.neg Float32[0.3, 0.1]
+@test ψspinned.neg ≈ Float32[0.3, 0.1]
 @test ψspinned.neglast == -2
 # spin(::Coanalytic1DFilter)
 ψ = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψspinned = spin(ψ)
 @test isa(ψspinned, Analytic1DFilter{Float32})
-@test_approx_eq ψspinned.pos Float32[0.4, 0.3, 0.1]
+@test ψspinned.pos ≈ Float32[0.4, 0.3, 0.1]
 @test ψspinned.posfirst == 3
 # spin(::FullResolution1DFilter)
 ψ = FullResolution1DFilter(Float32[0.1, 0.2, 0.3, 0.4])
 ψspinned = spin(ψ)
 @test isa(ψspinned, FullResolution1DFilter{Float32})
-@test_approx_eq ψspinned.coeff Float32[0.4, 0.3, 0.2, 0.1]
+@test ψspinned.coeff ≈ Float32[0.4, 0.3, 0.2, 0.1]
 # spin(::Vanishing1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
 ψ = Vanishing1DFilter(an, coan)
 ψspinned = spin(ψ)
 @test isa(ψspinned, Vanishing1DFilter{Float32})
-@test_approx_eq ψspinned.coan.neg Float32[0.3, 0.1]
+@test ψspinned.coan.neg ≈ Float32[0.3, 0.1]
 @test ψspinned.coan.neglast == -2
-@test_approx_eq ψspinned.an.pos Float32[0.4, 0.3, 0.1]
+@test ψspinned.an.pos ≈ Float32[0.4, 0.3, 0.1]
 @test ψspinned.an.posfirst == 3
 # spin(::VanishingWithMidpoint1DFilter)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
@@ -288,8 +288,8 @@ midpoint = Float32(0.5)
 ψ = VanishingWithMidpoint1DFilter(an, coan, midpoint)
 ψspinned = spin(ψ)
 @test isa(ψspinned, VanishingWithMidpoint1DFilter{Float32})
-@test_approx_eq ψspinned.coan.neg Float32[0.3, 0.1]
+@test ψspinned.coan.neg ≈ Float32[0.3, 0.1]
 @test ψspinned.coan.neglast == -2
-@test_approx_eq ψspinned.an.pos Float32[0.4, 0.3, 0.1]
+@test ψspinned.an.pos ≈ Float32[0.4, 0.3, 0.1]
 @test ψspinned.an.posfirst == 3
-@test_approx_eq ψspinned.midpoint Float32(0.5)
+@test ψspinned.midpoint ≈ Float32(0.5)
