@@ -109,7 +109,6 @@ function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
     Gadfly.plot(collect(ωs), ψs,
                  collect(ωs), ϕ,
                  collect(ωs), lp)
-    Gadfly.xlabel("ω (rad / s)")
 end
 
 Base.ndims(::Bank1D) = 1
