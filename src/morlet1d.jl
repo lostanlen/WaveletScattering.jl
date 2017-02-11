@@ -1,12 +1,3 @@
-"""Computes `gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den)`.
-The Gaussian bell curve is defined as `gauss(ω) = exp(- ω² / 2σ²)`.
-For performance reasons, we memoize the denominator `2σ²`,
-which is computed only once in the caller `morlet`.
-Also note that the exponentiation `ω²` is replaced by the explicit
-product `ω*ω`.
-"""
-gauss{T<:Real}(ω, den::T) = @fastmath Base.convert(T, exp(- ω*ω/den))::T
-
 """Computes a one-dimensional Morlet wavelet in the Fourier domain.
 A Morlet wavelet of center frequency `ξ` and of variance `σ` looks almost like
 a Gaussian bell curve. To ensure that the wavelet has a vanishing moment, we
@@ -53,6 +44,15 @@ function AbstractFilter{T<:FFTW.fftwReal,G<:LineGroups}(ϕmeta::ΦMeta,
     leg = leg[1:findlast(leg .> spec.ɛ)]
     return FourierSymmetric1DFilter(leg, one(T))
 end
+
+"""Computes `gauss{T<:Real}(ω, den::T) = exp(- ω*ω/den)`.
+The Gaussian bell curve is defined as `gauss(ω) = exp(- ω² / 2σ²)`.
+For performance reasons, we memoize the denominator `2σ²`,
+which is computed only once in the caller `morlet`.
+Also note that the exponentiation `ω²` is replaced by the explicit
+product `ω*ω`.
+"""
+gauss{T<:Real}(ω, den::T) = @fastmath Base.convert(T, exp(- ω*ω/den))::T
 
 function morlet{T<:FFTW.fftwReal}(::FourierDomain{1},
         center::T, den::T, N::Int, nPeriods::Int)
