@@ -14,13 +14,13 @@ import WaveletScattering: Path
 
 # Identity
 ρ = Identity()
-@test_approx_eq ρ([1.0, 2.0, 3.0]) [1.0, 2.0, 3.0]
+@test ρ([1.0, 2.0, 3.0]) ≈ [1.0, 2.0, 3.0]
 
 # Log1P
 threshold = 0.1
 ρ = Log1P(threshold)
-@test_approx_eq ρ([0.0]) [0.0]
-@test_approx_eq expm1.(ρ([1.0, 2.0, 3.0])) [1.0, 2.0, 3.0]*threshold
+@test ρ([0.0]) ≈ [0.0]
+@test expm1.(ρ([1.0, 2.0, 3.0])) ≈ [1.0, 2.0, 3.0]*threshold
 @test_throws DomainError ρ([- 1.001 / threshold])
 
 # Base.map
