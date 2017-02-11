@@ -45,13 +45,13 @@ for T in numerictypes, nfo in nfos, max_q in nfos[nfos.<=nfo],
     # centerfrequencies
     @test_approx_eq ξs[1] spec.motherfrequency
     difflogξs = diff(log2.(ξs[:]))
-    @test_approx_eq difflogξs (-ones(difflogξs)/spec.n_filters_per_octave)
+    @test difflogξs ≈ (-ones(difflogξs)/spec.n_filters_per_octave)
     @test all(ξs.>0.0)
-    @test_approx_eq ξs bws.*qs
+    @test ξs ≈ bws.*qs
     # qualityfactors
     @test all(qs.>=0.0)
     @test all(qs.<=max_q)
-    @test_approx_eq qs ξs./bws
+    @test qs ≈ ξs./bws
     # scales
     @test all(scs.>0.0)
     @test all(scs[qs.>1.0] .< (max_s+machine_precision))

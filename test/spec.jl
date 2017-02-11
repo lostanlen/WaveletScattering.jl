@@ -19,7 +19,7 @@ immutable NullWaveletClass <: RedundantWaveletClass end
 class = NullWaveletClass()
 for nfo in [1, 2, 4, 8, 12, 24, 32]
     ξ = default_motherfrequency(class, nfo)
-    @test_approx_eq 2ξ (ξ*2^(-1/nfo) + (1-ξ))
+    @test 2ξ ≈ (ξ*2^(-1/nfo) + (1-ξ))
 end
 
 # default_n_octaves
@@ -123,12 +123,12 @@ class = Morlet()
 
 
 # default_ɛ
-@test_approx_eq default_ɛ(Float16) 1e-3
-@test_approx_eq default_ɛ(Float32) 1e-7
-@test_approx_eq default_ɛ(Float64) 1e-15
-@test_approx_eq default_ɛ(Complex{Float16}) 1e-3
-@test_approx_eq default_ɛ(Complex{Float32}) 1e-7
-@test_approx_eq default_ɛ(Complex{Float64}) 1e-15
+@test default_ɛ(Float16) ≈ 1e-3
+@test default_ɛ(Float32) ≈ 1e-7
+@test default_ɛ(Float64) ≈ 1e-15
+@test default_ɛ(Complex{Float16}) ≈ 1e-3
+@test default_ɛ(Complex{Float32}) ≈ 1e-7
+@test default_ɛ(Complex{Float64}) ≈ 1e-15
 
 # default_max_qualityfactor
 @test_approx_eq default_max_qualityfactor(8.0, nothing) 8.0

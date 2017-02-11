@@ -8,7 +8,6 @@ import WaveletScattering: InputLayer
 # inputlayerstate.jl
 import WaveletScattering: InputLayerState
 
-
 data = rand(Float32, 256, 2)
 backend = Mocha.CPUBackend()
 inputlayer = InputLayer(

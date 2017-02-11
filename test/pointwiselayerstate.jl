@@ -26,4 +26,4 @@ pointwiselayerstate = Mocha.setup(backend, pointwiselayer,
 
 @test length(pointwiselayerstate.blobs) == 1
 pointwisedata = pointwiselayerstate.blobs[1].nodes[Path()].data
-@test_approx_eq pointwisedata data
+@test pointwisedata ≈ data

@@ -24,9 +24,9 @@ spec = Spec2D()
     Spec2D(class=MexicanHat(), n_orientations=0))
 
 # default_max_aspectratio
-@test_approx_eq default_max_aspectratio(Morlet(), nothing) 2.0
-@test_approx_eq default_max_aspectratio(MexicanHat(), nothing) 1.0
-@test_approx_eq default_max_aspectratio(Morlet(), 3.0) 3.0
+@test default_max_aspectratio(Morlet(), nothing) ≈ 2.0
+@test default_max_aspectratio(MexicanHat(), nothing) ≈ 1.0
+@test default_max_aspectratio(Morlet(), 3.0) ≈ 3.0
 
 # default_n_orientations
 @test default_n_orientations(Morlet(), nothing) == 4
