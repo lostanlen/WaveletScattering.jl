@@ -12,9 +12,3 @@ import WaveletScattering: Spec1D
 
 W = Bank1D(Spec1D(n_filters_per_octave=4, n_octaves=8))
 @test ndims(W) == 1
-
-x = zeros(Float32, 1 << W.spec.log2_size)
-x[1] = 1.0
-Wx = W(x)
-
-@test isa(Wx, ScatteredBlob{Node{Complex{Float32},2}})

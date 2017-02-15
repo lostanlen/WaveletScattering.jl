@@ -46,41 +46,6 @@ immutable Bank1D{
     end
 end
 
-function (bank::Bank1D{T,FourierDomain{1},TrivialGroup}){T,DIM}(
-        x::AbstractArray{T,DIM};
-        flags = FFTW.ESTIMATE,
-        timelimit = Inf,
-        verbose = 0)
-    syms = appendsymbols(fill(Symbol(bank.behavior.pathkey), 1), DIM)
-    inputnode = Node(x, ntuple(k -> kthrange(syms, x, k), DIM))
-    fouriernode = AbstractFourierNode(inputnode, [1], flags, timelimit)
-    chromakey = prepend(:χ, bank.behavior.pathkey)
-    chromarange = chromakey => 0:1:(bank.spec.n_filters_per_octave-1)
-    waveletranges = (collect(inputnode.ranges)..., chromarange)
-    waveletnodes =
-        DataStructures.SortedDict(Pair{Path,Node{Complex{T},DIM+1}}[])
-    octavekey = prepend(:j, bank.behavior.pathkey)
-    for j in bank.behavior.j_range
-        ψ_log2_sampling = bank.behavior.ψ_log2_samplings[1+j]
-        downsampled_length = size(x, 1) >> (-ψ_log2_sampling)
-        octave_size = (downsampled_length,
-            size(x)[2:end]..., bank.spec.n_filters_per_octave)
-        octave_ft = zeros(Complex{T}, octave_size)
-        inds = [fill(Colon(), DIM) ; 0]
-        for χ in 0:(bank.spec.n_filters_per_octave-1)
-            ψ = bank.ψs[1, 1+χ, 1+j]
-            inds[end] = 1 + χ
-            transform!(view(octave_ft, inds...), ψ, fouriernode, 1)
-        end
-        ifft_plan = plan_ifft(octave_ft, 1 ; flags=flags, timelimit=timelimit)
-        waveletnode = Node(ifft_plan * octave_ft, waveletranges)
-        waveletpath = Path(octavekey => j)
-        waveletnodes[waveletpath] = waveletnode
-    end
-    waveletblob = ScatteredBlob(waveletnodes)
-    return waveletblob
-end
-
 """Collects band-pass filters `ψ`s and low-pass filter `ϕ` in the Fourier domain. The band-pass filters are organized as a 4-D tensor, where the
 dimensions correspond to frequency `ω`, orientation `θ`, chroma `χ`,
 and octave index `j`."""
