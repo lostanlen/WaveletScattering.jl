@@ -131,9 +131,9 @@ class = Morlet()
 @test default_ɛ(Complex{Float64}) ≈ 1e-15
 
 # default_max_qualityfactor
-@test_approx_eq ≈ default_max_qualityfactor(8.0, nothing) 8.0
-@test_approx_eq ≈ default_max_qualityfactor(nothing, 8) 8.0
-@test_approx_eq ≈ default_max_qualityfactor(nothing, nothing) 1.0
+@test default_max_qualityfactor(8.0, nothing) ≈ 8.0
+@test default_max_qualityfactor(nothing, 8) ≈ 8.0
+@test default_max_qualityfactor(nothing, nothing) ≈ 1.0
 
 # default_n_filters_per_octave
 @test default_n_filters_per_octave(12, nothing) == 12
