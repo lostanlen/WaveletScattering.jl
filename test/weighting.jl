@@ -9,4 +9,4 @@ weighting = EqualWeighting()
 # LoudnessWeighting
 weighting = LoudnessWeighting(44100)
 @test weight_frequencies(weighting, 0.0) ≈ 0.0
-@test weight_frequencies(LoudnessWeighting(12000.0), [1e48]) ≈ 0.0
+@test weight_frequencies(LoudnessWeighting(12000.0), [1e48]) ≈ [0.0]
