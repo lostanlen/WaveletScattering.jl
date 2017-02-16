@@ -14,8 +14,7 @@ To create a `Bank1D`
 3. if needed, provide behavior characteristics as keyword arguments.
 Example:
 spec = Spec1D(n_filters_per_octave = 12, n_octaves = 10)
-pathkey = PathKey(:time)
-bank = Bank1D(spec, pathkey, j_range = 2:9)"""
+bank = Bank1D(spec, j_range = 3:10)"""
 immutable Bank1D{
         T<:Number,
         D<:LineDomains,
