@@ -101,6 +101,17 @@ function Base.isless(a::Path, b::Path)
     return length(a.sdict) < length(b.sdict)
 end
 
+function scattering_order(path::Path, suffix::PathKey)
+    pathkeys = collect(keys(path.sdict))
+    order = 0
+    for idkey in eachindex(firstpathkeys)
+        if firstpathkeys[idkey].literals[2:end] == suffix.literals
+            order = max(scattering_order,
+                firstpathkeys[idkey].literals[1].depth)
+        end
+    end
+    return order
+end
 
 """A `PathRange` is a sorted dictionary whose keys are `PathKey`'s
 and whose values are integer ranges."""
