@@ -1,5 +1,3 @@
-julia 0.4
-Clp 0.0.10
+julia 0.5
 DataStructures 0.3.11
-JuMP 0.10.1
-MathProgBase 0.3.17
+Wavelets 0.4.1

@@ -1,18 +1,34 @@
 using Base.Test
 
-using Clp
-using DataStructures
-using JuMP
-using MathProgBase
-
 tests = [
-    "spec",
+    "domain",
+    "group",
+    "waveletclass",
+    "path",
     "meta",
+    "spec",
+    "spec1d",
+    "spec2d",
     "filter",
     "fourierfilter",
-    "bank",
+    "weighting",
+    "behavior",
+    "bank1d",
     "morlet1d",
-    "path"
+    "blob",
+    "pointwise",
+    "modulus",
+    "log1p",
+    "symbols",
+    "layer",
+    "inputlayer",
+    "pointwiselayer",
+    "fourierlayer",
+    "waveletlayer",
+    "inputlayerstate",
+    "pointwiselayerstate",
+    "fourierlayerstate",
+    "net"
 ]
 
 println("Running tests:")

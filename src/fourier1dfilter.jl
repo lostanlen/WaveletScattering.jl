@@ -1,21 +1,28 @@
-abstract AbstractFourierFilter{T<:Number,N} <: AbstractFilter{T,N}
-abstract AbstractFourier1DFilter{T<:Number} <: AbstractFourierFilter{T,1}
-
-"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support is ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
-immutable Analytic1DFilter{T<:Number}  <: AbstractFourier1DFilter{T}
+"""An Analytic1DFilter has only positive frequencies. Its Fourier-domain support
+ranges between posfirst and (posfirst+length(pos)-1)<N/2."""
+immutable Analytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     pos::Vector{T}
     posfirst::Int
 end
 
-"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
-immutable Coanalytic1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
+"""A Coanalytic1DFilter has only negative frequencies. Its Fourier-domain
+support ranges between (neglast-length(neg)+1)>(-N/2) and neglast."""
+immutable Coanalytic1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     neg::Vector{T}
     neglast::Int
 end
 
+"""A FourierSymmetric1DFilter has a real impulse respnse in the spatial domain,
+hence a symmetric response in the Fourier domain. It consists of a leg of
+nonzero frequencies and a ""zero"" coefficient."""
+immutable FourierSymmetric1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
+    leg::Vector{T}
+    zero::T
+end
+
 """A FullResolution1DFilter spans the entire spectrum. Its is defined in the
 Fourier domain as a vector of size N."""
-immutable FullResolution1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
+immutable FullResolution1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     coeff::Vector{T}
 end
 
@@ -24,7 +31,7 @@ in positive and negative frequencies. Moreover, it is null for ω=0 and
 at the midpoint ω=N/2. Thus, it is defined as the combination of an
 Analytic1DFilter (positive frequencies) and a Coanalytic1DFilter (negative
 frequencies)."""
-immutable Vanishing1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
+immutable Vanishing1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     an::Analytic1DFilter
     coan::Coanalytic1DFilter{T}
 end
@@ -34,18 +41,34 @@ spanning both in positive and negative frequencies. It is null for ω=0 but
 nonzero at the midpoint ω=N/2. Thus, it is defined as the combination of
 an Analytic1DFilter (positive frequencies), a Coanalytic1DFilter (negative
 frequencies), and a midpoint (frequency ω=N/2)."""
-immutable VanishingWithMidpoint1DFilter{T<:Number} <: AbstractFourier1DFilter{T}
+immutable VanishingWithMidpoint1DFilter{T} <: AbstractFilter{T,FourierDomain{1}}
     an::Analytic1DFilter{T}
     coan::Coanalytic1DFilter{T}
     midpoint::T
 end
 
-function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
-    supertype = AbstractFourier1DFilter{eltype(y)}
-    N = 1 << spec.log2_size[1]
+"""Given an array `y` and a filter bank specification `spec`, the
+constructor `AbstractFilter` truncates `y` according to the magnitude
+threshold `spec.ɛ` and returns the appropriate subtype of `AbstractFilter`
+to represent the truncated array. The output is cast with the supertype
+`AbstractFilter` so that the output of this function can be stored
+efficiently into an array of abstract objects.
+For one-dimensional filters in the Fourier domain, the output type may be:
+* `Analytic1DFilter` if `y` is non-negligible only for positive frequencies
+* `Coanalytic1DFilter` if `y` is non-negligible only for negative frequencies
+* `Vanishing1DFilter` if the support of `y` encompasses a portion of
+  positive frequencies and a portion of negative frequencies, excluding
+  midpoint.
+* `VanishingWithMidpoint1DFilter` if the support of `y` encompasses a portion
+  of positive frequencies and a portion of negative frequencies, including
+  midpoint.
+* `FullResolution1DFilter` if `y` is non-negligible along the whole spectrum"""
+function AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
+    supertype = AbstractFilter{T,FourierDomain{1}}
+    N = 1 << spec.log2_size
     halfN = N >> 1
     ɛ2 = T(spec.ɛ * spec.ɛ)
-    y2 = abs2(y)
+    y2 = abs2.(y)
     negbools = y2[2:halfN] .> ɛ2
     negfirst, neglast = findfirst(negbools), findlast(negbools)
     posbools = y2[(2+halfN):end] .> ɛ2
@@ -54,13 +77,13 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
     if hasmidpoint
         (negfirst == 1) && (neglast == (halfN-1)) &&
             (posfirst == 1) && (poslast == (halfN-1)) &&
-            return FullResolution1DFilter(fftshift(y))
+            return FullResolution1DFilter(fftshift(y))::supertype
         midpoint = y[1]
         if (neglast == 0)
             coan = Coanalytic1DFilter(zeros(T, 1), -halfN + 1)
         else
-            coan =
-                Coanalytic1DFilter(y[(1+negfirst):(1+neglast)], neglast - halfN)
+            coan = Coanalytic1DFilter(y[(1+negfirst):(1+neglast)],
+                neglast - halfN)
         end
         if (poslast == 0)
             an = Analytic1DFilter(zeros(T, 1), halfN - 1)
@@ -84,22 +107,34 @@ function AbstractFourier1DFilter{T<:Number}(y::Vector{T}, spec::Abstract1DSpec)
 end
 
 # multiplication operator with scalar *
-Base.(:*){T<:Number}(ψ::Analytic1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::Analytic1DFilter{T}, b::Number) =
     Analytic1DFilter{T}(b * ψ.pos, ψ.posfirst)
-Base.(:*){T<:Number}(ψ::Coanalytic1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::Coanalytic1DFilter{T}, b::Number) =
     Coanalytic1DFilter{T}(b * ψ.neg, ψ.neglast)
-Base.(:*){T<:Number}(ψ::FullResolution1DFilter{T}, b::Number) =
+Base.:*{T}(ψ::FullResolution1DFilter{T}, b::Number) =
     FullResolution1DFilter{T}(b * ψ.coeff)
-Base.(:*){T<:Number}(ψ::Symmetric1DFilter{T}, b::Number) =
-    Symmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
-Base.(:*){T<:Number}(ψ::Vanishing1DFilter{T}, b::Number) =
-    Vanishing1DFilter(b * ψ.an, b * ψ.coan)
-Base.(:*){T<:Number}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
-    VanishingWithMidpoint1DFilter(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
-Base.(:*)(b::Number, ψ::AbstractFourierFilter) = ψ * b
+Base.:*{T}(ψ::FourierSymmetric1DFilter{T}, b::Number) =
+    FourierSymmetric1DFilter{T}(b * ψ.leg, T(b) * ψ.zero)
+Base.:*{T}(ψ::Vanishing1DFilter{T}, b::Number) =
+    Vanishing1DFilter{T}(b * ψ.an, b * ψ.coan)
+Base.:*{T}(ψ::VanishingWithMidpoint1DFilter{T}, b::Number) =
+    VanishingWithMidpoint1DFilter{T}(b * ψ.an, b * ψ.coan, T(b) * ψ.midpoint)
 
-# element-wise multiplication operator ".*" with scalar falls back to "*"
-Base.(:.*)(ψ::AbstractFourierFilter, b::Number) = ψ * b
+"""Given a narrowband filter `ψ` and its corresponding filter bank
+specification `spec`, returns the base-2 logarithm of the resampling factor
+such that the passband of `ψ` is not aliased. This resmpling factor is
+expressed in fraction of signal length ; thus, its base-2 logarithm is
+non-positive. The result does not account for manual oversampling."""
+critical_log2_sampling(ψ::Analytic1DFilter, spec::AbstractSpec) =
+    1 + nextpow2_exponent(ψ.posfirst + length(ψ.pos) - 1) - spec.log2_size
+critical_log2_sampling(ψ::Coanalytic1DFilter, spec::AbstractSpec) =
+    1 + nextpow2_exponent(ψ.neglast - length(ψ.neg) + 1) - spec.log2_size
+critical_log2_sampling(ψ::FullResolution1DFilter, spec::AbstractSpec) = 0
+critical_log2_sampling(ψ::FourierSymmetric1DFilter, spec::AbstractSpec) =
+    1 + nextpow2_exponent(length(ψ.leg)) - spec.log2_size
+critical_log2_sampling(ψ::Vanishing1DFilter, spec::AbstractSpec) = max(
+    critical_log2_sampling(ψ.an, spec), critical_log2_sampling(ψ.coan, spec))
+critical_log2_sampling(ψ::VanishingWithMidpoint1DFilter, spec::AbstractSpec) = 0
 
 # indexing between -N/2 and N/2-1
 function Base.getindex{T}(ψ::Analytic1DFilter{T}, i::Integer)
@@ -130,22 +165,19 @@ function Base.getindex{T}(ψ::Coanalytic1DFilter{T}, I::UnitRange{Int64})
         ψ.neg[end - ψ.neglast + (start:stop)];
         zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
 end
+function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, i::Integer)
+    i==0 && return ϕ.zero
+    abs(i)>length(ϕ.leg) && return zero(T)
+    return ϕ.leg[abs(i)]
+end
+function Base.getindex{T}(ϕ::FourierSymmetric1DFilter{T}, I::UnitRange{Int64})
+    T[ ϕ[ω] for ω in I ]
+end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
-    N = length(ψ.coeff)
-    halfN = N >> 1
-    i<(-halfN) && return zero(T)
-    i>(halfN-1) && return zero(T)
-    return ψ.coeff[mod1(1 + i, N)]
+    return ψ.coeff[ mod1(1 + i, length(ψ.coeff)) ]
 end
 function Base.getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
-    N = length(ψ.coeff)
-    halfN = N >> 1
-    start = max(I.start, -halfN)
-    stop = min(I.stop, halfN-1)
-    T[
-        zeros(T, max(min(start, I.stop + 1) - I.start, 0)) ;
-        ψ.coeff[[ mod1(1+ω, N) for ω in start:stop ]] ;
-        zeros(T, max(I.stop - max(I.start - 1, stop), 0)) ]
+    return ψ.coeff[ mod1.( 1 + (I.start:I.stop), length(ψ.coeff)) ]
 end
 function Base.getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
     return (i > 0 ? ψ.an[i] : ψ.coan[i])
@@ -192,7 +224,7 @@ function littlewoodpaleyadd!(lp::Vector, ψ::FullResolution1DFilter)
         @fastmath lp[ω] += abs2(ψ.coeff[ω])
     end
 end
-function littlewoodpaleyadd!(lp::Vector, ψ::Symmetric1DFilter)
+function littlewoodpaleyadd!(lp::Vector, ψ::FourierSymmetric1DFilter)
     @inbounds for ω in eachindex(ψ.leg)
         @fastmath lp[1 + ω] += abs2(ψ.leg[ω])
         @fastmath lp[length(lp) + 1 - ω] += abs2(ψ.leg[ω])
@@ -210,50 +242,43 @@ function littlewoodpaleyadd!(lp::Vector, ψ::VanishingWithMidpoint1DFilter)
 end
 
 """Returns the maximum Fourier-domain absolute value of a filter."""
-Base.maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2(ψ.pos)))
-Base.maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2(ψ.neg)))
-Base.maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2(ψ.coeff)))
-Base.maximum(ψ::Symmetric1DFilter) =
-    sqrt(max(maximum(abs2(ψ.leg)), abs(ψ.zero)))
+Base.maximum(ψ::Analytic1DFilter) = sqrt(maximum(abs2.(ψ.pos)))
+Base.maximum(ψ::Coanalytic1DFilter) = sqrt(maximum(abs2.(ψ.neg)))
+Base.maximum(ψ::FullResolution1DFilter) = sqrt(maximum(abs2.(ψ.coeff)))
+Base.maximum(ψ::FourierSymmetric1DFilter) =
+    sqrt(max(maximum(abs2.(ψ.leg)), abs2(ψ.zero)))
 Base.maximum(ψ::Vanishing1DFilter) = max(maximum(ψ.an), maximum(ψ.coan))
 Base.maximum(ψ::VanishingWithMidpoint1DFilter) =
     max(maximum(ψ.an), maximum(ψ.coan), abs(ψ.midpoint))
+
+"""The exponent of the smallest power of two not less than input integer `n`.
+Returns `0` for `n==0`, and returns `-nextpow2_exponent(-n)` for negative
+arguments."""
+nextpow2_exponent(n::Unsigned) = (sizeof(n)<<3)-leading_zeros(n-1)
+function nextpow2_exponent(n::Integer)
+    if n == 0
+        return oftype(n, 0)
+    elseif n < 0
+        return oftype(n, -nextpow2_exponent(unsigned(-n)))
+    else
+        return oftype(n, nextpow2_exponent(unsigned(n)))
+    end
+end
 
 """Renormalizes an array of Fourier-domain wavelets `ψs` by the square root
 of the maximum value of its Littlewood-Paley sum `lp`. This ensures approximate
 an energy conservation property for the subsequent wavelet transform operator.
 The Littlewood-Paley sum `lp` is defined, for each frequency `ω`, as the sum of
 wavelet energies (squared magnitudes)."""
-function renormalize!{F<:AbstractFourier1DFilter}(ψs::VecOrMat{F},
-                                                  ϕ::Symmetric1DFilter,
-                                                  metas, spec::Abstract1DSpec)
-    N = 1 << spec.log2_size[1]
-    T = spec.signaltype
-    if metas[end].scale > (spec.max_scale-0.01) && spec.max_qualityfactor > 1.0
-        elbowλ = 1; while (metas[elbowλ].scale<spec.max_scale) elbowλ += 1 end
-        elbowω = round(Int, N * metas[elbowλ].centerfrequency)
-        λs = elbowλ:length(metas)
-        ψmat = zeros(T, (elbowω, length(λs)))
-        for idλ in eachindex(λs) ψmat[:, idλ] = abs2(ψs[λs[idλ]][1:elbowω]); end
-        lp = zeros(real(T), N)
-        for idλ in 1:(elbowλ-1) littlewoodpaleyadd!(lp, ψs[idλ]); end
-        isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-        littlewoodpaleyadd!(lp, ϕ * sqrt(maximum(lp)))
-        remainder = maximum(lp) - lp[1 + (1:elbowω)]
-        model = JuMP.Model()
-        JuMP.@defVar(model, y[1:length(λs)] >= 0)
-        JuMP.@setObjective(model, Min, sum(remainder - ψmat * y))
-        JuMP.@addConstraint(model, remainder .>= ψmat * y)
-        JuMP.@addConstraint(model, diff(y) .<= 0)
-        JuMP.solve(model)
-        ψs[λs] .*= sqrt(2 * JuMP.getValue(y))
-    end
-    lp = zeros(real(T), N)
-    for idψ in eachindex(ψs) littlewoodpaleyadd!(lp, ψs[idψ]); end
-    isa(metas, Vector{NonOrientedMeta}) && symmetrize!(lp)
-    max_lp = maximum(lp)
-    ψs .*= inv(sqrt(max_lp))
-    return scale!(lp, inv(max_lp))
+function renormalize!{T<:Number,G<:LineGroups}(
+        ϕ::FourierSymmetric1DFilter{T},
+        ψs::Array{AbstractFilter{T,FourierDomain{1}},3},
+        spec::AbstractSpec{T,FourierDomain{1},G})
+    lp = zeros(real(T), 1<<spec.log2_size)
+    for idψ in eachindex(ψs[1, :, :]) littlewoodpaleyadd!(lp, ψs[idψ]); end
+    get_n_orientations(spec.pointgroup)==1 && symmetrize!(lp)
+    ψs .*= inv(sqrt(lp[1+end>>1]))
+    return scale!(lp, inv(lp[1+end>>1]))
 end
 
 """Reverses the coefficients of a Fourier-domain 1D filter `ψ` to yield a
@@ -266,6 +291,9 @@ spin(ψ::Vanishing1DFilter) = Vanishing1DFilter(spin(ψ.coan), spin(ψ.an))
 spin(ψ::VanishingWithMidpoint1DFilter) =
     VanishingWithMidpoint1DFilter(spin(ψ.coan), spin(ψ.an), ψ.midpoint)
 
+"""Returns the symmetric part of a input vector. This function is called by
+`renormalize!` to symmetrize the Littlewood-Paley sum of a one-dimensional
+filter bank."""
 function symmetrize!(lp::Vector)
     N = length(lp)
     for ω in 1:(N>>1 - 1)

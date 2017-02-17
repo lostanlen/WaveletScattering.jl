@@ -1,0 +1,207 @@
+# Node
+abstract AbstractNode{T<:Number,N}
+abstract AbstractFourierNode{T<:Number,N} <: AbstractNode{T,N}
+
+AbstractFourierNode{T<:FFTW.fftwReal}(node::AbstractNode{T}, args...) =
+    RealFourierNode(node, args...)
+AbstractFourierNode{T<:FFTW.fftwComplex}(node::AbstractNode{T}, args...) =
+    ComplexFourierNode(node, args...)
+
+immutable RealFourierNode{T<:FFTW.fftwComplex,R<:FFTW.fftwReal,N} <:
+        AbstractFourierNode{T,N}
+    data::Array{T,N}
+    forwardplan::FFTW.rFFTWPlan{R,-1,false,N}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+function RealFourierNode{T<:FFTW.fftwReal}(
+        node::AbstractNode{T},
+        region::AbstractArray{Int,1},
+        flags::UInt32 = FFTW.ESTIMATE,
+        timelimit = Inf)
+    forwardplan = plan_rfft(
+            node.data, region, flags = flags, timelimit = timelimit)
+    RealFourierNode(forwardplan * node.data, forwardplan, node.ranges)
+end
+
+immutable ComplexFourierNode{T<:FFTW.fftwComplex,N} <:
+        AbstractFourierNode{T,N}
+    data::Array{T,N}
+    forwardplan::FFTW.cFFTWPlan{T,-1,false,N}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+function ComplexFourierNode{T<:FFTW.fftwComplex}(
+        node::AbstractNode{T},
+        region::AbstractArray{Int,1} ;
+        flags = FFTW.ESTIMATE,
+        timelimit = Inf)
+    forwardplan =
+        plan_fft(node.data, region ; flags = flags, timelimit = timelimit)
+    ComplexFourierNode(forwardplan * node.data, forwardplan, node.ranges)
+end
+
+immutable Node{T<:Number,N} <: AbstractNode{T,N}
+    data::Array{T,N}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+immutable InvComplexFourierNode{T<:FFTW.fftwComplex,N,R<:FFTW.fftwReal} <:
+        AbstractNode{T,N}
+    data::Array{T,N}
+    inverseplan::Base.DFT.ScaledPlan{T,FFTW.cFFTWPlan{T,1,false,N},R}
+    ranges::NTuple{N,Pair{PathKey,StepRange{Int,Int}}}
+end
+
+function InvComplexFourierNode{T<:FFTW.fftwComplex}(
+        node::AbstractNode{T},
+        region::Vector{Int},
+        flags::UInt32 = FFTW.ESTIMATE,
+        timelimit = Inf)
+    inverseplan =
+        plan_ifft(node.data, region ; flags = flags, timelimit = timelimit)
+    InvComplexFourierNode(inverseplan * node.data, inverseplan, node.ranges)
+end
+
+function pathdepth(node::AbstractNode, refkey::PathKey)
+    mapreduce(p -> pathdepth(p.first, refkey), max, 1, node.ranges)
+end
+
+function transform!{T}(
+        destination::SubArray,
+        ψ::AbstractFilter{T,FourierDomain{1}},
+        node::AbstractNode,
+        dims::Array{Int})
+    transform!(destination, ψ, node, dims[1])
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::Analytic1DFilter,
+        node::AbstractNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in (ψ.posfirst):(ψ.posfirst+length(ψ.pos)-1)
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.pos[1 - ψ.posfirst + ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::FullResolution1DFilter,
+        node::RealFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    halfN = size(node.data, dim) - 1
+    # positive frequencies (including 0 and π)
+    @inbounds for ω in 0:halfN
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.coeff[1 + ω], input)
+    end
+    # negative frequencies
+    @inbounds for ω in (halfN+1):(2*halfN-1)
+        inds[dim] = 1 + 2*halfN - ω
+        input = view(node.data, inds...)
+        inds[dim] = 1 + ω
+        output = view(destination, inds...)
+        broadcast!(A_mul_Bc, output, ψ.coeff[1 + ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::FullResolution1DFilter,
+        node::ComplexFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in 0:(size(node.data, dim)-1)
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.coeff[1 + ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::Vanishing1DFilter,
+        node::ComplexFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
+    end
+    @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
+        inds[dim] = 1 + size(node.data, dim) + ω
+        input = view(node.data, inds...)
+        inds[dim] = 1 + size(destination, dim) + ω
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.coan.neg[1 + end + ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::Vanishing1DFilter,
+        node::RealFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
+    end
+    inds_in, inds_out = inds, Base.copy(inds)
+    @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
+        inds_in[dim] = 1 - ω
+        input = view(node.data, inds_in...)
+        inds_out[dim] = 1 + size(destination, dim) + ω
+        output = view(destination, inds_out...)
+        broadcast!(A_mul_Bc, output,
+            ψ.coan.neg[end - ψ.coan.neglast + ω], input)
+    end
+end
+
+function transform!(
+        destination::SubArray,
+        ψ::VanishingWithMidpoint1DFilter,
+        node::RealFourierNode,
+        dim::Int)
+    inds = Union{Colon,Int}[
+        fill(Colon(), dim-1) ; 0 ; fill(Colon(), ndims(destination)-1)]
+    @inbounds for ω in ψ.an.posfirst+(0:(length(ψ.an.pos)-1))
+        inds[dim] = 1 + ω
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.an.pos[1 - ψ.an.posfirst + ω], input)
+    end
+    @inbounds for ω in ψ.coan.neglast+(0:-1:(1-length(ψ.coan.neg)))
+        inds[dim] = 1 - ω
+        input = view(node.data, inds...)
+        inds[dim] = 1 + size(destination, dim) + ω
+        output = view(destination, inds...)
+        broadcast!(A_mul_Bc, output,
+            ψ.coan.neg[end - ψ.coan.neglast + ω], input)
+    end
+    @inbounds begin
+        ωmidpoint = ψ.an.posfirst + length(ψ.an.pos)
+        inds[dim] = 1 + ωmidpoint
+        input = view(node.data, inds...)
+        output = view(destination, inds...)
+        broadcast!(*, output, ψ.midpoint, input)
+    end
+end

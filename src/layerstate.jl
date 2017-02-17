@@ -1,0 +1,1 @@
+abstract AbstractScatteredLayerState <: Mocha.LayerState
