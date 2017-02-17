@@ -71,8 +71,8 @@ function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
     lp2 += abs2(ϕ)
     lp = sqrt(lp2)
     Gadfly.plot(collect(ωs), ψs,
-                 collect(ωs), ϕ,
-                 collect(ωs), lp)
+                collect(ωs), ϕ,
+                collect(ωs), lp)
 end
 
 Base.ndims(::Bank1D) = 1

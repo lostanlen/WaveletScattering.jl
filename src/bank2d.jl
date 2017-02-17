@@ -32,6 +32,17 @@ immutable Bank2D{
             log2_oversampling::Int = 0,
             max_log2_stride::Int = spec.n_octaves-1,
             weighting::AbstractWeighting = EqualWeighting())
+        (nΘs, nΧs, nJs) = size(spec.ψmetas)
+        ψs = Array(AbstractFilter{T,D}, (nΘs, nΧs, nJs))
+        # TODO: write AbstractFilter{T}(y::Vector{T}, spec::AbstractSpec{T,FourierDomain{1}})
+        #ψs[1, :, :] =
+        #    pmap(AbstractFilter, spec.ψmetas[1, :, :], fill(spec, nΧs, nJs))
+        #(nΘs > 1) && spin!(ψs)
+        #ϕ = AbstractFilter(spec.ϕmeta, spec)
+        #renormalize!(ϕ, ψs, spec)
+        #behavior = Behavior(ϕ, ψs, spec, is_ϕ_applied, j_range,
+        #    log2_oversampling, max_log2_stride, pathkey, weighting)
+        #new{T,D,G,W}(ϕ, ψs, behavior, spec)
     end
 end
 
