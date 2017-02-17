@@ -104,10 +104,9 @@ end
 function scattering_order(path::Path, suffix::PathKey)
     pathkeys = collect(keys(path.sdict))
     order = 0
-    for idkey in eachindex(firstpathkeys)
-        if firstpathkeys[idkey].literals[2:end] == suffix.literals
-            order = max(scattering_order,
-                firstpathkeys[idkey].literals[1].depth)
+    for idkey in eachindex(pathkeys)
+        if pathkeys[idkey].literals[2:end] == suffix.literals
+            order = max(order, pathkeys[idkey].literals[1].depth)
         end
     end
     return order
