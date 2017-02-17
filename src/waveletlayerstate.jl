@@ -32,7 +32,7 @@ function Mocha.setup(
             for subscript in subscripts
                 outsizes[subscript] =
                     insizes[subscript] >> (-ψ_log2_sampling)
-                inrange = outranges[subscript].second
+                inrange = inranges[subscript].second
                 outranges[subscript] = outranges[subscript].first =>
                     (inrange.start):(1<<-ψ_log2_sampling):(inrange.stop)
             end
