@@ -62,17 +62,4 @@ function Base.collect{T}(bank::Bank1D{T,FourierDomain{1}})
     return (ψs, ϕ)
 end
 
-function littlewoodpaleyplot{T}(bank::Bank1D{T,FourierDomain{1}})
-    (ψs, ϕ) = collect(bank)
-    ψs = ψs[:, :]
-    ωs = linspace(0, 2pi, length(ϕ)+1)[1:(end-1)]
-    lp2 = squeeze(sum(abs2(ψs), 2), 2)
-    symmetrize!(lp2)
-    lp2 += abs2(ϕ)
-    lp = sqrt(lp2)
-    Gadfly.plot(collect(ωs), ψs,
-                collect(ωs), ϕ,
-                collect(ωs), lp)
-end
-
 Base.ndims(::Bank1D) = 1
