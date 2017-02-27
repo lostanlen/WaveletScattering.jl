@@ -98,9 +98,12 @@ midpoint = Float32(0.5)
 @test ψ[-6:-2] == Float32[0.0 ; 0.1 ; 0.3 ; 0.4 ; 0.0]
 # getindex{T}(ψ::FullResolution1DFilter{T}, i::Integer)
 ψ = FullResolution1DFilter(Float32[0.01, 0.1, 0.2, 0.3])
-@test Float32[ψ[ω] for ω in -2:1] == Float32[0.2, 0.3, 0.01, 0.1]
+@test Float32[ψ[ω] for ω in -3:2] == Float32[0.0, 0.2, 0.3, 0.01, 0.1, 0.0]
 # getindex{T}(ψ::FullResolution1DFilter{T}, I::UnitRange{Int64})
-@test ψ[-2:1] == Float32[0.2, 0.3, 0.01, 0.1]
+@test ψ[-3:2] == Float32[0.0, 0.2, 0.3, 0.01, 0.1, 0.0]
+@test ψ[-5:-3] == Float32[0.0, 0.0, 0.0]
+@test ψ[3:5] == Float32[0.0, 0.0, 0.0]
+@test ψ[5:3] == Float32[]
 # getindex{T}(ψ::Vanishing1DFilter{T}, i::Integer)
 an = Analytic1DFilter(Float32[0.1, 0.3], 2)
 coan = Coanalytic1DFilter(Float32[0.1, 0.3, 0.4], -3)
