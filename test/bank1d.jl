@@ -1,12 +1,6 @@
 using Base.Test
 # bank1d.jl
 import WaveletScattering: Bank1D
-# blob.jl
-import WaveletScattering: ScatteredBlob
-# node.jl
-import WaveletScattering: Node
-# path.jl
-import WaveletScattering: Path
 # spec1d.jl
 import WaveletScattering: Spec1D
 
