@@ -81,6 +81,3 @@ Mocha.init(backend)
 net = Mocha.Net("network", backend, layers)
 
 @test isa(net, Mocha.Net{Mocha.CPUBackend})
-
-import WaveletScattering: AbstractNode, get_bandwidth, get_centerfrequency,
-    prepend, transform!, scattering_order
