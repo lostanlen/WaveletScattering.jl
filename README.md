@@ -10,4 +10,4 @@ while discarding non-informative variability, such as rigid motions, frequency t
 Its design is inspired from the [scattering.m](https://github.com/lostanlen/scattering.m) toolbox, while taking advantage of
 Julia's multiple dispatch and in-place operations.
 
-The development of this package has been stopped.
+The development of this package has been stopped and superseded by Kymatio, a PyTorch/Keras/NumPy implementation: https://github.com/kymatio/kymatio
